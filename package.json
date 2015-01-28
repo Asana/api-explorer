@@ -37,5 +37,8 @@
     "gulp-typescript": "^2.3.0",
     "jshint-stylish": "^1.0.0",
     "typescript-formatter": "^0.1.4"
+  },
+  "dependencies": {
+    "asana": "^0.5.8"
   }
 }
