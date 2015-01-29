@@ -4,48 +4,50 @@
 
 declare module Asana {
 
+    // This is an external library, so we can't enforce PascalCased class and interface names.
+    /* tslint:disable:class-name */
+
     //
     // Asana.Client API
     // ----------------------------------------------------------------------
-    interface AsanaClient {
-        (dispatcher: AsanaDispatcher, options: any): AsanaClient;
-        create(options: any): AsanaClient;
-        create(): AsanaClient;
+    class Client {
+        constructor(dispatcher: Dispatcher, options?: any);
+        create(options?: any): Client;
     }
 
     //
     // Asana.Dispatcher API
     // ----------------------------------------------------------------------
-    interface AsanaDispatcher {
+    class Dispatcher {
     }
 
     //
     // Asana.auth API
     // ----------------------------------------------------------------------
-    interface AsanaAuth {
+    interface auth {
     }
 
     //
     // Asana.errors API
     // ----------------------------------------------------------------------
-    interface AsanaErrors {
+    interface errors {
     }
 
     //
     // Asana.resources API
     // ----------------------------------------------------------------------
-    interface AsanaResources {
+    interface resources {
     }
 
     //
     // Asana Exports
     // ----------------------------------------------------------------------
     interface Exports {
-        Client: AsanaClient;
-        Dispatcher: AsanaDispatcher;
-        auth: AsanaAuth;
-        errors: AsanaErrors;
-        resources: AsanaResources;
+        Client: Client;
+        Dispatcher: Dispatcher;
+        auth: auth;
+        errors: errors;
+        resources: resources;
     }
 }
 
