@@ -34,6 +34,7 @@ typings
 _build
 _cache
 doc
+dist
 
 # IntelliJ
 .idea

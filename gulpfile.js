@@ -17,6 +17,8 @@ var index = './index.js';
 gulp.task('lint', ['jshint', 'tslint']);
 gulp.task('test', ['lint', 'spec']);
 gulp.task('bundle', ['browser', 'browser-min']);
+gulp.task('web-setup', ['scripts', 'browser-min', 'public-files']);
+gulp.task('default', ['web-setup']);
 
 /**
  * Bundles the code, full version to `asana.js` and minified to `asana-min.js`
@@ -35,11 +37,18 @@ function browserTask(minify) {
                 .pipe(vinylBuffer())
                 .pipe(uglify());
         }
-        return task.pipe(gulp.dest('dist'));
+        return task.pipe(gulp.dest(globs.dist()));
     };
 }
 gulp.task('browser', ['scripts'], browserTask(false));
 gulp.task('browser-min', ['scripts'], browserTask(true));
+
+/**
+ * Set up files before running the web server.
+ */
+gulp.task('public-files', ['clean'], function() {
+  gulp.src(globs.pubs()).pipe(gulp.dest(globs.dist()));
+});
 
 /**
  * Gulpfile variables
@@ -147,6 +156,12 @@ globs = {
   }),
   build_index: val(function() {
     return './' + path.join(globs.build(), globs.src(), 'index.js');
+  }),
+  pub: val(function() {
+    return 'public';
+  }),
+  pubs: val(function() {
+    return path.join(globs.pub(), '**');
   })
 };
 
