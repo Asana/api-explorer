@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Asana/node-asana-tester",
   "devDependencies": {
+    "browserify": "^8.1.1",
     "del": "^1.1.1",
     "dts-bundle": "^0.2.0",
     "event-stream": "^3.2.1",
@@ -35,8 +36,11 @@
     "gulp-mocha": "^2.0.0",
     "gulp-tslint": "^1.4.1",
     "gulp-typescript": "^2.3.0",
+    "gulp-uglify": "^1.0.2",
     "jshint-stylish": "^1.0.0",
-    "typescript-formatter": "^0.1.4"
+    "typescript-formatter": "^0.1.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
     "asana": "^0.5.8"

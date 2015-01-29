@@ -1,12 +1,45 @@
+var browserify = require('browserify');
 var gulp = require('gulp');
 var loadPlugins = require('gulp-load-plugins');
 var path = require('path');
+var uglify = require('gulp-uglify');
+var vinylBuffer = require('vinyl-buffer');
+var vinylSourceStream = require('vinyl-source-stream');
+
+/**
+ * Paths
+ */
+var index = './index.js';
 
 /**
  * High Level Tasks
  */
 gulp.task('lint', ['jshint', 'tslint']);
 gulp.task('test', ['lint', 'spec']);
+gulp.task('bundle', ['browser', 'browser-min']);
+
+/**
+ * Bundles the code, full version to `asana.js` and minified to `asana-min.js`
+ */
+function browserTask(minify) {
+    return function() {
+        var task = browserify(
+            {
+                entries: [globs.build_index()],
+                standalone: 'AsanaTester'
+            })
+            .bundle()
+            .pipe(vinylSourceStream('asana-tester' + (minify ? '-min' : '') + '.js'));
+        if (minify) {
+            task = task
+                .pipe(vinylBuffer())
+                .pipe(uglify());
+        }
+        return task.pipe(gulp.dest('dist'));
+    };
+}
+gulp.task('browser', ['scripts'], browserTask(false));
+gulp.task('browser-min', ['scripts'], browserTask(true));
 
 /**
  * Gulpfile variables
@@ -111,6 +144,9 @@ globs = {
   ts: val(function() {
     return path.join(
         '{' + globs.src() + ',' + globs.test() + '}', '**', '*.ts');
+  }),
+  build_index: val(function() {
+    return './' + path.join(globs.build(), globs.src(), 'index.js');
   })
 };
 
