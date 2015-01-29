@@ -2,33 +2,55 @@
 // Project: https://github.com/asana/node-asana/
 // Note: These type definitions are incomplete; only used sections of the API will be defined.
 
-interface Asana {
-    Client: Asana.Client;
-    Dispatcher: Asana.Dispatcher;
-    auth: Asana.Auth;
-    errors: Asana.Errors;
-    resources: Asana.Resources;
-}
-
 declare module Asana {
-    interface Client {
-        (dispatcher: Asana.Dispatcher, options: any): Asana.Client;
-        create(options: any): Asana.Client;
-        create(): Asana.Client;
+
+    //
+    // Asana.Client API
+    // ----------------------------------------------------------------------
+    interface AsanaClient {
+        (dispatcher: AsanaDispatcher, options: any): AsanaClient;
+        create(options: any): AsanaClient;
+        create(): AsanaClient;
     }
-    interface Dispatcher {
+
+    //
+    // Asana.Dispatcher API
+    // ----------------------------------------------------------------------
+    interface AsanaDispatcher {
     }
-    interface Auth {
+
+    //
+    // Asana.auth API
+    // ----------------------------------------------------------------------
+    interface AsanaAuth {
     }
-    interface Errors {
+
+    //
+    // Asana.errors API
+    // ----------------------------------------------------------------------
+    interface AsanaErrors {
     }
-    interface Resources {
+
+    //
+    // Asana.resources API
+    // ----------------------------------------------------------------------
+    interface AsanaResources {
+    }
+
+    //
+    // Asana Exports
+    // ----------------------------------------------------------------------
+    interface Exports {
+        Client: AsanaClient;
+        Dispatcher: AsanaDispatcher;
+        auth: AsanaAuth;
+        errors: AsanaErrors;
+        resources: AsanaResources;
     }
 }
-
-declare var asana: Asana;
 
 declare module "asana" {
-    export = asana;
+    var exports: Asana.Exports;
+    export = exports;
 }
 

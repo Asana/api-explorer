@@ -7,7 +7,7 @@ import Asana = require("asana");
  *
  * @returns {Asana.Client}
  */
-export function getAsanaClient(): Asana.Client {
+export function getAsanaClient(): typeof Asana.Client {
     return Asana.Client.create();
 }
 
