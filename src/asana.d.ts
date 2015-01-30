@@ -7,6 +7,9 @@ declare module "asana" {
     export class Client {
         constructor(dispatcher: Dispatcher, options?: any);
         static create(options?: any): Client;
+        useOauth(options?: any): Client;
+        authorize(): Promise<Client>;
+        users: resources.Users;
     }
 
     export class Dispatcher {
@@ -23,5 +26,9 @@ declare module "asana" {
     }
 
     export module resources {
+        export class Users {
+            constructor(dispatcher: Dispatcher);
+            me(params?: any): Promise<any>;
+        }
     }
 }
