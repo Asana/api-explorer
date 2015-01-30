@@ -10,12 +10,19 @@ declare module "asana" {
         useOauth(options?: any): Client;
         authorize(): Promise<Client>;
         users: resources.Users;
+        dispatcher: Dispatcher;
     }
 
     export class Dispatcher {
+        get(path: string, query: any, dispatchOptions: any): Promise<any>;
     }
 
     export module auth {
+        // TODO: Fill in credentials interface.
+        export interface Credentials {
+
+        }
+
         export class PopupFlow {
             constructor(options?: any);
             static runReceiver(): void;
