@@ -5,7 +5,7 @@ import constants = require("./constants");
 /**
  * Fetches credentials if the user has recently oauthed in.
  *
- * @TODO Implement this.
+ * @TODO #StoredCredentials: Implement fetching credentials.
  * @returns {Asana.auth.Credentials|null}
  */
 function fetchCredentialsOrNull(): Asana.auth.Credentials {
@@ -16,7 +16,7 @@ function fetchCredentialsOrNull(): Asana.auth.Credentials {
 /**
  * Stores credentials from an authorized client for use in later sessions.
  *
- * @TODO Implement this.
+ * @TODO #StoredCredentials: Implement storing credentials.
  * @param {Asana.Client} client
  */
 function storeCredentialsFromClient(client: Asana.Client): void {
@@ -43,15 +43,22 @@ class AuthorizedClient {
         });
     }
 
+    private credentials(): Asana.auth.Credentials {
+        // We know our authenticator is an oauth authenticator, so we typecast it as such.
+        return (<Asana.auth.OauthAuthenticator>this.client.dispatcher.authenticator).credentials;
+    }
+
     /**
      * Checks if the current client has non-expired credentials.
      *
-     * @TODO: Implement this.
+     * @TODO #StoredCredentials: Implement this after we can store credentials.
      * @returns {boolean}
      */
     public isAuthorized(): boolean {
+        // Note: Currently assumes any credentials are valid. Fix after #StoredCredentials.
         console.warn("Using stored credentials is currently unsupported.");
-        return false;
+
+        return this.credentials() != null;
     }
 
     /**
@@ -61,15 +68,16 @@ class AuthorizedClient {
      * @returns {Promise<Client>}  A promise that resolves to this client when
      *     authorization is complete.
      */
-    private ensureAuthorized(): Promise<Asana.Client> {
+    public authorize(): Promise<Asana.Client> {
         return this.client.authorize().then(function(client) {
             storeCredentialsFromClient(client);
+
             return client;
         });
     }
 
     /**
-     * Dispatches a GET request to the Asana API.
+     * Dispatches a GET request to the Asana API, from an already-authorized client.
      *
      * @param {string} path  The path of the API
      * @param {any} query  The query params
@@ -78,9 +86,12 @@ class AuthorizedClient {
      * @returns {Promise<any>}  The response for the request.
      */
     public get(path: string, query?: any, dispatchOptions?: any): Promise<any> {
-        return this.ensureAuthorized().then(function(client) {
-            return client.dispatcher.get(path, query, dispatchOptions);
-        });
+        if (!this.isAuthorized()) {
+            throw new Error("Client is not authorized to perform a request.");
+        }
+
+        // TODO: Handle error cases.
+        return this.client.dispatcher.get(path, query, dispatchOptions);
     }
 }
 export = AuthorizedClient;
