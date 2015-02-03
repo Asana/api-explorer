@@ -23,9 +23,9 @@ export function getName(): void {
         console.log("should be authorized");
         client.get("/users/me").then(function(response) {
             $("#ui").html("Hello " + response.data.name + "!");
-        }).catch(function(err) {
-            $("#ui").html("Error: " + err);
         });
+    }).catch(function(err) {
+        $("#ui").html("Error: " + err);
     });
 }
 
