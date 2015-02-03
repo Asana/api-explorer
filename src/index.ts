@@ -1,10 +1,6 @@
 /// <reference path="./asana.d.ts" />
 import Asana = require("asana");
-/// <reference path="jquery/jquery.d.ts" />
-import $ = require("jquery");
 import AuthorizedClient = require("./authorized_client");
-
-// TODO: Add tests.
 
 /**
  * Gets the user's name, and sets text in #ui to reflect it.
@@ -15,17 +11,17 @@ export function getName(): void {
     var client: AuthorizedClient = new AuthorizedClient();
 
     // Try to authorize, and display the user's name.
-    $("#ui").html("Authorizing...");
+    document.getElementById("ui").innerHTML = "Authorizing...";
 
     // Note: For now, we'll authorize and immediately query the API.
     //       Later, we'll separate those behaviors.
     client.authorize().then(function() {
         console.log("should be authorized");
         client.get("/users/me").then(function(response) {
-            $("#ui").html("Hello " + response.data.name + "!");
+            document.getElementById("ui").innerHTML = "Hello " + response.data.name + "!";
         });
     }).catch(function(err) {
-        $("#ui").html("Error: " + err);
+        document.getElementById("ui").innerHTML = "Error: " + err;
     });
 }
 

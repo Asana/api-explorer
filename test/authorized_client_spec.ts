@@ -33,7 +33,7 @@ describe("AuthorizedClient", () => {
                 clientId: "client_id",
                 redirectUri: "redirect_uri"
             });
-            var oauthStub: SinonSpy = sinon.stub(client, "useOauth");
+            var oauthStub: SinonStub = sinon.stub(client, "useOauth");
 
             /* tslint:disable:no-unused-variable */
             var authorized_client = new AuthorizedClient(client);
