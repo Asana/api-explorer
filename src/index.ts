@@ -1,6 +1,5 @@
-/// <reference path="./asana.d.ts" />
-import Asana = require("asana");
 import AuthorizedClient = require("./authorized_client");
+export import Receiver = require("./receiver");
 
 /**
  * Gets the user's name, and sets text in #ui to reflect it.
@@ -23,12 +22,4 @@ export function getName(): void {
     }).catch(function(err) {
         document.getElementById("ui").innerHTML = "Error: " + err;
     });
-}
-
-/**
- * Runs the receiver code to send the Oauth result to the requesting tab.
- * Note: This logic is handled entirely within the `Asana.auth` module.
- */
-export function runReceiver(): void {
-    Asana.auth.PopupFlow.runReceiver();
 }
