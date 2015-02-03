@@ -30,8 +30,8 @@ function storeCredentialsFromClient(client: Asana.Client): void {
 class AuthorizedClient {
     private client: Asana.Client;
 
-    constructor() {
-        this.client = Asana.Client.create({
+    constructor(client?: Asana.Client) {
+        this.client = client || Asana.Client.create({
             clientId: constants.CLIENT_ID,
             redirectUri: constants.REDIRECT_URI
         });
