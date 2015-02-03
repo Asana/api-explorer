@@ -13,6 +13,15 @@
     },
     "sinon/sinon.d.ts": {
       "commit": "016db435a6d07149b825d2f2b0bf2f639cff3986"
+    },
+    "bluebird/bluebird.d.ts": {
+      "commit": "01ce3ccf7f071514ff5057ef32a4550bf0b81dfe"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "01ce3ccf7f071514ff5057ef32a4550bf0b81dfe"
+    },
+    "chai-as-promised/chai-as-promised.d.ts": {
+      "commit": "7bab855ae33d79e86da1eb6c73a7f7eab2676ddb"
     }
   }
 }

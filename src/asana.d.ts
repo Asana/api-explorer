@@ -7,13 +7,30 @@ declare module "asana" {
     export class Client {
         constructor(dispatcher: Dispatcher, options?: any);
         static create(options?: any): Client;
+        useOauth(options?: any): Client;
+        authorize(): Promise<Client>;
+        dispatcher: Dispatcher;
     }
 
     export class Dispatcher {
+        get(path: string, query: any, dispatchOptions: any): Promise<any>;
+        authenticator: auth.Authenticator;
     }
 
     export module auth {
-        export class PopupFlow {
+        // TODO: Fill in credentials interface.
+        interface Credentials {
+
+        }
+
+        class Authenticator {
+        }
+
+        class OauthAuthenticator extends Authenticator {
+            credentials: Credentials;
+        }
+
+        class PopupFlow {
             constructor(options?: any);
             static runReceiver(): void;
         }
