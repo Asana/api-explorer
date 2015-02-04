@@ -1,4 +1,5 @@
 var browserify = require('browserify');
+var connect = require('gulp-connect');
 var gulp = require('gulp');
 var loadPlugins = require('gulp-load-plugins');
 var path = require('path');
@@ -18,7 +19,7 @@ gulp.task('lint', ['jshint', 'tslint']);
 gulp.task('test', ['lint', 'spec']);
 gulp.task('bundle', ['browser', 'browser-min']);
 gulp.task('web-setup', ['scripts', 'browser-min', 'public-files']);
-gulp.task('default', ['web-setup']);
+gulp.task('default', ['web-setup', 'server', 'watch']);
 
 /**
  * Bundles the code, full version to `asana.js` and minified to `asana-min.js`
@@ -46,8 +47,27 @@ gulp.task('browser-min', ['scripts'], browserTask(true));
 /**
  * Set up files before running the web server.
  */
-gulp.task('public-files', ['clean'], function() {
+gulp.task('public-files', function() {
   gulp.src(globs.pubs()).pipe(gulp.dest(globs.dist()));
+});
+
+/**
+ * Run a simple server for running the API tester.
+ */
+gulp.task('server', function() {
+  connect.server({
+    root: ['dist'],
+    port: process.env['PORT'] || 8338
+  });
+});
+
+
+/**
+ * Watch for changes for live reloading.
+ */
+gulp.task('watch', function() {
+  gulp.watch(globs.ts(), ['browser-min']);
+  gulp.watch(globs.pubs(), ['public-files']);
 });
 
 /**
@@ -161,7 +181,7 @@ globs = {
     return 'public';
   }),
   pubs: val(function() {
-    return path.join(globs.pub(), '**');
+    return path.join(globs.pub(), '**', '*.{html,css}');
   })
 };
 
@@ -207,7 +227,7 @@ gulp.task('jshint', function() {
 /**
  * Processes the TypeScript files
  */
-gulp.task('scripts', ['clean', 'tslint'], function() {
+gulp.task('scripts', ['tslint'], function() {
   var hasError = false;
   var compiler = gulp.src(globs.dts())
       .pipe(_.typescript(env.project()));
