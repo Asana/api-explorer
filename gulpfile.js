@@ -1,16 +1,6 @@
-var browserify = require('browserify');
-var connect = require('gulp-connect');
 var gulp = require('gulp');
 var loadPlugins = require('gulp-load-plugins');
 var path = require('path');
-var uglify = require('gulp-uglify');
-var vinylBuffer = require('vinyl-buffer');
-var vinylSourceStream = require('vinyl-source-stream');
-
-/**
- * Paths
- */
-var index = './index.js';
 
 /**
  * High Level Tasks
@@ -20,55 +10,6 @@ gulp.task('test', ['lint', 'spec']);
 gulp.task('bundle', ['browser', 'browser-min']);
 gulp.task('web-setup', ['scripts', 'browser-min', 'public-files']);
 gulp.task('default', ['web-setup', 'server', 'watch']);
-
-/**
- * Bundles the code, full version to `asana.js` and minified to `asana-min.js`
- */
-function browserTask(minify) {
-    return function() {
-        var task = browserify(
-            {
-                entries: [globs.build_index()],
-                standalone: 'AsanaTester'
-            })
-            .bundle()
-            .pipe(vinylSourceStream('asana-tester' + (minify ? '-min' : '') + '.js'));
-        if (minify) {
-            task = task
-                .pipe(vinylBuffer())
-                .pipe(uglify());
-        }
-        return task.pipe(gulp.dest(globs.dist()));
-    };
-}
-gulp.task('browser', ['scripts'], browserTask(false));
-gulp.task('browser-min', ['scripts'], browserTask(true));
-
-/**
- * Set up files before running the web server.
- */
-gulp.task('public-files', function() {
-  gulp.src(globs.pubs()).pipe(gulp.dest(globs.dist()));
-});
-
-/**
- * Run a simple server for running the API tester.
- */
-gulp.task('server', function() {
-  connect.server({
-    root: ['dist'],
-    port: process.env['PORT'] || 8338
-  });
-});
-
-
-/**
- * Watch for changes for live reloading.
- */
-gulp.task('watch', function() {
-  gulp.watch(globs.ts(), ['browser-min']);
-  gulp.watch(globs.pubs(), ['public-files']);
-});
 
 /**
  * Gulpfile variables
@@ -81,12 +22,15 @@ var _, env, globs, val;
  */
 _ = loadPlugins({
   pattern: '{' + [
+    'browserify',
     'dts-bundle',
     'del',
     'event-stream',
     'glob',
     'gulp-*',
     'typescript-formatter',
+    'vinyl-buffer',
+    'vinyl-source-stream'
   ].join(',') + '}',
   scope: [
     'devDependencies'
@@ -184,6 +128,55 @@ globs = {
     return path.join(globs.pub(), '**', '*.{html,css}');
   })
 };
+
+/**
+ * Bundles the code, full version to `asana.js` and minified to `asana-min.js`
+ */
+function browserTask(minify) {
+    return function() {
+        var task = _.browserify(
+            {
+                entries: [globs.build_index()],
+                standalone: 'AsanaTester'
+            })
+            .bundle()
+            .pipe(_.vinylSourceStream('asana-tester' + (minify ? '-min' : '') + '.js'));
+        if (minify) {
+            task = task
+                .pipe(_.vinylBuffer())
+                .pipe(_.uglify());
+        }
+        return task.pipe(gulp.dest(globs.dist()));
+    };
+}
+gulp.task('browser', ['scripts'], browserTask(false));
+gulp.task('browser-min', ['scripts'], browserTask(true));
+
+/**
+ * Set up files before running the web server.
+ */
+gulp.task('public-files', function() {
+  gulp.src(globs.pubs()).pipe(gulp.dest(globs.dist()));
+});
+
+/**
+ * Run a simple server for running the API tester.
+ */
+gulp.task('server', function() {
+  _.connect.server({
+    root: ['dist'],
+    port: process.env.PORT || 8338
+  });
+});
+
+
+/**
+ * Watch for changes for live reloading.
+ */
+gulp.task('watch', function() {
+  gulp.watch(globs.ts(), ['browser-min']);
+  gulp.watch(globs.pubs(), ['public-files']);
+});
 
 /**
  * Cleans the build artifacts
