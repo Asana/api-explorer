@@ -24,6 +24,7 @@
   "homepage": "https://github.com/Asana/node-asana-tester",
   "devDependencies": {
     "bluebird": "^2.9.6",
+    "browser-sync": "^2.0.0-rc5",
     "browserify": "^8.1.1",
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",

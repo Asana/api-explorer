@@ -8,7 +8,7 @@ var path = require('path');
 gulp.task('lint', ['jshint', 'tslint']);
 gulp.task('test', ['lint', 'spec']);
 gulp.task('bundle', ['browser', 'browser-min']);
-gulp.task('web-setup', ['scripts', 'browser-min', 'public-files']);
+gulp.task('web-setup', ['scripts', 'bundle', 'public-files']);
 gulp.task('default', ['web-setup', 'server', 'watch']);
 
 /**
@@ -22,6 +22,7 @@ var _, env, globs, val;
  */
 _ = loadPlugins({
   pattern: '{' + [
+    'browser-sync',
     'browserify',
     'dts-bundle',
     'del',
@@ -162,10 +163,15 @@ gulp.task('public-files', function() {
 /**
  * Run a simple server for running the API tester.
  */
-gulp.task('server', function() {
-  _.connect.server({
-    root: ['dist'],
-    port: process.env.PORT || 8338
+gulp.task('server', ['web-setup'], function() {
+  _.browserSync({
+    ghostMode: false,
+    notify: false,
+    online: false,
+    port: process.env.PORT || 8338,
+    server: {
+      baseDir: globs.dist(),
+    }
   });
 });
 
@@ -174,8 +180,8 @@ gulp.task('server', function() {
  * Watch for changes for live reloading.
  */
 gulp.task('watch', function() {
-  gulp.watch(globs.ts(), ['browser-min']);
-  gulp.watch(globs.pubs(), ['public-files']);
+  gulp.watch(globs.ts(), ['browser-min', _.browserSync.reload]);
+  gulp.watch(globs.pubs(), ['public-files', _.browserSync.reload]);
 });
 
 /**
