@@ -1,5 +1,5 @@
 {
-  "name": "node-asana-tester",
+  "name": "asana-tester",
   "version": "0.0.0",
   "private": true,
   "description": "A node.js client for the Asana API Tester",
@@ -48,6 +48,6 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "asana": "^0.5.8"
+    "asana": "^0.5.9"
   }
 }
