@@ -18,9 +18,9 @@ declare module "asana" {
     }
 
     export module auth {
-        // TODO: Fill in credentials interface.
         interface Credentials {
-
+            access_token: string;
+            expires_in: string;
         }
 
         class Authenticator {

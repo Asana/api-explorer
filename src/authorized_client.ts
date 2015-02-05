@@ -1,27 +1,7 @@
 /// <reference path="./asana.d.ts" />
 import Asana = require("asana");
 import constants = require("./constants");
-
-/**
- * Fetches credentials if the user has recently oauthed in.
- *
- * @TODO #StoredCredentials: Implement fetching credentials.
- * @returns {Asana.auth.Credentials|null}
- */
-function fetchCredentialsOrNull(): Asana.auth.Credentials {
-    console.warn("Fetching credentials is currently unsupported.");
-    return null;
-}
-
-/**
- * Stores credentials from an authorized client for use in later sessions.
- *
- * @TODO #StoredCredentials: Implement storing credentials.
- * @param {Asana.Client} client
- */
-function storeCredentialsFromClient(client: Asana.Client): void {
-    console.warn("Storing credentials is currently unsupported.");
-}
+import credentials = require("./credentials");
 
 /**
  * A client that seamlessly authorizes and allows use of parts of the API.
@@ -38,27 +18,18 @@ class AuthorizedClient {
 
         // Try to use credentials, if they are supplied. Otherwise, we use the popup flow.
         this.client.useOauth({
-            credentials: fetchCredentialsOrNull(),
+            credentials: credentials.getFromLocalStorage(),
             flowType: Asana.auth.PopupFlow
         });
-    }
-
-    private credentials(): Asana.auth.Credentials {
-        // We know our authenticator is an oauth authenticator, so we typecast it as such.
-        return (<Asana.auth.OauthAuthenticator>this.client.dispatcher.authenticator).credentials;
     }
 
     /**
      * Checks if the current client has non-expired credentials.
      *
-     * @TODO #StoredCredentials: Implement this after we can store credentials.
      * @returns {boolean}
      */
     public isAuthorized(): boolean {
-        // Note: Currently assumes any credentials are valid. Fix after #StoredCredentials.
-        console.warn("Using stored credentials is currently unsupported.");
-
-        return this.credentials() != null;
+        return credentials.validateFromClient(this.client);
     }
 
     /**
@@ -68,9 +39,9 @@ class AuthorizedClient {
      * @returns {Promise<Client>}  A promise that resolves to this client when
      *     authorization is complete.
      */
-    public authorize(): Promise<Asana.Client> {
+     public authorize(): Promise<Asana.Client> {
         return this.client.authorize().then(function(client) {
-            storeCredentialsFromClient(client);
+            credentials.storeFromClient(client);
 
             return client;
         });

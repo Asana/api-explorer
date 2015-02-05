@@ -6,6 +6,7 @@ import sinon = require("sinon");
 import Promise = require("bluebird");
 
 import AuthorizedClient = require("../src/authorized_client");
+import credentials = require("../src/credentials");
 import constants = require("../src/constants");
 
 chai.use(chaiAsPromised);
@@ -48,18 +49,13 @@ describe("AuthorizedClient", () => {
     });
 
     describe("#isAuthorized", () => {
-        it("should return true with credentials", () => {
+        it("should pass through authorization check to credentials", () => {
             var authorized_client = new AuthorizedClient();
-            sinon.stub(authorized_client, "credentials").returns("very real");
+            var stub = sinon.stub(credentials, "validateFromClient");
 
-            assert.isTrue(authorized_client.isAuthorized());
-        });
+            authorized_client.isAuthorized();
 
-        it("should return false with no credentials", () => {
-            var authorized_client = new AuthorizedClient();
-            sinon.stub(authorized_client, "credentials").returns(null);
-
-            assert.isFalse(authorized_client.isAuthorized());
+            sinon.assert.calledWith(stub, (<any>authorized_client).client);
         });
     });
 
