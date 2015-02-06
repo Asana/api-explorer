@@ -1,7 +1,10 @@
 /// <reference path="./asana.d.ts" />
 import Asana = require("asana");
 import constants = require("./constants");
-import credentials = require("./credentials");
+import CredentialsManager = require("./credentials_manager");
+import Promise = require("bluebird");
+
+var FLOW_TYPE = Asana.auth.PopupFlow;
 
 /**
  * A client that seamlessly authorizes and allows use of parts of the API.
@@ -16,10 +19,10 @@ class AuthorizedClient {
             redirectUri: constants.REDIRECT_URI
         });
 
-        // Try to use credentials, if they are supplied. Otherwise, we use the popup flow.
+        // Initially set up (possibly expired) credentials. We'll re-authorize if they are indeed expired.
         this.client.useOauth({
-            credentials: credentials.getFromLocalStorage(),
-            flowType: Asana.auth.PopupFlow
+            credentials: CredentialsManager.getFromLocalStorage(),
+            flowType: FLOW_TYPE
         });
     }
 
@@ -29,7 +32,7 @@ class AuthorizedClient {
      * @returns {boolean}
      */
     public isAuthorized(): boolean {
-        return credentials.validateFromClient(this.client);
+        return CredentialsManager.validateFromClient(this.client);
     }
 
     /**
@@ -39,12 +42,21 @@ class AuthorizedClient {
      * @returns {Promise<Client>}  A promise that resolves to this client when
      *     authorization is complete.
      */
-     public authorize(): Promise<Asana.Client> {
-        return this.client.authorize().then(function(client) {
-            credentials.storeFromClient(client);
+     public authorizeIfExpired(): Promise<Asana.Client> {
+        if (!this.isAuthorized()) {
+            // Set up Oauth flow without credentials, so we re-authorize.
+            this.client.useOauth({
+                flowType: FLOW_TYPE
+            });
 
-            return client;
-        });
+            return this.client.authorize().then(function (client) {
+                CredentialsManager.storeFromClient(client);
+
+                return client;
+            });
+        } else {
+            return Promise.resolve(this.client);
+        }
     }
 
     /**
@@ -57,12 +69,10 @@ class AuthorizedClient {
      * @returns {Promise<any>}  The response for the request.
      */
     public get(path: string, query?: any, dispatchOptions?: any): Promise<any> {
-        if (!this.isAuthorized()) {
-            throw new Error("Client is not authorized to perform a request.");
-        }
-
         // TODO: Handle error cases.
-        return this.client.dispatcher.get(path, query, dispatchOptions);
+        return this.authorizeIfExpired().then(function(client) {
+            return client.dispatcher.get(path, query, dispatchOptions);
+        });
     }
 }
 export = AuthorizedClient;

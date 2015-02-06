@@ -6,7 +6,7 @@ import sinon = require("sinon");
 import Promise = require("bluebird");
 
 import AuthorizedClient = require("../src/authorized_client");
-import credentials = require("../src/credentials");
+import CredentialsManager = require("../src/credentials_manager");
 import constants = require("../src/constants");
 
 chai.use(chaiAsPromised);
@@ -51,7 +51,7 @@ describe("AuthorizedClient", () => {
     describe("#isAuthorized", () => {
         it("should pass through authorization check to credentials", () => {
             var authorized_client = new AuthorizedClient();
-            var stub = sinon.stub(credentials, "validateFromClient");
+            var stub = sinon.stub(CredentialsManager, "validateFromClient");
 
             authorized_client.isAuthorized();
 
@@ -59,62 +59,103 @@ describe("AuthorizedClient", () => {
         });
     });
 
-    describe("#authorize", () => {
+    describe("#authorizeIfExpired", () => {
         var authorized_client: AuthorizedClient;
         var client: Asana.Client;
         var authorizeStub: SinonStub;
+        var isAuthorizedStub: SinonStub;
 
         beforeEach(() => {
             authorized_client = new AuthorizedClient();
             client = (<any>authorized_client).client;
             authorizeStub = sinon.stub(client, "authorize");
+            isAuthorizedStub = sinon.stub(authorized_client, "isAuthorized");
         });
 
-        it("should pass through authorization to client", () => {
+        it("should be a no-op if unexpired", () => {
+            isAuthorizedStub.returns(true);
+            var useOauthStub = sinon.stub(client, "useOauth");
+
+            assert.becomes(authorized_client.authorizeIfExpired(), client);
+            sinon.assert.notCalled(useOauthStub);
+            sinon.assert.notCalled(authorizeStub);
+
+        });
+
+        it("should pass through authorization to client if expired", () => {
+            isAuthorizedStub.returns(false);
             authorizeStub.returns(Promise.resolve(client));
 
-            assert.becomes(authorized_client.authorize(), client);
+            assert.becomes(authorized_client.authorizeIfExpired(), client);
             sinon.assert.called(authorizeStub);
         });
 
         it("should throw if client's authorization is unsuccessful", () => {
+            isAuthorizedStub.returns(false);
             authorizeStub.returns(
                 Promise.reject(new Error("Message thrown"))
             );
 
-            assert.isRejected(authorized_client.authorize(), "Message thrown");
+            assert.isRejected(authorized_client.authorizeIfExpired(), "Message thrown");
             sinon.assert.called(authorizeStub);
         });
     });
 
     describe("#get", () => {
         var authorized_client: AuthorizedClient;
-        var dispatcher: Asana.Dispatcher;
+        var client: Asana.Client;
+        var authorizeStub: SinonStub;
         var getStub: SinonStub;
 
         beforeEach(() => {
             authorized_client = new AuthorizedClient();
-            dispatcher = (<any>authorized_client).client.dispatcher;
-            getStub = sinon.stub(dispatcher, "get");
+            client = (<any>authorized_client).client;
+            authorizeStub = sinon.stub(client, "authorize");
+            getStub = sinon.stub(client.dispatcher, "get").returns("great");
         });
 
-        it("should throw if unauthorized", () => {
-            sinon.stub(authorized_client, "isAuthorized").returns(false);
-
-            assert.throw(
-                () => authorized_client.get("arg1", "arg2", "arg3"),
-                "Client is not authorized to perform a request."
-            );
-            sinon.assert.notCalled(getStub);
-        });
-
-        it("should pass through request to dispatcher if authorized", () => {
+        it("should pass through request to dispatcher if authorized", (done) => {
             sinon.stub(authorized_client, "isAuthorized").returns(true);
 
+            var promise: Promise<any>;
             assert.doesNotThrow(
-                () => authorized_client.get("arg1", "arg2", "arg3")
+                () => promise = authorized_client.get("arg1", "arg2", "arg3")
             );
-            sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
+
+            promise.then(function(data) {
+                // Make sure we didn't accidentally authorize.
+                sinon.assert.notCalled(authorizeStub);
+
+                // Verify we've successfully passed through to the dispatcher.
+                sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
+                assert.equal(data, "great");
+                done();
+            }).catch(function(err) {
+                done(err);
+            });
+        });
+
+        it("should authorize before requesting if unauthorized", (done) => {
+            sinon.stub(authorized_client, "isAuthorized").returns(false);
+            authorizeStub.returns(Promise.resolve(client));
+
+            var promise: Promise<any>;
+            assert.doesNotThrow(
+                () => promise = authorized_client.get("arg1", "arg2", "arg3")
+            );
+
+            promise.then(function(data) {
+                // Make sure we didn't accidentally authorize.
+                sinon.assert.called(authorizeStub);
+                assert(authorizeStub.calledBefore(getStub));
+
+                // Verify we've successfully passed through to the dispatcher.
+                sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
+                assert.equal(data, "great");
+                done();
+            }).catch(function(err) {
+                done(err);
+            });
         });
     });
 });

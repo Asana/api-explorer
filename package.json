@@ -48,6 +48,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "asana": "^0.5.9"
+    "asana": "^0.5.9",
+    "bluebird": "^2.9.6"
   }
 }

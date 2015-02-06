@@ -14,11 +14,8 @@ export function getName(): void {
 
     // Note: For now, we'll authorize and immediately query the API.
     //       Later, we'll separate those behaviors.
-    client.authorize().then(function() {
-        console.log("should be authorized");
-        client.get("/users/me").then(function(response) {
-            document.getElementById("ui").innerHTML = "Hello " + response.data.name + "!";
-        });
+    client.get("/users/me").then(function(response) {
+        document.getElementById("ui").innerHTML = "Hello " + response.data.name + "!";
     }).catch(function(err) {
         document.getElementById("ui").innerHTML = "Error: " + err;
     });
