@@ -51,7 +51,7 @@ describe("AuthorizedClient", () => {
     describe("#isAuthorized", () => {
         it("should pass through authorization check to credentials", () => {
             var authorized_client = new AuthorizedClient();
-            var stub = sinon.stub(CredentialsManager, "validateFromClient");
+            var stub = sinon.stub(CredentialsManager, "isValidFromClient");
 
             authorized_client.isAuthorized();
 

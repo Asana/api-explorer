@@ -15,7 +15,7 @@ export var localStorage: Storage =
  * @param {Asana.auth.Credentials} credentials
  * @returns {boolean}
  */
-function validate(credentials: Asana.auth.Credentials) {
+function isValid(credentials: Asana.auth.Credentials) {
     // TODO: Actually validate this.
     return credentials != null;
 }
@@ -26,8 +26,8 @@ function validate(credentials: Asana.auth.Credentials) {
  * @param {Asana.Client} client
  * @returns {boolean}
  */
-export function validateFromClient(client: Asana.Client) {
-    return validate(getFromClient(client));
+export function isValidFromClient(client: Asana.Client) {
+    return isValid(getFromClient(client));
 }
 
 /**
@@ -53,7 +53,7 @@ export function getFromLocalStorage(): Asana.auth.Credentials {
             localStorage.getItem(constants.LOCALSTORAGE_KEY)
         );
 
-        return validate(credentials) ? credentials : null;
+        return isValid(credentials) ? credentials : null;
     } else {
         // If we don't have access to local storage, then we can't do anything.
         console.warn("No access to local storage.");

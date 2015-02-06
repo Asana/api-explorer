@@ -32,7 +32,7 @@ class AuthorizedClient {
      * @returns {boolean}
      */
     public isAuthorized(): boolean {
-        return CredentialsManager.validateFromClient(this.client);
+        return CredentialsManager.isValidFromClient(this.client);
     }
 
     /**
