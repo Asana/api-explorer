@@ -20,7 +20,8 @@ declare module "asana" {
     export module auth {
         interface Credentials {
             access_token: string;
-            expires_in: string;
+            expires_in: number;
+            expiry_timestamp?: number;
         }
 
         class Authenticator {

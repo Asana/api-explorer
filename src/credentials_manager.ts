@@ -10,14 +10,24 @@ export var localStorage: Storage =
     typeof window !== "undefined" ? window.localStorage : null;
 
 /**
+ * The time to subtract before we actually consider credentials expired.
+ */
+var EXPIRY_BUFFER_MS = 5 * 60 * 1000;
+
+/**
  * Returns true if the credentials have not expired.
  *
  * @param {Asana.auth.Credentials} credentials
  * @returns {boolean}
  */
 function isValid(credentials: Asana.auth.Credentials) {
-    // TODO: Actually validate this.
-    return credentials != null;
+    // If no credentials or expiry time, then mark as invalid.
+    if (credentials == null || credentials.expiry_timestamp == null) {
+        return false;
+    }
+
+    // We're valid when we have more than the buffer remaining before expiry.
+    return credentials.expiry_timestamp - Date.now() > EXPIRY_BUFFER_MS;
 }
 
 /**
@@ -42,18 +52,17 @@ function getFromClient(client: Asana.Client): Asana.auth.Credentials {
 }
 
 /**
- * Fetches credentials from localStorage, if the user has recently oauthed in.
- * If the credentials have expired or don't exist, then return null.
+ * Fetches credentials from localStorage, if such credentials exist.
+ * Note: This may return expired credentials, so we always must re-check
+ * before using them.
  *
  * @returns {Asana.auth.Credentials}
  */
 export function getFromLocalStorage(): Asana.auth.Credentials {
     if (localStorage !== null) {
-        var credentials: Asana.auth.Credentials = JSON.parse(
+        return JSON.parse(
             localStorage.getItem(constants.LOCALSTORAGE_KEY)
         );
-
-        return isValid(credentials) ? credentials : null;
     } else {
         // If we don't have access to local storage, then we can't do anything.
         console.warn("No access to local storage.");
@@ -68,12 +77,16 @@ export function getFromLocalStorage(): Asana.auth.Credentials {
  */
 export function storeFromClient(client: Asana.Client): void {
     if (localStorage !== null) {
+        var credentials = getFromClient(client);
+
+        // Add expiry timestamp to credentials, for use when checking expiry.
+        credentials.expiry_timestamp = Date.now() + credentials.expires_in * 1000;
+
         localStorage.setItem(
             constants.LOCALSTORAGE_KEY,
-            JSON.stringify(getFromClient(client))
+            JSON.stringify(credentials)
         );
     } else {
-        console.log(localStorage);
         // If we don't have access to local storage, then we can't do anything.
         console.warn("No access to local storage.");
     }
