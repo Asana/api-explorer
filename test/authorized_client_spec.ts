@@ -13,6 +13,16 @@ chai.use(chaiAsPromised);
 var assert = chai.assert;
 
 describe("AuthorizedClient", () => {
+    var sand: SinonSandbox;
+
+    beforeEach(() => {
+        sand = sinon.sandbox.create();
+    });
+
+    afterEach(() => {
+       sand.restore();
+    });
+
     describe("#new", () => {
         it("should pass through client ID to client", () => {
             var authorized_client = new AuthorizedClient();
@@ -34,7 +44,7 @@ describe("AuthorizedClient", () => {
                 clientId: "client_id",
                 redirectUri: "redirect_uri"
             });
-            var oauthStub: SinonStub = sinon.stub(client, "useOauth");
+            var oauthStub: SinonStub = sand.stub(client, "useOauth");
 
             /* tslint:disable:no-unused-variable */
             var authorized_client = new AuthorizedClient(client);
@@ -51,7 +61,7 @@ describe("AuthorizedClient", () => {
     describe("#isAuthorized", () => {
         it("should pass through authorization check to credentials", () => {
             var authorized_client = new AuthorizedClient();
-            var stub = sinon.stub(CredentialsManager, "isValidFromClient");
+            var stub = sand.stub(CredentialsManager, "isValidFromClient");
 
             authorized_client.isAuthorized();
 
@@ -68,13 +78,13 @@ describe("AuthorizedClient", () => {
         beforeEach(() => {
             authorized_client = new AuthorizedClient();
             client = (<any>authorized_client).client;
-            authorizeStub = sinon.stub(client, "authorize");
-            isAuthorizedStub = sinon.stub(authorized_client, "isAuthorized");
+            authorizeStub = sand.stub(client, "authorize");
+            isAuthorizedStub = sand.stub(authorized_client, "isAuthorized");
         });
 
         it("should be a no-op if unexpired", () => {
             isAuthorizedStub.returns(true);
-            var useOauthStub = sinon.stub(client, "useOauth");
+            var useOauthStub = sand.stub(client, "useOauth");
 
             assert.becomes(authorized_client.authorizeIfExpired(), client);
             sinon.assert.notCalled(useOauthStub);
@@ -96,7 +106,10 @@ describe("AuthorizedClient", () => {
                 Promise.reject(new Error("Message thrown"))
             );
 
-            assert.isRejected(authorized_client.authorizeIfExpired(), "Message thrown");
+            assert.isRejected(
+                authorized_client.authorizeIfExpired(),
+                "Message thrown"
+            );
             sinon.assert.called(authorizeStub);
         });
     });
@@ -110,12 +123,12 @@ describe("AuthorizedClient", () => {
         beforeEach(() => {
             authorized_client = new AuthorizedClient();
             client = (<any>authorized_client).client;
-            authorizeStub = sinon.stub(client, "authorize");
-            getStub = sinon.stub(client.dispatcher, "get").returns("great");
+            authorizeStub = sand.stub(client, "authorize");
+            getStub = sand.stub(client.dispatcher, "get").returns("great");
         });
 
-        it("should pass through request to dispatcher if authorized", (done) => {
-            sinon.stub(authorized_client, "isAuthorized").returns(true);
+        it("should pass through request to dispatcher if authorized", (cb) => {
+            sand.stub(authorized_client, "isAuthorized").returns(true);
 
             var promise: Promise<any>;
             assert.doesNotThrow(
@@ -129,14 +142,14 @@ describe("AuthorizedClient", () => {
                 // Verify we've successfully passed through to the dispatcher.
                 sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
                 assert.equal(data, "great");
-                done();
+                cb();
             }).catch(function(err) {
-                done(err);
+                cb(err);
             });
         });
 
         it("should authorize before requesting if unauthorized", (done) => {
-            sinon.stub(authorized_client, "isAuthorized").returns(false);
+            sand.stub(authorized_client, "isAuthorized").returns(false);
             authorizeStub.returns(Promise.resolve(client));
 
             var promise: Promise<any>;
