@@ -148,7 +148,7 @@ describe("AuthorizedClient", () => {
             });
         });
 
-        it("should authorize before requesting if unauthorized", (done) => {
+        it("should authorize before requesting if unauthorized", (cb) => {
             sand.stub(authorized_client, "isAuthorized").returns(false);
             authorizeStub.returns(Promise.resolve(client));
 
@@ -165,9 +165,9 @@ describe("AuthorizedClient", () => {
                 // Verify we've successfully passed through to the dispatcher.
                 sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
                 assert.equal(data, "great");
-                done();
+                cb();
             }).catch(function(err) {
-                done(err);
+                cb(err);
             });
         });
     });
