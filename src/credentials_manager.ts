@@ -3,8 +3,6 @@ import Asana = require("asana");
 
 import constants = require("./constants");
 
-// TODO: TEST!!!
-
 // Allows us to mock out localStorage in tests.
 export var localStorage: Storage =
     typeof window !== "undefined" ? window.localStorage : null;
@@ -78,6 +76,10 @@ export function getFromLocalStorage(): Asana.auth.Credentials {
 export function storeFromClient(client: Asana.Client): void {
     if (localStorage !== null) {
         var credentials = getFromClient(client);
+
+        if (credentials === null) {
+            throw new Error("There are no credentials in the client.");
+        }
 
         // Add expiry timestamp to credentials, for use when checking expiry.
         credentials.expiry_timestamp = Date.now() + credentials.expires_in * 1000;
