@@ -3,6 +3,10 @@ import Asana = require("asana");
 
 import constants = require("./constants");
 
+// Note: We may want to move this system to the Asana client. We can create
+// a general storage interface and use a localStorage implementation.
+// This would provide the ability for auto-renewal in the client
+
 // Allows us to mock out localStorage in tests.
 export var localStorage: Storage =
     typeof window !== "undefined" ? window.localStorage : null;
