@@ -1,27 +1,10 @@
 /// <reference path="./asana.d.ts" />
 import Asana = require("asana");
 import constants = require("./constants");
+import CredentialsManager = require("./credentials_manager");
+import Promise = require("bluebird");
 
-/**
- * Fetches credentials if the user has recently oauthed in.
- *
- * @TODO #StoredCredentials: Implement fetching credentials.
- * @returns {Asana.auth.Credentials|null}
- */
-function fetchCredentialsOrNull(): Asana.auth.Credentials {
-    console.warn("Fetching credentials is currently unsupported.");
-    return null;
-}
-
-/**
- * Stores credentials from an authorized client for use in later sessions.
- *
- * @TODO #StoredCredentials: Implement storing credentials.
- * @param {Asana.Client} client
- */
-function storeCredentialsFromClient(client: Asana.Client): void {
-    console.warn("Storing credentials is currently unsupported.");
-}
+var FLOW_TYPE = Asana.auth.PopupFlow;
 
 /**
  * A client that seamlessly authorizes and allows use of parts of the API.
@@ -36,29 +19,20 @@ class AuthorizedClient {
             redirectUri: constants.REDIRECT_URI
         });
 
-        // Try to use credentials, if they are supplied. Otherwise, we use the popup flow.
+        // Initially set up (possibly expired) credentials. We'll re-authorize if they are indeed expired.
         this.client.useOauth({
-            credentials: fetchCredentialsOrNull(),
-            flowType: Asana.auth.PopupFlow
+            credentials: CredentialsManager.getFromLocalStorage(),
+            flowType: FLOW_TYPE
         });
-    }
-
-    private credentials(): Asana.auth.Credentials {
-        // We know our authenticator is an oauth authenticator, so we typecast it as such.
-        return (<Asana.auth.OauthAuthenticator>this.client.dispatcher.authenticator).credentials;
     }
 
     /**
      * Checks if the current client has non-expired credentials.
      *
-     * @TODO #StoredCredentials: Implement this after we can store credentials.
      * @returns {boolean}
      */
     public isAuthorized(): boolean {
-        // Note: Currently assumes any credentials are valid. Fix after #StoredCredentials.
-        console.warn("Using stored credentials is currently unsupported.");
-
-        return this.credentials() != null;
+        return CredentialsManager.isValidFromClient(this.client);
     }
 
     /**
@@ -68,12 +42,21 @@ class AuthorizedClient {
      * @returns {Promise<Client>}  A promise that resolves to this client when
      *     authorization is complete.
      */
-    public authorize(): Promise<Asana.Client> {
-        return this.client.authorize().then(function(client) {
-            storeCredentialsFromClient(client);
+     public authorizeIfExpired(): Promise<Asana.Client> {
+        if (!this.isAuthorized()) {
+            // Set up Oauth flow without credentials, so we re-authorize.
+            this.client.useOauth({
+                flowType: FLOW_TYPE
+            });
 
-            return client;
-        });
+            return this.client.authorize().then(function (client) {
+                CredentialsManager.storeFromClient(client);
+
+                return client;
+            });
+        } else {
+            return Promise.resolve(this.client);
+        }
     }
 
     /**
@@ -86,12 +69,10 @@ class AuthorizedClient {
      * @returns {Promise<any>}  The response for the request.
      */
     public get(path: string, query?: any, dispatchOptions?: any): Promise<any> {
-        if (!this.isAuthorized()) {
-            throw new Error("Client is not authorized to perform a request.");
-        }
-
         // TODO: Handle error cases.
-        return this.client.dispatcher.get(path, query, dispatchOptions);
+        return this.authorizeIfExpired().then(function(client) {
+            return client.dispatcher.get(path, query, dispatchOptions);
+        });
     }
 }
 export = AuthorizedClient;
