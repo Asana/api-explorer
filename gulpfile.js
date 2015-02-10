@@ -97,7 +97,8 @@ globs = {
     return [
       globs.ts(),
       'lib/**/*.d.ts',
-      'typings/**/*.d.ts'
+      'typings/**/*.d.ts',
+      'node_modules/typed-react/dist/typed-react.d.ts'
     ];
   }),
   gulp: val(function() {

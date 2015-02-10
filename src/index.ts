@@ -1,6 +1,14 @@
+import React = require("react");
+
 import AuthorizedClient = require("./authorized_client");
 export import Receiver = require("./receiver");
+export import Explorer = require("./components/explorer");
 
+export function initPage(): void {
+    var explorer = React.createElement(Explorer.explorer, {});
+
+    React.render(explorer, document.getElementById("container"));
+}
 /**
  * Gets the user's name, and sets text in #ui to reflect it.
  * This is mainly an example, to show how the API and JQuery will interact.
