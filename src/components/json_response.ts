@@ -4,8 +4,6 @@ import TypedReact = require("typed-react");
 
 var r = react.DOM;
 
-// TODO: Add tests.
-
 export interface Props {
     response: any;
 }
