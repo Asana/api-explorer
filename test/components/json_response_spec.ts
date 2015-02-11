@@ -11,7 +11,7 @@ import JsonResponse = require("../../src/components/json_response");
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
 
-describe("ExplorerComponent", () => {
+describe("JsonResponseComponent", () => {
     var sand: SinonSandbox;
 
     var root: JsonResponse.Component;
