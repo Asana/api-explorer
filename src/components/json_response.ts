@@ -19,6 +19,7 @@ export class Component extends TypedReact.Component<Props, {}> {
             JSON.stringify(this.props.response.data, undefined, 2);
 
         return r.pre({
+            className: "json-response-block",
             children: [
                 r.code({
                     className: "json"
