@@ -2,29 +2,32 @@ import React = require("react");
 import TypedReact = require("typed-react");
 
 import AuthorizedClient = require("../authorized_client");
+import JsonResponse = require("./json_response");
+
+var r = React.DOM;
 
 // TODO: Add tests.
 
-export interface ExplorerProps {
-}
-
 interface ExplorerState {
     authorized_client?: AuthorizedClient;
-
-    // TODO: Remove this after proof-of-concept.
-    name: string;
+    route?: string;
+    response?: any;
 }
 
 /**
  * The main API Explorer component.
  */
-class Explorer extends TypedReact.Component<ExplorerProps, ExplorerState> {
+class Explorer extends TypedReact.Component<{}, ExplorerState> {
     getInitialState() {
         return {
-            authorized_client: new AuthorizedClient()
+            authorized_client: new AuthorizedClient(),
+            route: "/users/me"
         };
     }
 
+    /**
+     * Authorize the client, if it has expired, and force a re-rendering.
+     */
     authorize() {
         this.state.authorized_client.authorizeIfExpired().then(function() {
             if (this.isMounted()) {
@@ -33,25 +36,39 @@ class Explorer extends TypedReact.Component<ExplorerProps, ExplorerState> {
         }.bind(this));
     }
 
+    /**
+     * Send a get request to the API using the current state's route, and
+     * update the state after receiving a response.
+     */
+    getAndUpdateState() {
+        var route = this.state.route;
+
+        this.state.authorized_client.get(route).then(function(response: any) {
+            this.setState({
+                response: response
+            });
+        }.bind(this));
+    }
+
     render() {
         if (!this.state.authorized_client.isAuthorized()) {
-            return React.DOM.a({
+            return r.a({
                 href: "#",
                 onClick: this.authorize
             }, "Click to authorize!");
         } else {
-            // Update the user's name.
-            if (this.state.name !== undefined) {
-                return React.DOM.h1(null, "Welcome, " + this.state.name);
-            } else {
-                this.state.authorized_client.get("/users/me").then(function(response: any) {
-                    this.setState({
-                        name: response.data.name
-                    });
-                }.bind(this));
-
-                return React.DOM.h1(null, "Requesting information...");
-            }
+            return r.div({
+                children: [
+                    r.div(null, "Route:" + this.state.route),
+                    r.a({
+                        href: "#",
+                        onClick: this.getAndUpdateState
+                    }, "Send request!"),
+                    React.createElement(JsonResponse.jsonResponse, {
+                        response: this.state.response
+                    })
+                ]
+            });
         }
     }
 }
