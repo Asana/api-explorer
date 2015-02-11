@@ -66,7 +66,7 @@ env = {
   }),
   project: val(function() {
     return _.typescript.createProject({
-      declarationFiles: true,
+      declarationFiles: false,
       module: 'commonjs',
       noExternalResolve: true,
       noImplicitAny: true,

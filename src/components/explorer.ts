@@ -1,14 +1,15 @@
-import React = require("react");
+import build = require("./build");
+import react = require("react");
 import TypedReact = require("typed-react");
 
 import AuthorizedClient = require("../authorized_client");
 import JsonResponse = require("./json_response");
 
-var r = React.DOM;
+var r = react.DOM;
 
 // TODO: Add tests.
 
-interface ExplorerState {
+export interface State {
     authorized_client?: AuthorizedClient;
     route?: string;
     response?: any;
@@ -17,7 +18,7 @@ interface ExplorerState {
 /**
  * The main API Explorer component.
  */
-class Explorer extends TypedReact.Component<{}, ExplorerState> {
+export class Component extends TypedReact.Component<{}, State> {
     getInitialState() {
         return {
             authorized_client: new AuthorizedClient(),
@@ -64,7 +65,7 @@ class Explorer extends TypedReact.Component<{}, ExplorerState> {
                         href: "#",
                         onClick: this.getAndUpdateState
                     }, "Send request!"),
-                    React.createElement(JsonResponse.jsonResponse, {
+                    JsonResponse.create({
                         response: this.state.response
                     })
                 ]
@@ -73,4 +74,4 @@ class Explorer extends TypedReact.Component<{}, ExplorerState> {
     }
 }
 
-export var explorer = TypedReact.createClass(Explorer);
+export var create = build(Component);

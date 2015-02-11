@@ -1,18 +1,19 @@
-import React = require("react");
+import build = require("./build");
+import react = require("react");
 import TypedReact = require("typed-react");
 
-var r = React.DOM;
+var r = react.DOM;
 
 // TODO: Add tests.
 
-export interface JsonResponseProps {
+export interface Props {
     response: any;
 }
 
 /**
  * The JSON response code block.
  */
-class JsonResponse extends TypedReact.Component<JsonResponseProps, {}> {
+export class Component extends TypedReact.Component<Props, {}> {
     render() {
         var json_string = this.props.response === undefined ? null :
             JSON.stringify(this.props.response.data, undefined, 2);
@@ -27,4 +28,4 @@ class JsonResponse extends TypedReact.Component<JsonResponseProps, {}> {
     }
 }
 
-export var jsonResponse = TypedReact.createClass(JsonResponse);
+export var create = build(Component);
