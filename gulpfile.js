@@ -66,7 +66,7 @@ env = {
   }),
   project: val(function() {
     return _.typescript.createProject({
-      declarationFiles: true,
+      declarationFiles: false,
       module: 'commonjs',
       noExternalResolve: true,
       noImplicitAny: true,
@@ -97,7 +97,8 @@ globs = {
     return [
       globs.ts(),
       'lib/**/*.d.ts',
-      'typings/**/*.d.ts'
+      'typings/**/*.d.ts',
+      'node_modules/typed-react/dist/typed-react.d.ts'
     ];
   }),
   gulp: val(function() {

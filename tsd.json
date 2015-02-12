@@ -19,6 +19,9 @@
     },
     "chai-as-promised/chai-as-promised.d.ts": {
       "commit": "7bab855ae33d79e86da1eb6c73a7f7eab2676ddb"
+    },
+    "react/react.d.ts": {
+      "commit": "54e4632ca7b4085eab942223d24856edacaa6677"
     }
   }
 }
