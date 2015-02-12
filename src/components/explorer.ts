@@ -7,7 +7,9 @@ import JsonResponse = require("./json_response");
 
 var r = react.DOM;
 
-// TODO: Add tests.
+export interface Props {
+    initial_authorized_client?: AuthorizedClient
+}
 
 export interface State {
     authorized_client?: AuthorizedClient;
@@ -18,10 +20,14 @@ export interface State {
 /**
  * The main API Explorer component.
  */
-export class Component extends TypedReact.Component<{}, State> {
+export class Component extends TypedReact.Component<Props, State> {
     getInitialState() {
+        // If a client exists in props, use it. Otherwise, make a new one.
+        var authorized_client =
+            this.props.initial_authorized_client || new AuthorizedClient();
+
         return {
-            authorized_client: new AuthorizedClient(),
+            authorized_client: authorized_client,
             route: "/users/me"
         };
     }
@@ -54,14 +60,17 @@ export class Component extends TypedReact.Component<{}, State> {
     render() {
         if (!this.state.authorized_client.isAuthorized()) {
             return r.a({
+                className: "authorize-link",
                 href: "#",
                 onClick: this.authorize
             }, "Click to authorize!");
         } else {
             return r.div({
+                className: "api-explorer",
                 children: [
                     r.div(null, "Route:" + this.state.route),
                     r.a({
+                        className: "send-request",
                         href: "#",
                         onClick: this.getAndUpdateState
                     }, "Send request!"),
