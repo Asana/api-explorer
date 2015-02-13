@@ -5,6 +5,7 @@
   "description": "A node.js client for the Asana API Tester",
   "main": "dist/index.js",
   "scripts": {
+    "postinstall": "tsd reinstall --overwrite --save",
     "test": "gulp test"
   },
   "repository": {
