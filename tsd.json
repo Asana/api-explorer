@@ -22,6 +22,9 @@
     },
     "react/react.d.ts": {
       "commit": "54e4632ca7b4085eab942223d24856edacaa6677"
+    },
+    "jsdom/jsdom.d.ts": {
+      "commit": "84db5f1b5934ab9048185e784a34c545f1d705af"
     }
   }
 }
