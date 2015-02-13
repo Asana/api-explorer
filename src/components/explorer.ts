@@ -9,7 +9,8 @@ import RouteEntry = require("./route_entry");
 var r = react.DOM;
 
 export interface Props {
-    initial_authorized_client?: AuthorizedClient
+    initial_authorized_client?: AuthorizedClient;
+    initial_route?: string;
 }
 
 export interface State {
@@ -29,7 +30,7 @@ export class Component extends TypedReact.Component<Props, State> {
 
         return {
             authorized_client: authorized_client,
-            route: "/users/me"
+            route: this.props.initial_route || "/users/me"
         };
     }
 

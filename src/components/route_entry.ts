@@ -10,18 +10,17 @@ export interface Props {
     onRouteChange: (event?: React.FormEvent) => void;
 }
 
-// TODO: Move relevant tests from explorer to route_entry
-// TODO: Add tests for input changing
-
 /**
  * The JSON response code block.
  */
 export class Component extends TypedReact.Component<Props, {}> {
     render() {
         return r.form({
+            className: "route-entry",
             onSubmit: this.props.onFormSubmit,
             children: [
                 r.input({
+                    className: "input-route",
                     onChange: this.props.onRouteChange,
                     value: this.props.route
                 }),

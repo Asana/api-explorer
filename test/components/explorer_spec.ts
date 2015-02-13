@@ -9,6 +9,7 @@ import sinon = require("sinon");
 
 import AuthorizedClient = require("../../src/authorized_client");
 import Explorer = require("../../src/components/explorer");
+import RouteEntry = require("../../src/components/route_entry");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -104,19 +105,27 @@ describe("ExplorerComponent", () => {
 
     describe("when authorized", () => {
         var root: Explorer.Component;
-        var node: Node;
-        var children: NodeList;
+        var inputRoute: React.HTMLComponent;
+        var routeEntry: RouteEntry.Component;
+
+        var initial_route: string;
 
         beforeEach(() => {
             isAuthorizedStub.returns(true);
 
+            initial_route = "/this/route";
             root = testUtils.renderIntoDocument<Explorer.Component>(
                 Explorer.create({
-                    initial_authorized_client: client
+                    initial_authorized_client: client,
+                    initial_route: initial_route
                 })
             );
-            node = root.getDOMNode();
-            children = node.childNodes;
+            inputRoute = testUtils.findRenderedDOMComponentWithClass(
+                root,
+                "input-route"
+            );
+            routeEntry = <RouteEntry.Component>testUtils
+                .findRenderedComponentWithType(root, RouteEntry.create);
         });
 
         it("should not contain the authorization link", () => {
@@ -127,28 +136,21 @@ describe("ExplorerComponent", () => {
         });
 
         it("should display the current route URL", () => {
-            var explorer = testUtils.findRenderedDOMComponentWithClass(
-                root,
-                "api-explorer"
+            assert.include(
+                (<HTMLInputElement>inputRoute.getDOMNode()).value,
+                initial_route
             );
-
-            assert.include(explorer.getDOMNode().textContent, "/users/me");
         });
 
-        it("should contain a link to make a request", (cb) => {
-           var link = testUtils.findRenderedDOMComponentWithClass(
-               root,
-               "send-request"
-           );
-
+        it("should make a GET request on submit", (cb) => {
             // Stub get request to return json.
-            var json_promise = Promise.resolve({ data: "{ a: 2 }" });
+            var json_promise = Promise.resolve({data: "{ a: 2 }"});
             var getStub = sand.stub(client, "get").returns(json_promise);
 
-            // Clicking the link should send request.
-            testUtils.Simulate.click(link.getDOMNode());
+            // Clicking the link should send request with the correct route.
+            testUtils.Simulate.submit(routeEntry.getDOMNode());
             json_promise.then(function () {
-                sinon.assert.called(getStub);
+                sinon.assert.calledWith(getStub, initial_route);
 
                 assert.equal(testUtils.findRenderedDOMComponentWithClass(
                     root,
@@ -159,7 +161,32 @@ describe("ExplorerComponent", () => {
             }).catch(function (err) {
                 cb(err);
             });
+        });
 
+        it("should contain an input to change the route", (cb) => {
+            var new_route = "/this/other/route";
+
+            // Stub get request to return json.
+            var json_promise = Promise.resolve({data: "{ a: 2 }"});
+            var getStub = sand.stub(client, "get").returns(json_promise);
+
+            // Clicking the link should send request with the correct route.
+            testUtils.Simulate.change(inputRoute, {
+                target: { value: new_route }
+            });
+            testUtils.Simulate.submit(routeEntry.getDOMNode());
+            json_promise.then(function () {
+                sinon.assert.calledWith(getStub, new_route);
+
+                assert.equal(testUtils.findRenderedDOMComponentWithClass(
+                    root,
+                    "json-response-block"
+                ).getDOMNode().textContent, "\"{ a: 2 }\"");
+
+                cb();
+            }).catch(function (err) {
+                cb(err);
+            });
         });
     });
 });
