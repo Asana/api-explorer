@@ -14,21 +14,17 @@ describe("CredentialsManager", () => {
 
     beforeEach(() => {
         sand = sinon.sandbox.create();
+
+        sand.clock = sinon.useFakeTimers();
     });
 
     afterEach(() => {
+        sand.clock.restore();
+
         sand.restore();
     });
 
     describe("#isValidFromClient", () => {
-        beforeEach(() => {
-            this.clock = sinon.useFakeTimers();
-        });
-
-        afterEach(() => {
-            this.clock.restore();
-        });
-
         it("should fail with null credentials", () => {
             var client = helpers.createOauthClient(null);
             assert.isFalse(CredentialsManager.isValidFromClient(client));
@@ -38,7 +34,7 @@ describe("CredentialsManager", () => {
             var client = helpers.createOauthClient(
                 helpers.createCredentials(Date.now())
             );
-            this.clock.tick(500);
+            sand.clock.tick(500);
             assert.isFalse(CredentialsManager.isValidFromClient(client));
         });
 
