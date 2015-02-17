@@ -13,162 +13,162 @@ chai.use(chaiAsPromised);
 var assert = chai.assert;
 
 describe("AuthorizedClient", () => {
-    var sand: SinonSandbox;
+  var sand: SinonSandbox;
+
+  beforeEach(() => {
+    sand = sinon.sandbox.create();
+  });
+
+  afterEach(() => {
+    sand.restore();
+  });
+
+  describe("#new", () => {
+    it("should pass through client ID to client", () => {
+      var authorized_client = new AuthorizedClient();
+      var client = (<any>authorized_client).client;
+
+      assert.equal(client.app.clientId, constants.CLIENT_ID);
+    });
+
+    it("should pass through redirect URI to app", () => {
+      var authorized_client = new AuthorizedClient();
+      var client = (<any>authorized_client).client;
+
+      assert.equal(client.app.redirectUri, constants.REDIRECT_URI);
+    });
+
+    it("should configure an oauth authenticator", () => {
+      // Before initializing the AuthorizedClient, we stub useOauth.
+      var client = Asana.Client.create({
+        clientId: "client_id",
+        redirectUri: "redirect_uri"
+      });
+      var oauthStub: SinonStub = sand.stub(client, "useOauth");
+
+      /* tslint:disable:no-unused-variable */
+      var authorized_client = new AuthorizedClient(client);
+      /* tslint:enable:no-unused-variable */
+
+      sinon.assert.calledWithMatch(oauthStub, sinon.match({
+          credentials: null,
+          flowType: Asana.auth.PopupFlow
+        })
+      );
+    });
+  });
+
+  describe("#isAuthorized", () => {
+    it("should pass through authorization check to credentials", () => {
+      var authorized_client = new AuthorizedClient();
+      var stub = sand.stub(CredentialsManager, "isValidFromClient");
+
+      authorized_client.isAuthorized();
+
+      sinon.assert.calledWith(stub, (<any>authorized_client).client);
+    });
+  });
+
+  describe("#authorizeIfExpired", () => {
+    var authorized_client: AuthorizedClient;
+    var client: Asana.Client;
+    var authorizeStub: SinonStub;
+    var isAuthorizedStub: SinonStub;
 
     beforeEach(() => {
-        sand = sinon.sandbox.create();
+      authorized_client = new AuthorizedClient();
+      client = (<any>authorized_client).client;
+      authorizeStub = sand.stub(client, "authorize");
+      isAuthorizedStub = sand.stub(authorized_client, "isAuthorized");
     });
 
-    afterEach(() => {
-       sand.restore();
+    it("should be a no-op if unexpired", () => {
+      isAuthorizedStub.returns(true);
+      var useOauthStub = sand.stub(client, "useOauth");
+
+      assert.becomes(authorized_client.authorizeIfExpired(), client);
+      sinon.assert.notCalled(useOauthStub);
+      sinon.assert.notCalled(authorizeStub);
+
     });
 
-    describe("#new", () => {
-        it("should pass through client ID to client", () => {
-            var authorized_client = new AuthorizedClient();
-            var client = (<any>authorized_client).client;
+    it("should pass through authorization to client if expired", () => {
+      isAuthorizedStub.returns(false);
+      authorizeStub.returns(Promise.resolve(client));
 
-            assert.equal(client.app.clientId, constants.CLIENT_ID);
-        });
-
-        it("should pass through redirect URI to app", () => {
-            var authorized_client = new AuthorizedClient();
-            var client = (<any>authorized_client).client;
-
-            assert.equal(client.app.redirectUri, constants.REDIRECT_URI);
-        });
-
-        it("should configure an oauth authenticator", () => {
-            // Before initializing the AuthorizedClient, we stub useOauth.
-            var client = Asana.Client.create({
-                clientId: "client_id",
-                redirectUri: "redirect_uri"
-            });
-            var oauthStub: SinonStub = sand.stub(client, "useOauth");
-
-            /* tslint:disable:no-unused-variable */
-            var authorized_client = new AuthorizedClient(client);
-            /* tslint:enable:no-unused-variable */
-
-            sinon.assert.calledWithMatch(oauthStub, sinon.match({
-                    credentials: null,
-                    flowType: Asana.auth.PopupFlow
-                })
-            );
-        });
+      assert.becomes(authorized_client.authorizeIfExpired(), client);
+      sinon.assert.called(authorizeStub);
     });
 
-    describe("#isAuthorized", () => {
-        it("should pass through authorization check to credentials", () => {
-            var authorized_client = new AuthorizedClient();
-            var stub = sand.stub(CredentialsManager, "isValidFromClient");
+    it("should throw if client's authorization is unsuccessful", () => {
+      isAuthorizedStub.returns(false);
+      authorizeStub.returns(
+        Promise.reject(new Error("Message thrown"))
+      );
 
-            authorized_client.isAuthorized();
+      assert.isRejected(
+        authorized_client.authorizeIfExpired(),
+        "Message thrown"
+      );
+      sinon.assert.called(authorizeStub);
+    });
+  });
 
-            sinon.assert.calledWith(stub, (<any>authorized_client).client);
-        });
+  describe("#get", () => {
+    var authorized_client: AuthorizedClient;
+    var client: Asana.Client;
+    var authorizeStub: SinonStub;
+    var getStub: SinonStub;
+
+    beforeEach(() => {
+      authorized_client = new AuthorizedClient();
+      client = (<any>authorized_client).client;
+      authorizeStub = sand.stub(client, "authorize");
+      getStub = sand.stub(client.dispatcher, "get").returns("great");
     });
 
-    describe("#authorizeIfExpired", () => {
-        var authorized_client: AuthorizedClient;
-        var client: Asana.Client;
-        var authorizeStub: SinonStub;
-        var isAuthorizedStub: SinonStub;
+    it("should pass through request to dispatcher if authorized", (cb) => {
+      sand.stub(authorized_client, "isAuthorized").returns(true);
 
-        beforeEach(() => {
-            authorized_client = new AuthorizedClient();
-            client = (<any>authorized_client).client;
-            authorizeStub = sand.stub(client, "authorize");
-            isAuthorizedStub = sand.stub(authorized_client, "isAuthorized");
-        });
+      var promise: Promise<any>;
+      assert.doesNotThrow(
+        () => promise = authorized_client.get("arg1", "arg2", "arg3")
+      );
 
-        it("should be a no-op if unexpired", () => {
-            isAuthorizedStub.returns(true);
-            var useOauthStub = sand.stub(client, "useOauth");
+      promise.then(function(data) {
+        // Make sure we didn't accidentally authorize.
+        sinon.assert.notCalled(authorizeStub);
 
-            assert.becomes(authorized_client.authorizeIfExpired(), client);
-            sinon.assert.notCalled(useOauthStub);
-            sinon.assert.notCalled(authorizeStub);
-
-        });
-
-        it("should pass through authorization to client if expired", () => {
-            isAuthorizedStub.returns(false);
-            authorizeStub.returns(Promise.resolve(client));
-
-            assert.becomes(authorized_client.authorizeIfExpired(), client);
-            sinon.assert.called(authorizeStub);
-        });
-
-        it("should throw if client's authorization is unsuccessful", () => {
-            isAuthorizedStub.returns(false);
-            authorizeStub.returns(
-                Promise.reject(new Error("Message thrown"))
-            );
-
-            assert.isRejected(
-                authorized_client.authorizeIfExpired(),
-                "Message thrown"
-            );
-            sinon.assert.called(authorizeStub);
-        });
+        // Verify we've successfully passed through to the dispatcher.
+        sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
+        assert.equal(data, "great");
+        cb();
+      }).catch(function(err) {
+        cb(err);
+      });
     });
 
-    describe("#get", () => {
-        var authorized_client: AuthorizedClient;
-        var client: Asana.Client;
-        var authorizeStub: SinonStub;
-        var getStub: SinonStub;
+    it("should authorize before requesting if unauthorized", (cb) => {
+      sand.stub(authorized_client, "isAuthorized").returns(false);
+      authorizeStub.returns(Promise.resolve(client));
 
-        beforeEach(() => {
-            authorized_client = new AuthorizedClient();
-            client = (<any>authorized_client).client;
-            authorizeStub = sand.stub(client, "authorize");
-            getStub = sand.stub(client.dispatcher, "get").returns("great");
-        });
+      var promise: Promise<any>;
+      assert.doesNotThrow(
+        () => promise = authorized_client.get("arg1", "arg2", "arg3")
+      );
 
-        it("should pass through request to dispatcher if authorized", (cb) => {
-            sand.stub(authorized_client, "isAuthorized").returns(true);
+      promise.then(function(data) {
+        // Make sure we didn't accidentally authorize.
+        sinon.assert.called(authorizeStub);
+        assert(authorizeStub.calledBefore(getStub));
 
-            var promise: Promise<any>;
-            assert.doesNotThrow(
-                () => promise = authorized_client.get("arg1", "arg2", "arg3")
-            );
-
-            promise.then(function(data) {
-                // Make sure we didn't accidentally authorize.
-                sinon.assert.notCalled(authorizeStub);
-
-                // Verify we've successfully passed through to the dispatcher.
-                sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
-                assert.equal(data, "great");
-                cb();
-            }).catch(function(err) {
-                cb(err);
-            });
-        });
-
-        it("should authorize before requesting if unauthorized", (cb) => {
-            sand.stub(authorized_client, "isAuthorized").returns(false);
-            authorizeStub.returns(Promise.resolve(client));
-
-            var promise: Promise<any>;
-            assert.doesNotThrow(
-                () => promise = authorized_client.get("arg1", "arg2", "arg3")
-            );
-
-            promise.then(function(data) {
-                // Make sure we didn't accidentally authorize.
-                sinon.assert.called(authorizeStub);
-                assert(authorizeStub.calledBefore(getStub));
-
-                // Verify we've successfully passed through to the dispatcher.
-                sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
-                assert.equal(data, "great");
-                cb();
-            }).catch(function(err) {
-                cb(err);
-            });
-        });
+        // Verify we've successfully passed through to the dispatcher.
+        sinon.assert.calledWith(getStub, "arg1", "arg2", "arg3");
+        assert.equal(data, "great");
+        cb();
+      }).catch(function(err) {
+        cb(err);
+      });
     });
+  });
 });

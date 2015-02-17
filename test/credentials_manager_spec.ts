@@ -10,128 +10,128 @@ var assert = chai.assert;
 var MINUTE_IN_MS = 1000 * 60;
 
 describe("CredentialsManager", () => {
-    var sand: SinonSandbox;
+  var sand: SinonSandbox;
+
+  beforeEach(() => {
+    sand = sinon.sandbox.create();
+
+    sand.clock = sinon.useFakeTimers();
+  });
+
+  afterEach(() => {
+    sand.clock.restore();
+
+    sand.restore();
+  });
+
+  describe("#isValidFromClient", () => {
+    it("should fail with null credentials", () => {
+      var client = helpers.createOauthClient(null);
+      assert.isFalse(CredentialsManager.isValidFromClient(client));
+    });
+
+    it("should fail with expired credentials", () => {
+      var client = helpers.createOauthClient(
+        helpers.createCredentials(Date.now())
+      );
+      sand.clock.tick(500);
+      assert.isFalse(CredentialsManager.isValidFromClient(client));
+    });
+
+    it("should fail with soon-to-expire credentials", () => {
+      var client = helpers.createOauthClient(
+        helpers.createCredentials(Date.now() + 2 * MINUTE_IN_MS)
+      );
+
+      assert.isFalse(CredentialsManager.isValidFromClient(client));
+    });
+
+    it("should succeed with long-to-expire credentials", () => {
+      var client = helpers.createOauthClient(
+        helpers.createCredentials(Date.now() + 20 * MINUTE_IN_MS)
+      );
+
+      assert.isTrue(CredentialsManager.isValidFromClient(client));
+    });
+  });
+
+  describe("localStorage", () => {
+    var oldStorage: Storage;
+    var localStorage: Storage;
 
     beforeEach(() => {
-        sand = sinon.sandbox.create();
-
-        sand.clock = sinon.useFakeTimers();
+      // We need to mock localStorage, which is a browser-only api.
+      // So we create a fake storage, and then mock methods within it.
+      oldStorage = CredentialsManager.localStorage;
+      localStorage = helpers.createFakeStorage();
+      CredentialsManager.localStorage = localStorage;
     });
 
     afterEach(() => {
-        sand.clock.restore();
-
-        sand.restore();
+      // We want test isolation, so we restore the original localStorage.
+      CredentialsManager.localStorage = oldStorage;
     });
 
-    describe("#isValidFromClient", () => {
-        it("should fail with null credentials", () => {
-            var client = helpers.createOauthClient(null);
-            assert.isFalse(CredentialsManager.isValidFromClient(client));
-        });
+    describe("#getFromLocalStorage", () => {
+      it("should return null when localStorage is empty", () => {
+        var getItemStub = sand.stub(localStorage, "getItem");
+        var parseStub = sand.spy(JSON, "parse");
 
-        it("should fail with expired credentials", () => {
-            var client = helpers.createOauthClient(
-                helpers.createCredentials(Date.now())
-            );
-            sand.clock.tick(500);
-            assert.isFalse(CredentialsManager.isValidFromClient(client));
-        });
+        getItemStub.returns(null);
+        assert.equal(CredentialsManager.getFromLocalStorage(), null);
 
-        it("should fail with soon-to-expire credentials", () => {
-            var client = helpers.createOauthClient(
-                helpers.createCredentials(Date.now() + 2 * MINUTE_IN_MS)
-            );
+        sinon.assert.called(getItemStub);
+        sinon.assert.calledWith(parseStub, null);
+      });
 
-            assert.isFalse(CredentialsManager.isValidFromClient(client));
-        });
+      it("should fetch result when localStorage is not empty", () => {
+        var getItemStub = sand.stub(localStorage, "getItem");
+        var parseStub = sand.stub(JSON, "parse");
 
-        it("should succeed with long-to-expire credentials", () => {
-            var client = helpers.createOauthClient(
-                helpers.createCredentials(Date.now() + 20 * MINUTE_IN_MS)
-            );
+        getItemStub.returns("hi");
+        CredentialsManager.getFromLocalStorage();
 
-            assert.isTrue(CredentialsManager.isValidFromClient(client));
-        });
+        sinon.assert.called(getItemStub);
+        sinon.assert.calledWith(parseStub, "hi");
+      });
     });
 
-    describe("localStorage", () => {
-        var oldStorage: Storage;
-        var localStorage: Storage;
+    describe("#storeFromClient", () => {
+      it("should throw when no credentials are in the client", () => {
+        var client = helpers.createOauthClient(null);
 
-        beforeEach(() => {
-            // We need to mock localStorage, which is a browser-only api.
-            // So we create a fake storage, and then mock methods within it.
-            oldStorage = CredentialsManager.localStorage;
-            localStorage = helpers.createFakeStorage();
-            CredentialsManager.localStorage = localStorage;
-        });
+        assert.throws(
+          () => CredentialsManager.storeFromClient(client),
+          "no credentials in the client"
+        );
+      });
 
-        afterEach(() => {
-            // We want test isolation, so we restore the original localStorage.
-            CredentialsManager.localStorage = oldStorage;
-        });
+      it("should store credentials from the client", () => {
+        var credentials = helpers.createCredentials(Date.now());
+        var client = helpers.createOauthClient(credentials);
+        var setItemStub = sand.stub(localStorage, "setItem");
 
-        describe("#getFromLocalStorage", () => {
-            it("should return null when localStorage is empty", () => {
-                var getItemStub = sand.stub(localStorage, "getItem");
-                var parseStub = sand.spy(JSON, "parse");
+        CredentialsManager.storeFromClient(client);
 
-                getItemStub.returns(null);
-                assert.equal(CredentialsManager.getFromLocalStorage(), null);
+        sinon.assert.calledWithExactly(
+          setItemStub,
+          constants.LOCALSTORAGE_KEY,
+          JSON.stringify(credentials)
+        );
+      });
 
-                sinon.assert.called(getItemStub);
-                sinon.assert.calledWith(parseStub, null);
-            });
+      it("should add expiry timestamp to credentials", () => {
+        var credentials = helpers.createCredentials(Date.now());
+        var client = helpers.createOauthClient(credentials);
 
-            it("should fetch result when localStorage is not empty", () => {
-                var getItemStub = sand.stub(localStorage, "getItem");
-                var parseStub = sand.stub(JSON, "parse");
+        CredentialsManager.storeFromClient(client);
 
-                getItemStub.returns("hi");
-                CredentialsManager.getFromLocalStorage();
-
-                sinon.assert.called(getItemStub);
-                sinon.assert.calledWith(parseStub, "hi");
-            });
-        });
-
-        describe("#storeFromClient", () => {
-            it("should throw when no credentials are in the client", () => {
-                var client = helpers.createOauthClient(null);
-
-                assert.throws(
-                    () => CredentialsManager.storeFromClient(client),
-                    "no credentials in the client"
-                );
-            });
-
-            it("should store credentials from the client", () => {
-                var credentials = helpers.createCredentials(Date.now());
-                var client = helpers.createOauthClient(credentials);
-                var setItemStub = sand.stub(localStorage, "setItem");
-
-                CredentialsManager.storeFromClient(client);
-
-                sinon.assert.calledWithExactly(
-                    setItemStub,
-                    constants.LOCALSTORAGE_KEY,
-                    JSON.stringify(credentials)
-                );
-            });
-
-            it("should add expiry timestamp to credentials", () => {
-                var credentials = helpers.createCredentials(Date.now());
-                var client = helpers.createOauthClient(credentials);
-
-                CredentialsManager.storeFromClient(client);
-
-                assert.equal(
-                    credentials.expiry_timestamp,
-                    Date.now() + credentials.expires_in * 1000
-                );
-            });
-        });
+        assert.equal(
+          credentials.expiry_timestamp,
+          Date.now() + credentials.expires_in * 1000
+        );
+      });
     });
+  });
 });
 

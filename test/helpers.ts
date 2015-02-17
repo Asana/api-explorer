@@ -10,11 +10,11 @@ var noop = () => { return; };
  * @returns {Asana.auth.Credentials}
  */
 export function createCredentials(expiry_ts: number): Asana.auth.Credentials {
-    return {
-        access_token: "token",
-        expires_in: 3600,
-        expiry_timestamp: expiry_ts
-    };
+  return {
+    access_token: "token",
+    expires_in: 3600,
+    expiry_timestamp: expiry_ts
+  };
 }
 
 /**
@@ -24,10 +24,10 @@ export function createCredentials(expiry_ts: number): Asana.auth.Credentials {
  * @returns {Client}
  */
 export function createOauthClient(credentials?: Asana.auth.Credentials): Asana.Client {
-    return Asana.Client.create({
-        clientId: "client_id",
-        redirectUri: "redirect_uri"
-    }).useOauth({ credentials: credentials });
+  return Asana.Client.create({
+    clientId: "client_id",
+    redirectUri: "redirect_uri"
+  }).useOauth({ credentials: credentials });
 }
 
 /**
@@ -37,13 +37,13 @@ export function createOauthClient(credentials?: Asana.auth.Credentials): Asana.C
  * @returns {Storage}
  */
 export function createFakeStorage(): Storage {
-    return <Storage>{
-        getItem: noop,
-        setItem: noop,
-        removeItem: noop,
-        clear: noop,
-        length: null,
-        key: null,
-        remainingSpace: null
-    };
+  return <Storage>{
+    getItem: noop,
+    setItem: noop,
+    removeItem: noop,
+    clear: noop,
+    length: null,
+    key: null,
+    remainingSpace: null
+  };
 }

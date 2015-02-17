@@ -9,7 +9,7 @@ import constants = require("./constants");
 
 // Allows us to mock out localStorage in tests.
 export var localStorage: Storage =
-    typeof window !== "undefined" ? window.localStorage : null;
+  typeof window !== "undefined" ? window.localStorage : null;
 
 /**
  * The time to subtract before we actually consider credentials expired.
@@ -23,13 +23,13 @@ var EXPIRY_BUFFER_MS = 5 * 60 * 1000;
  * @returns {boolean}
  */
 function isValid(credentials: Asana.auth.Credentials) {
-    // If no credentials or expiry time, then mark as invalid.
-    if (credentials == null || credentials.expiry_timestamp == null) {
-        return false;
-    }
+  // If no credentials or expiry time, then mark as invalid.
+  if (credentials == null || credentials.expiry_timestamp == null) {
+    return false;
+  }
 
-    // We're valid when we have more than the buffer remaining before expiry.
-    return credentials.expiry_timestamp - Date.now() > EXPIRY_BUFFER_MS;
+  // We're valid when we have more than the buffer remaining before expiry.
+  return credentials.expiry_timestamp - Date.now() > EXPIRY_BUFFER_MS;
 }
 
 /**
@@ -39,7 +39,7 @@ function isValid(credentials: Asana.auth.Credentials) {
  * @returns {boolean}
  */
 export function isValidFromClient(client: Asana.Client) {
-    return isValid(getFromClient(client));
+  return isValid(getFromClient(client));
 }
 
 /**
@@ -49,8 +49,8 @@ export function isValidFromClient(client: Asana.Client) {
  * @returns {Asana.auth.Credentials}
  */
 function getFromClient(client: Asana.Client): Asana.auth.Credentials {
-    // We know our authenticator is an oauth authenticator, so we typecast it as such.
-    return (<Asana.auth.OauthAuthenticator>client.dispatcher.authenticator).credentials;
+  // We know our authenticator is an oauth authenticator, so we typecast it as such.
+  return (<Asana.auth.OauthAuthenticator>client.dispatcher.authenticator).credentials;
 }
 
 /**
@@ -61,15 +61,15 @@ function getFromClient(client: Asana.Client): Asana.auth.Credentials {
  * @returns {Asana.auth.Credentials}
  */
 export function getFromLocalStorage(): Asana.auth.Credentials {
-    if (localStorage !== null) {
-        return JSON.parse(
-            localStorage.getItem(constants.LOCALSTORAGE_KEY)
-        );
-    } else {
-        // If we don't have access to local storage, then we can't do anything.
-        console.warn("No access to local storage.");
-        return null;
-    }
+  if (localStorage !== null) {
+    return JSON.parse(
+      localStorage.getItem(constants.LOCALSTORAGE_KEY)
+    );
+  } else {
+    // If we don't have access to local storage, then we can't do anything.
+    console.warn("No access to local storage.");
+    return null;
+  }
 }
 
 /**
@@ -78,22 +78,22 @@ export function getFromLocalStorage(): Asana.auth.Credentials {
  * @param {Asana.Client} client
  */
 export function storeFromClient(client: Asana.Client): void {
-    if (localStorage !== null) {
-        var credentials = getFromClient(client);
+  if (localStorage !== null) {
+    var credentials = getFromClient(client);
 
-        if (credentials === null) {
-            throw new Error("There are no credentials in the client.");
-        }
-
-        // Add expiry timestamp to credentials, for use when checking expiry.
-        credentials.expiry_timestamp = Date.now() + credentials.expires_in * 1000;
-
-        localStorage.setItem(
-            constants.LOCALSTORAGE_KEY,
-            JSON.stringify(credentials)
-        );
-    } else {
-        // If we don't have access to local storage, then we can't do anything.
-        console.warn("No access to local storage.");
+    if (credentials === null) {
+      throw new Error("There are no credentials in the client.");
     }
+
+    // Add expiry timestamp to credentials, for use when checking expiry.
+    credentials.expiry_timestamp = Date.now() + credentials.expires_in * 1000;
+
+    localStorage.setItem(
+      constants.LOCALSTORAGE_KEY,
+      JSON.stringify(credentials)
+    );
+  } else {
+    // If we don't have access to local storage, then we can't do anything.
+    console.warn("No access to local storage.");
+  }
 }

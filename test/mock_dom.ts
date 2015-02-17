@@ -12,7 +12,7 @@ declare var navigator: Navigator;
  * Note: This file must be required at the top of the file (before react).
  */
 (function () {
-    document = jsdom.jsdom("<body></body>");
-    window = document.parentWindow;
-    navigator = window.navigator;
+  document = jsdom.jsdom("<body></body>");
+  window = document.parentWindow;
+  navigator = window.navigator;
 })();
