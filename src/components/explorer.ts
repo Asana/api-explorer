@@ -9,12 +9,12 @@ import RouteEntry = require("./route_entry");
 var r = react.DOM;
 
 export interface Props {
-  initial_authorized_client?: AuthorizedClient;
+  initialAuthorizedClient?: AuthorizedClient;
   initial_route?: string;
 }
 
 export interface State {
-  authorized_client?: AuthorizedClient;
+  authorizedClient?: AuthorizedClient;
   route?: string;
   response?: any;
 }
@@ -25,11 +25,11 @@ export interface State {
 export class Component extends TypedReact.Component<Props, State> {
   getInitialState() {
     // If a client exists in props, use it. Otherwise, make a new one.
-    var authorized_client =
-      this.props.initial_authorized_client || new AuthorizedClient();
+    var authorizedClient =
+      this.props.initialAuthorizedClient || new AuthorizedClient();
 
     return {
-      authorized_client: authorized_client,
+      authorizedClient: authorizedClient,
       route: this.props.initial_route || "/users/me"
     };
   }
@@ -38,7 +38,7 @@ export class Component extends TypedReact.Component<Props, State> {
    * Authorize the client, if it has expired, and force a re-rendering.
    */
   authorize() {
-    this.state.authorized_client.authorizeIfExpired().then(function() {
+    this.state.authorizedClient.authorizeIfExpired().then(function() {
       if (this.isMounted()) {
         this.forceUpdate();
       }
@@ -63,7 +63,7 @@ export class Component extends TypedReact.Component<Props, State> {
 
     var route = this.state.route;
 
-    this.state.authorized_client.get(route).then(function(response: any) {
+    this.state.authorizedClient.get(route).then(function(response: any) {
       this.setState({
         response: response
       });
@@ -71,7 +71,7 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   render() {
-    if (!this.state.authorized_client.isAuthorized()) {
+    if (!this.state.authorizedClient.isAuthorized()) {
       return r.a({
         className: "authorize-link",
         href: "#",

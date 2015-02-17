@@ -34,7 +34,7 @@ describe("ExplorerComponent", () => {
   it("should check authorization state", () => {
     testUtils.renderIntoDocument<Explorer.Component>(
       Explorer.create({
-        initial_authorized_client: client
+        initialAuthorizedClient: client
       })
     );
 
@@ -51,7 +51,7 @@ describe("ExplorerComponent", () => {
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
-          initial_authorized_client: client
+          initialAuthorizedClient: client
         })
       );
       node = root.getDOMNode();
@@ -116,7 +116,7 @@ describe("ExplorerComponent", () => {
       initial_route = "/this/route";
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
-          initial_authorized_client: client,
+          initialAuthorizedClient: client,
           initial_route: initial_route
         })
       );
