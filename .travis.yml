@@ -6,3 +6,7 @@ language: node_js
 node_js:
   - '0.10'
 sudo: false
+# Set up github token for higher tsd rate-limits
+before_install:
+- openssl aes-256-cbc -K $encrypted_d04ead2b6c5a_key -iv $encrypted_d04ead2b6c5a_iv
+  -in .tsdrc.enc -out .tsdrc -d

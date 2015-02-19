@@ -6,5 +6,5 @@ import Explorer = require("./components/explorer");
  * Creates and renders the API Explorer component.
  */
 export function run(): void {
-    react.render(Explorer.create(), document.getElementById("container"));
+  react.render(Explorer.create(), document.getElementById("container"));
 }

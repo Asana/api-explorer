@@ -6,5 +6,5 @@ import Asana = require("asana");
  * Note: This logic is handled entirely within the `Asana.auth` module.
  */
 export function run(): void {
-    Asana.auth.PopupFlow.runReceiver();
+  Asana.auth.PopupFlow.runReceiver();
 }
