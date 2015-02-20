@@ -5,7 +5,7 @@ import AsanaJson = require("asana-json");
  *
  * @returns {string[]}
  */
-export function names(): String[] {
+export function names(): string[] {
   return Object.keys(AsanaJson);
 }
 
@@ -17,6 +17,18 @@ export function names(): String[] {
  */
 export function resourceFromResourceName(name: string): AsanaJson.Resource {
   return (<any>AsanaJson)[name];
+}
+
+/**
+ * Returns the resource name (key of AsanaJson) for a given resource.
+ *
+ * @param resource
+ * @returns {any}
+ */
+export function resourceNameFromResource(resource: AsanaJson.Resource): string {
+  return Object.keys(AsanaJson).filter(
+      key => { return (<any>AsanaJson)[key] === resource; }
+  )[0];
 }
 
 /**

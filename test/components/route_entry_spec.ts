@@ -24,8 +24,8 @@ describe("RouteEntryComponent", () => {
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    onFormSubmitStub = sinon.stub();
-    onRouteChangeStub = sinon.stub();
+    onFormSubmitStub = sand.stub();
+    onRouteChangeStub = sand.stub();
 
     root = testUtils.renderIntoDocument<RouteEntry.Component>(
       RouteEntry.create({
