@@ -20,33 +20,42 @@ export interface Props {
  * The JSON response code block.
  */
 export class Component extends TypedReact.Component<Props, {}> {
+
+  private _renderSelectResource() {
+    return r.select({
+      className: "select-resource",
+      onChange: this.props.onResourceChange,
+      value: Resources.resourceNameFromResource(this.props.resource),
+      children: Resources.names().map(resource => {
+        return r.option({
+          value: resource
+        }, resource);
+      })
+    });
+  }
+
+  private _renderSelectRoute() {
+    return r.select({
+      className: "select-route",
+      onChange: this.props.onRouteChange,
+      value: this.props.route,
+      children: Resources.routesFromResource(this.props.resource).map(
+          route => {
+          return r.option({
+            value: route
+          }, route);
+        })
+    });
+  }
+
   render() {
     return r.div({ },
-      r.select({
-        className: "select-resource",
-        onChange: this.props.onResourceChange,
-        value: Resources.resourceNameFromResource(this.props.resource),
-        children: Resources.names().map(resource => {
-          return r.option({
-            value: resource
-          }, resource);
-        })
-      }),
+      this._renderSelectResource(),
       r.form({
         className: "route-entry",
         onSubmit: this.props.onFormSubmit,
         children: [
-          r.select({
-            className: "select-route",
-            onChange: this.props.onRouteChange,
-            value: this.props.route,
-            children: Resources.routesFromResource(this.props.resource).map(
-                route => {
-                  return r.option({
-                    value: route
-                  }, route);
-            })
-          }),
+          this._renderSelectRoute(),
           r.button({
             className: "submit-request"
           }, "Submit!"),
