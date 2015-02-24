@@ -39,9 +39,11 @@ export class Component extends TypedReact.Component<Props, State> {
     var resource =
       Resources.resourceFromResourceName(this.props.initial_resource_string) ||
       Resources.resourceFromResourceName("Users");
-    var route = this.props.initial_route || "/users/me";
 
-    // TODO: Verify route is a valid route from resource. If not, choose a valid one.
+    // If the initial route is valid, use it. Otherwise, use a valid one.
+    var valid_routes = Resources.routesFromResource(resource);
+    var route = (valid_routes.indexOf(this.props.initial_route) !== -1) ?
+      this.props.initial_route : valid_routes[0];
 
     return {
       authorizedClient: authorizedClient,

@@ -44,6 +44,42 @@ describe("ExplorerComponent", () => {
     sinon.assert.called(isAuthorizedStub);
   });
 
+  describe("initial state", () => {
+    it("should set initial routes if found in the resource", () => {
+      var resource = helpers.fetchResource(0);
+      var valid_route = Resources.routesFromResource(resource)[1];
+      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+        Explorer.create({
+          initialAuthorizedClient: client,
+          initial_resource_string:
+            Resources.resourceNameFromResource(resource),
+          initial_route: valid_route
+        })
+      );
+
+      assert.equal(explorer.state.route, valid_route);
+    });
+
+    it("should ignore initial routes if not found in the resource", () => {
+      var invalid_route = "/this/does/not/exist";
+      var resource = helpers.fetchResource(0);
+      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+        Explorer.create({
+          initialAuthorizedClient: client,
+          initial_resource_string:
+            Resources.resourceNameFromResource(resource),
+          initial_route: invalid_route
+        })
+      );
+
+      assert.notEqual(explorer.state.route, invalid_route);
+      assert.include(
+        Resources.routesFromResource(resource),
+        explorer.state.route
+      );
+    });
+  });
+
   describe("when unauthorized", () => {
     var root: Explorer.Component;
     var node: Node;
