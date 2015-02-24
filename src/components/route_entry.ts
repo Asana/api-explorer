@@ -34,6 +34,27 @@ export class Component extends TypedReact.Component<Props, {}> {
     });
   }
 
+  private _renderRouteInfo() {
+    var action = Resources.actionFromResourcePath(
+      this.props.resource,
+      this.props.route
+    );
+
+    return r.div({ },
+      r.div({ },
+        r.strong({ }, "Route description: "),
+        action.comment
+      ),
+      r.div({ },
+        r.strong({ }, "Current route attributes: "),
+        action.params !== undefined ?
+          action.params.map(parameter => parameter.name).join() :
+          ""
+      )
+    );
+
+  }
+
   render() {
     return r.form({
       className: "route-entry",
@@ -43,9 +64,7 @@ export class Component extends TypedReact.Component<Props, {}> {
         r.button({
           className: "submit-request"
         }, "Submit!"),
-        r.div({ },
-          this.props.resource.properties.map(property => property.name).join()
-        )
+        this._renderRouteInfo()
       ]
     });
   }

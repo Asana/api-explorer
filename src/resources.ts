@@ -40,3 +40,13 @@ export function resourceNameFromResource(resource: AsanaJson.Resource): string {
 export function routesFromResource(resource: AsanaJson.Resource): string[] {
   return resource.actions.map(action => { return action.path; });
 }
+
+/**
+ * Return the action for a given resource and path string.
+ *
+ */
+export function actionFromResourcePath(resource: AsanaJson.Resource, path: string): AsanaJson.Action {
+  return resource.actions.filter(
+    action => { return path === action.path; }
+  )[0];
+}
