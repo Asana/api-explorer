@@ -21,13 +21,13 @@ describe("ExplorerComponent", () => {
   var sand: SinonSandbox;
 
   var client: AuthorizedClient;
-  var isAuthorizedStub: SinonStub;
+  var hasPreviouslyAuthorizedStub: SinonStub;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
     client = new AuthorizedClient();
-    isAuthorizedStub = sand.stub(client, "isAuthorized");
+    hasPreviouslyAuthorizedStub = sand.stub(client, "hasPreviouslyAuthorized");
   });
 
   afterEach(() => {
@@ -41,7 +41,7 @@ describe("ExplorerComponent", () => {
       })
     );
 
-    sinon.assert.called(isAuthorizedStub);
+    sinon.assert.called(hasPreviouslyAuthorizedStub);
   });
 
   describe("initial state", () => {
@@ -83,7 +83,7 @@ describe("ExplorerComponent", () => {
     var children: NodeList;
 
     beforeEach(() => {
-      isAuthorizedStub.returns(false);
+      hasPreviouslyAuthorizedStub.returns(false);
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
@@ -111,7 +111,7 @@ describe("ExplorerComponent", () => {
       // Stub authorization to set the client to authorized.
       var promise: Promise<any>;
       var authorizeStub = sand.stub(client, "authorizeIfExpired", () => {
-          isAuthorizedStub.returns(true);
+          hasPreviouslyAuthorizedStub.returns(true);
           return promise = Promise.resolve();
         }
       );
@@ -149,7 +149,7 @@ describe("ExplorerComponent", () => {
     var initial_resource: AsanaJson.Resource;
 
     beforeEach(() => {
-      isAuthorizedStub.returns(true);
+      hasPreviouslyAuthorizedStub.returns(true);
 
       initial_resource = helpers.fetchResource(0);
       initial_action = initial_resource.actions[0];

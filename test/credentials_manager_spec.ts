@@ -55,6 +55,37 @@ describe("CredentialsManager", () => {
     });
   });
 
+  describe("#isPossiblyValidFromClient", () => {
+    it("should fail with null credentials", () => {
+      var client = helpers.createOauthClient(null);
+      assert.isFalse(CredentialsManager.isPossiblyValidFromClient(client));
+    });
+
+    it("should pass with expired credentials", () => {
+      var client = helpers.createOauthClient(
+        helpers.createCredentials(Date.now())
+      );
+      sand.clock.tick(500);
+      assert.isTrue(CredentialsManager.isPossiblyValidFromClient(client));
+    });
+
+    it("should pass with soon-to-expire credentials", () => {
+      var client = helpers.createOauthClient(
+        helpers.createCredentials(Date.now() + 2 * MINUTE_IN_MS)
+      );
+
+      assert.isTrue(CredentialsManager.isPossiblyValidFromClient(client));
+    });
+
+    it("should succeed with long-to-expire credentials", () => {
+      var client = helpers.createOauthClient(
+        helpers.createCredentials(Date.now() + 20 * MINUTE_IN_MS)
+      );
+
+      assert.isTrue(CredentialsManager.isPossiblyValidFromClient(client));
+    });
+  });
+
   describe("localStorage", () => {
     var oldStorage: Storage;
     var localStorage: Storage;

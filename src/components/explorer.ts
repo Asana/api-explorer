@@ -111,7 +111,7 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   render() {
-    if (!this.state.authorizedClient.isAuthorized()) {
+    if (!this.state.authorizedClient.hasPreviouslyAuthorized()) {
       return r.a({
         className: "authorize-link",
         href: "#",

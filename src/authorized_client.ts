@@ -36,6 +36,15 @@ class AuthorizedClient {
   }
 
   /**
+   * Checks if the current client has ever authorized (possibly expired credentials).
+   *
+   * @returns {boolean}
+   */
+  public hasPreviouslyAuthorized(): boolean {
+    return CredentialsManager.isPossiblyValidFromClient(this.client);
+  }
+
+  /**
    * Authorizes the client to make request, and saves the credentials for a
    * later session.
    *
