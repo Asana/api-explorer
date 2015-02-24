@@ -100,6 +100,10 @@ export class Component extends TypedReact.Component<Props, State> {
     var route = this.state.action.path;
 
     this.state.authorizedClient.get(route).then(function(response: any) {
+
+      // Add the corresponding action to the response for later use.
+      response.action = this.state.action;
+
       this.setState({
         response: response
       });
