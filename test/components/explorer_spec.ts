@@ -1,7 +1,9 @@
+/// <reference path="../../src/asana_json.d.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
+import AsanaJson = require("asana-json");
 import chai = require("chai");
 import Promise = require("bluebird");
 import react = require("react/addons");
@@ -9,7 +11,8 @@ import sinon = require("sinon");
 
 import AuthorizedClient = require("../../src/authorized_client");
 import Explorer = require("../../src/components/explorer");
-import RouteEntry = require("../../src/components/route_entry");
+import Resources = require("../../src/resources");
+import helpers = require("../helpers");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -39,6 +42,42 @@ describe("ExplorerComponent", () => {
     );
 
     sinon.assert.called(isAuthorizedStub);
+  });
+
+  describe("initial state", () => {
+    it("should set initial routes if found in the resource", () => {
+      var resource = helpers.fetchResource(0);
+      var valid_route = Resources.routesFromResource(resource)[1];
+      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+        Explorer.create({
+          initialAuthorizedClient: client,
+          initial_resource_string:
+            Resources.resourceNameFromResource(resource),
+          initial_route: valid_route
+        })
+      );
+
+      assert.equal(explorer.state.route, valid_route);
+    });
+
+    it("should ignore initial routes if not found in the resource", () => {
+      var invalid_route = "/this/does/not/exist";
+      var resource = helpers.fetchResource(0);
+      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+        Explorer.create({
+          initialAuthorizedClient: client,
+          initial_resource_string:
+            Resources.resourceNameFromResource(resource),
+          initial_route: invalid_route
+        })
+      );
+
+      assert.notEqual(explorer.state.route, invalid_route);
+      assert.include(
+        Resources.routesFromResource(resource),
+        explorer.state.route
+      );
+    });
   });
 
   describe("when unauthorized", () => {
@@ -105,27 +144,39 @@ describe("ExplorerComponent", () => {
 
   describe("when authorized", () => {
     var root: Explorer.Component;
-    var inputRoute: React.HTMLComponent;
-    var routeEntry: RouteEntry.Component;
+    var selectResource: React.HTMLComponent;
+    var selectRoute: React.HTMLComponent;
+    var routeEntry: React.HTMLComponent;
 
     var initial_route: string;
+    var initial_resource: AsanaJson.Resource;
 
     beforeEach(() => {
       isAuthorizedStub.returns(true);
 
-      initial_route = "/this/route";
+      initial_resource = helpers.fetchResource(0);
+      initial_route = Resources.routesFromResource(initial_resource)[0];
+
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
           initialAuthorizedClient: client,
-          initial_route: initial_route
+          initial_route: initial_route,
+          initial_resource_string:
+            Resources.resourceNameFromResource(initial_resource)
         })
       );
-      inputRoute = testUtils.findRenderedDOMComponentWithClass(
+      selectResource = testUtils.findRenderedDOMComponentWithClass(
         root,
-        "input-route"
+        "select-resource"
       );
-      routeEntry = <RouteEntry.Component>testUtils
-        .findRenderedComponentWithType(root, RouteEntry.create);
+      selectRoute = testUtils.findRenderedDOMComponentWithClass(
+        root,
+        "select-route"
+      );
+      routeEntry = testUtils.findRenderedDOMComponentWithClass(
+        root,
+        "route-entry"
+      );
     });
 
     it("should not contain the authorization link", () => {
@@ -137,7 +188,7 @@ describe("ExplorerComponent", () => {
 
     it("should display the current route URL", () => {
       assert.include(
-        (<HTMLInputElement>inputRoute.getDOMNode()).value,
+        (<HTMLInputElement>selectRoute.getDOMNode()).value,
         initial_route
       );
     });
@@ -163,20 +214,52 @@ describe("ExplorerComponent", () => {
       });
     });
 
-    it("should contain an input to change the route", (cb) => {
-      var new_route = "/this/other/route";
+    it("should make the correct GET request after changing resource", (cb) => {
+      var other_resource = helpers.fetchResource(1);
+      var other_route = Resources.routesFromResource(other_resource)[0];
 
       // Stub get request to return json.
       var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client, "get").returns(json_promise);
+      var getStub = sand.stub(client, "get")
+        .withArgs(other_route).returns(json_promise);
+
+      // We change the resource, which in-turn will change the route.
+      testUtils.Simulate.change(selectResource, {
+        target: { value: Resources.resourceNameFromResource(other_resource) }
+      });
 
       // Clicking the link should send request with the correct route.
-      testUtils.Simulate.change(inputRoute, {
-        target: { value: new_route }
-      });
       testUtils.Simulate.submit(routeEntry.getDOMNode());
       json_promise.then(function () {
-        sinon.assert.calledWith(getStub, new_route);
+        sinon.assert.calledWith(getStub, other_route);
+
+        assert.equal(testUtils.findRenderedDOMComponentWithClass(
+          root,
+          "json-response-block"
+        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+
+        cb();
+      }).catch(function (err) {
+        cb(err);
+      });
+    });
+
+    it("should make the correct GET request after changing route", (cb) => {
+      var other_route = Resources.routesFromResource(initial_resource)[1];
+
+      // Stub get request to return json.
+      var json_promise = Promise.resolve({data: "{ a: 2 }"});
+      var getStub = sand.stub(client, "get")
+        .withArgs(other_route).returns(json_promise);
+
+      testUtils.Simulate.change(selectRoute, {
+        target: { value: other_route }
+      });
+
+      // Clicking the link should send request with the correct route.
+      testUtils.Simulate.submit(routeEntry.getDOMNode());
+      json_promise.then(function () {
+        sinon.assert.calledWith(getStub, other_route);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,
