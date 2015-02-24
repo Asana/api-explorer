@@ -69,18 +69,40 @@ describe("RouteEntryComponent", () => {
     sand.restore();
   });
 
-  it("should contain initial resource in the select field", () => {
-    assert.equal(
-      (<HTMLSelectElement>selectResource.getDOMNode()).value,
+  it("should contain dropdown to choose resource", () => {
+    var selectNode = <HTMLInputElement>selectResource.getDOMNode();
+    var resource_names = Resources.names();
+
+    // The current resource should be selected.
+    assert.include(
+      selectNode.value,
       Resources.resourceNameFromResource(initial_resource)
     );
+    // All other resources should be options.
+    assert.equal(selectNode.children.length, resource_names.length);
+    resource_names.forEach((resource_name, idx) => {
+      assert.equal(
+        (<HTMLOptionElement>selectNode.children.item(idx)).value,
+        resource_name
+      );
+    });
   });
 
-  it("should contain initial route in the select field", () => {
-    assert.equal(
-      (<HTMLSelectElement>selectRoute.getDOMNode()).value,
-      initial_route
-    );
+  it("should contain dropdown to choose route", () => {
+    var selectNode = <HTMLInputElement>selectRoute.getDOMNode();
+    var routes = Resources.routesFromResource(initial_resource);
+
+    // The current route should be selected.
+    assert.include(selectNode.value, initial_route);
+
+    // All other routes should be options.
+    assert.equal(selectNode.children.length, routes.length);
+    routes.forEach((route, idx) => {
+      assert.equal(
+        (<HTMLOptionElement>selectNode.children.item(idx)).value,
+        route
+      );
+    });
   });
 
   it("should trigger onFormSubmit property on submit", () => {
