@@ -18,11 +18,11 @@ var testUtils = react.addons.TestUtils;
 describe("RouteEntryComponent", () => {
   var sand: SinonSandbox;
 
-  var initial_route: string;
+  var initial_action: AsanaJson.Action;
   var initial_resource: AsanaJson.Resource;
 
   var onFormSubmitStub: SinonStub;
-  var onRouteChangeStub: SinonStub;
+  var onActionChangeStub: SinonStub;
 
   var root: RouteEntry.Component;
   var selectRoute: React.HTMLComponent;
@@ -31,17 +31,17 @@ describe("RouteEntryComponent", () => {
     sand = sinon.sandbox.create();
 
     initial_resource = helpers.fetchResource(2);
-    initial_route = Resources.routesFromResource(initial_resource)[0];
+    initial_action = initial_resource.actions[0];
 
     onFormSubmitStub = sand.stub();
-    onRouteChangeStub = sand.stub();
+    onActionChangeStub = sand.stub();
 
     root = testUtils.renderIntoDocument<RouteEntry.Component>(
       RouteEntry.create({
-        route: initial_route,
+        action: initial_action,
         resource: initial_resource,
         onFormSubmit: onFormSubmitStub,
-        onRouteChange: onRouteChangeStub
+        onActionChange: onActionChangeStub
       })
     );
     selectRoute = testUtils.findRenderedDOMComponentWithClass(
@@ -57,7 +57,7 @@ describe("RouteEntryComponent", () => {
   it("should select the current route", () => {
     assert.include(
       (<HTMLInputElement>selectRoute.getDOMNode()).value,
-      initial_route
+      initial_action.path
     );
   });
 
@@ -85,6 +85,6 @@ describe("RouteEntryComponent", () => {
     testUtils.Simulate.change(selectRoute, {
       target: { value: other_route }
     });
-    sinon.assert.called(onRouteChangeStub);
+    sinon.assert.called(onActionChangeStub);
   });
 });

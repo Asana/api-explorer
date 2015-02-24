@@ -47,17 +47,17 @@ describe("ExplorerComponent", () => {
   describe("initial state", () => {
     it("should set initial routes if found in the resource", () => {
       var resource = helpers.fetchResource(0);
-      var valid_route = Resources.routesFromResource(resource)[1];
+      var valid_action = resource.actions[1];
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
           initialAuthorizedClient: client,
           initial_resource_string:
             Resources.resourceNameFromResource(resource),
-          initial_route: valid_route
+          initial_route: valid_action.path
         })
       );
 
-      assert.equal(explorer.state.route, valid_route);
+      assert.equal(explorer.state.action, valid_action);
     });
 
     it("should ignore initial routes if not found in the resource", () => {
@@ -72,11 +72,8 @@ describe("ExplorerComponent", () => {
         })
       );
 
-      assert.notEqual(explorer.state.route, invalid_route);
-      assert.include(
-        Resources.routesFromResource(resource),
-        explorer.state.route
-      );
+      assert.notEqual(explorer.state.action.path, invalid_route);
+      assert.include(resource.actions, explorer.state.action);
     });
   });
 

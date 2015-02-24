@@ -10,9 +10,9 @@ var r = react.DOM;
 
 export interface Props {
   resource: AsanaJson.Resource;
-  route: string;
+  action: AsanaJson.Action;
   onFormSubmit: (event?: React.FormEvent) => void;
-  onRouteChange: (event?: React.FormEvent) => void;
+  onActionChange: (event?: React.FormEvent) => void;
 }
 
 /**
@@ -23,8 +23,8 @@ export class Component extends TypedReact.Component<Props, {}> {
   private _renderSelectRoute() {
     return r.select({
       className: "select-route",
-      onChange: this.props.onRouteChange,
-      value: this.props.route,
+      onChange: this.props.onActionChange,
+      value: this.props.action.path,
       children: Resources.routesFromResource(this.props.resource).map(
           route => {
           return r.option({
@@ -35,20 +35,15 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 
   private _renderRouteInfo() {
-    var action = Resources.actionFromResourcePath(
-      this.props.resource,
-      this.props.route
-    );
-
     return r.div({ },
       r.div({ },
         r.strong({ }, "Route description: "),
-        action.comment
+        this.props.action.comment
       ),
       r.div({ },
         r.strong({ }, "Current route attributes: "),
-        action.params !== undefined ?
-          action.params.map(parameter => parameter.name).join() :
+        this.props.action.params !== undefined ?
+          this.props.action.params.map(parameter => parameter.name).join() :
           ""
       )
     );
