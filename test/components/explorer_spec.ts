@@ -145,19 +145,19 @@ describe("ExplorerComponent", () => {
     var selectRoute: React.HTMLComponent;
     var routeEntry: React.HTMLComponent;
 
-    var initial_route: string;
+    var initial_action: AsanaJson.Action;
     var initial_resource: AsanaJson.Resource;
 
     beforeEach(() => {
       isAuthorizedStub.returns(true);
 
       initial_resource = helpers.fetchResource(0);
-      initial_route = Resources.routesFromResource(initial_resource)[0];
+      initial_action = initial_resource.actions[0];
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
           initialAuthorizedClient: client,
-          initial_route: initial_route,
+          initial_route: initial_action.path,
           initial_resource_string:
             Resources.resourceNameFromResource(initial_resource)
         })
@@ -186,7 +186,7 @@ describe("ExplorerComponent", () => {
     it("should display the current route URL", () => {
       assert.include(
         (<HTMLInputElement>selectRoute.getDOMNode()).value,
-        initial_route
+        initial_action.name
       );
     });
 
@@ -198,7 +198,7 @@ describe("ExplorerComponent", () => {
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
       json_promise.then(function () {
-        sinon.assert.calledWith(getStub, initial_route);
+        sinon.assert.calledWith(getStub, initial_action.path);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,
@@ -213,12 +213,12 @@ describe("ExplorerComponent", () => {
 
     it("should make the correct GET request after changing resource", (cb) => {
       var other_resource = helpers.fetchResource(1);
-      var other_route = Resources.routesFromResource(other_resource)[0];
+      var other_action = other_resource.actions[0];
 
       // Stub get request to return json.
       var json_promise = Promise.resolve({data: "{ a: 2 }"});
       var getStub = sand.stub(client, "get")
-        .withArgs(other_route).returns(json_promise);
+        .withArgs(other_action.path).returns(json_promise);
 
       // We change the resource, which in-turn will change the route.
       testUtils.Simulate.change(selectResource, {
@@ -228,7 +228,7 @@ describe("ExplorerComponent", () => {
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
       json_promise.then(function () {
-        sinon.assert.calledWith(getStub, other_route);
+        sinon.assert.calledWith(getStub, other_action.path);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,
@@ -242,21 +242,21 @@ describe("ExplorerComponent", () => {
     });
 
     it("should make the correct GET request after changing route", (cb) => {
-      var other_route = Resources.routesFromResource(initial_resource)[1];
+      var other_action = initial_resource.actions[1];
 
       // Stub get request to return json.
       var json_promise = Promise.resolve({data: "{ a: 2 }"});
       var getStub = sand.stub(client, "get")
-        .withArgs(other_route).returns(json_promise);
+        .withArgs(other_action.path).returns(json_promise);
 
       testUtils.Simulate.change(selectRoute, {
-        target: { value: other_route }
+        target: { value: other_action.name }
       });
 
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
       json_promise.then(function () {
-        sinon.assert.calledWith(getStub, other_route);
+        sinon.assert.calledWith(getStub, other_action.path);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,

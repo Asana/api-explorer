@@ -84,9 +84,9 @@ export class Component extends TypedReact.Component<Props, State> {
    * Updates the action state following an onChange event.
    */
   onChangeActionState(event: React.FormEvent) {
-    var route = (<HTMLSelectElement>event.target).value;
+    var action_name = (<HTMLSelectElement>event.target).value;
     this.setState({
-      action: Resources.actionFromResourcePath(this.state.resource, route)
+      action: Resources.actionFromName(this.state.resource, action_name)
     });
   }
 

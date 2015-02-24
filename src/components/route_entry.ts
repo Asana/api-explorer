@@ -4,8 +4,6 @@ import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
 
-import Resources = require("../resources");
-
 var r = react.DOM;
 
 export interface Props {
@@ -24,12 +22,12 @@ export class Component extends TypedReact.Component<Props, {}> {
     return r.select({
       className: "select-route",
       onChange: this.props.onActionChange,
-      value: this.props.action.path,
-      children: Resources.routesFromResource(this.props.resource).map(
-          route => {
+      value: this.props.action.name,
+      children: this.props.resource.actions.map(
+          action => {
           return r.option({
-            value: route
-          }, route);
+            value: action.name
+          }, action.path);
         })
     });
   }
@@ -45,6 +43,10 @@ export class Component extends TypedReact.Component<Props, {}> {
         this.props.action.params !== undefined ?
           this.props.action.params.map(parameter => parameter.name).join() :
           ""
+      ),
+      r.div({ },
+        r.strong({ }, "Route method: "),
+        this.props.action.method
       )
     );
 

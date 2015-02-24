@@ -8,7 +8,6 @@ import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
 
-import Resources = require("../../src/resources");
 import RouteEntry = require("../../src/components/route_entry");
 import helpers = require("../helpers");
 
@@ -57,20 +56,18 @@ describe("RouteEntryComponent", () => {
   it("should select the current route", () => {
     assert.include(
       (<HTMLInputElement>selectRoute.getDOMNode()).value,
-      initial_action.path
+      initial_action.name
     );
   });
 
   it("should contain dropdown with other routes", () => {
     var children = selectRoute.getDOMNode().childNodes;
-    var routes = Resources.routesFromResource(initial_resource);
 
-    assert.equal(children.length, routes.length);
-    routes.forEach((route, idx) => {
-      assert.equal(
-        (<HTMLOptionElement>children.item(idx)).value,
-        route
-      );
+    assert.equal(children.length, initial_resource.actions.length);
+    initial_resource.actions.forEach((action, idx) => {
+      var child_item = (<HTMLOptionElement>children.item(idx));
+      assert.equal(child_item.value, action.name);
+      assert.equal(child_item.text, action.path);
     });
   });
 
@@ -80,10 +77,10 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should trigger onRouteChange property on route change", () => {
-    var other_route = Resources.routesFromResource(initial_resource)[1];
+    var other_action = initial_resource.actions[1];
 
     testUtils.Simulate.change(selectRoute, {
-      target: { value: other_route }
+      target: { value: other_action.name }
     });
     sinon.assert.called(onActionChangeStub);
   });
