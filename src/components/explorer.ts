@@ -6,6 +6,7 @@ import TypedReact = require("typed-react");
 
 import AuthorizedClient = require("../authorized_client");
 import JsonResponse = require("./json_response");
+import ResourceEntry = require("./resource_entry");
 import RouteEntry = require("./route_entry");
 
 import Resources = require("../resources");
@@ -113,12 +114,15 @@ export class Component extends TypedReact.Component<Props, State> {
       return r.div({
         className: "api-explorer",
         children: [
+          ResourceEntry.create({
+            resource: this.state.resource,
+            onResourceChange: this.onChangeResourceState
+          }),
           RouteEntry.create({
             resource: this.state.resource,
             route: this.state.route,
             onFormSubmit: this.onSubmitRequest,
-            onRouteChange: this.onChangeRouteState,
-            onResourceChange: this.onChangeResourceState
+            onRouteChange: this.onChangeRouteState
           }),
           JsonResponse.create({
             response: this.state.response

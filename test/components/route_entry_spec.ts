@@ -18,28 +18,22 @@ var testUtils = react.addons.TestUtils;
 describe("RouteEntryComponent", () => {
   var sand: SinonSandbox;
 
-  var root: RouteEntry.Component;
-  var routeForm: React.HTMLComponent;
-  var selectResource: React.HTMLComponent;
-  var selectRoute: React.HTMLComponent;
-
   var initial_route: string;
   var initial_resource: AsanaJson.Resource;
-  var other_resource: AsanaJson.Resource;
 
   var onFormSubmitStub: SinonStub;
-  var onResourceChangeStub: SinonStub;
   var onRouteChangeStub: SinonStub;
+
+  var root: RouteEntry.Component;
+  var selectRoute: React.HTMLComponent;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    initial_resource = helpers.fetchResource(1);
+    initial_resource = helpers.fetchResource(2);
     initial_route = Resources.routesFromResource(initial_resource)[0];
-    other_resource = helpers.fetchResource(0);
 
     onFormSubmitStub = sand.stub();
-    onResourceChangeStub = sand.stub();
     onRouteChangeStub = sand.stub();
 
     root = testUtils.renderIntoDocument<RouteEntry.Component>(
@@ -47,17 +41,8 @@ describe("RouteEntryComponent", () => {
         route: initial_route,
         resource: initial_resource,
         onFormSubmit: onFormSubmitStub,
-        onResourceChange: onResourceChangeStub,
         onRouteChange: onRouteChangeStub
       })
-    );
-    routeForm = testUtils.findRenderedDOMComponentWithClass(
-      root,
-      "route-entry"
-    );
-    selectResource = testUtils.findRenderedDOMComponentWithClass(
-      root,
-      "select-resource"
     );
     selectRoute = testUtils.findRenderedDOMComponentWithClass(
       root,
@@ -69,44 +54,28 @@ describe("RouteEntryComponent", () => {
     sand.restore();
   });
 
-  it("should contain dropdown to choose resource", () => {
-    var selectNode = <HTMLInputElement>selectResource.getDOMNode();
-    var resource_names = Resources.names();
-
-    // The current resource should be selected.
+  it("should select the current route", () => {
     assert.include(
-      selectNode.value,
-      Resources.resourceNameFromResource(initial_resource)
+      (<HTMLInputElement>selectRoute.getDOMNode()).value,
+      initial_route
     );
-    // All other resources should be options.
-    assert.equal(selectNode.children.length, resource_names.length);
-    resource_names.forEach((resource_name, idx) => {
-      assert.equal(
-        (<HTMLOptionElement>selectNode.children.item(idx)).value,
-        resource_name
-      );
-    });
   });
 
-  it("should contain dropdown to choose route", () => {
-    var selectNode = <HTMLInputElement>selectRoute.getDOMNode();
+  it("should contain dropdown with other routes", () => {
+    var children = selectRoute.getDOMNode().childNodes;
     var routes = Resources.routesFromResource(initial_resource);
 
-    // The current route should be selected.
-    assert.include(selectNode.value, initial_route);
-
-    // All other routes should be options.
-    assert.equal(selectNode.children.length, routes.length);
+    assert.equal(children.length, routes.length);
     routes.forEach((route, idx) => {
       assert.equal(
-        (<HTMLOptionElement>selectNode.children.item(idx)).value,
+        (<HTMLOptionElement>children.item(idx)).value,
         route
       );
     });
   });
 
   it("should trigger onFormSubmit property on submit", () => {
-    testUtils.Simulate.submit(routeForm.getDOMNode());
+    testUtils.Simulate.submit(root.getDOMNode());
     sinon.assert.called(onFormSubmitStub);
   });
 
@@ -117,12 +86,5 @@ describe("RouteEntryComponent", () => {
       target: { value: other_route }
     });
     sinon.assert.called(onRouteChangeStub);
-  });
-
-  it("should trigger onResourceChange property on resource change", () => {
-    testUtils.Simulate.change(selectResource, {
-      target: { value: other_resource }
-    });
-    sinon.assert.called(onResourceChangeStub);
   });
 });

@@ -13,26 +13,12 @@ export interface Props {
   route: string;
   onFormSubmit: (event?: React.FormEvent) => void;
   onRouteChange: (event?: React.FormEvent) => void;
-  onResourceChange: (event?: React.FormEvent) => void;
 }
 
 /**
- * The JSON response code block.
+ * The route entry area.
  */
 export class Component extends TypedReact.Component<Props, {}> {
-
-  private _renderSelectResource() {
-    return r.select({
-      className: "select-resource",
-      onChange: this.props.onResourceChange,
-      value: Resources.resourceNameFromResource(this.props.resource),
-      children: Resources.names().map(resource => {
-        return r.option({
-          value: resource
-        }, resource);
-      })
-    });
-  }
 
   private _renderSelectRoute() {
     return r.select({
@@ -49,22 +35,19 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 
   render() {
-    return r.div({ },
-      this._renderSelectResource(),
-      r.form({
-        className: "route-entry",
-        onSubmit: this.props.onFormSubmit,
-        children: [
-          this._renderSelectRoute(),
-          r.button({
-            className: "submit-request"
-          }, "Submit!"),
-          r.div({ },
-            this.props.resource.properties.map(property => property.name).join()
-          )
-        ]
-      })
-    );
+    return r.form({
+      className: "route-entry",
+      onSubmit: this.props.onFormSubmit,
+      children: [
+        this._renderSelectRoute(),
+        r.button({
+          className: "submit-request"
+        }, "Submit!"),
+        r.div({ },
+          this.props.resource.properties.map(property => property.name).join()
+        )
+      ]
+    });
   }
 }
 
