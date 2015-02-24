@@ -22,7 +22,7 @@ export interface Props {
 export interface State {
   authorizedClient?: AuthorizedClient;
   resource?: AsanaJson.Resource;
-  route?: string;
+  action?: AsanaJson.Action;
   response?: any;
 }
 
@@ -41,14 +41,14 @@ export class Component extends TypedReact.Component<Props, State> {
       Resources.resourceFromResourceName("Users");
 
     // If the initial route is valid, use it. Otherwise, use a valid one.
-    var valid_routes = Resources.routesFromResource(resource);
-    var route = (valid_routes.indexOf(this.props.initial_route) !== -1) ?
-      this.props.initial_route : valid_routes[0];
+    var action =
+      Resources.actionFromResourcePath(resource, this.props.initial_route) ||
+      resource.actions[0];
 
     return {
       authorizedClient: authorizedClient,
       resource: resource,
-      route: route
+      action: action
     };
   }
 
@@ -64,28 +64,29 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   /**
-   * Updates the route state following an onChange event.
+   * Updates the resource state following an onChange event.
    */
   onChangeResourceState(event: React.FormEvent) {
     var resource = Resources.resourceFromResourceName(
       (<HTMLSelectElement>event.target).value);
 
-    // If the resource has changed, also update the route.
-    var route = (resource !== this.state.resource) ?
-      Resources.routesFromResource(resource)[0] : this.state.route;
+    // If the resource has changed, also update the action.
+    var action = (resource !== this.state.resource) ?
+      resource.actions[0] : this.state.action;
 
     this.setState({
       resource: resource,
-      route: route
+      action: action
     });
   }
 
   /**
-   * Updates the resource state following an onChange event.
+   * Updates the action state following an onChange event.
    */
-  onChangeRouteState(event: React.FormEvent) {
+  onChangeActionState(event: React.FormEvent) {
+    var action_name = (<HTMLSelectElement>event.target).value;
     this.setState({
-      route: (<HTMLSelectElement>event.target).value
+      action: Resources.actionFromName(this.state.resource, action_name)
     });
   }
 
@@ -96,9 +97,13 @@ export class Component extends TypedReact.Component<Props, State> {
   onSubmitRequest(event: React.FormEvent) {
     event.preventDefault();
 
-    var route = this.state.route;
+    var route = this.state.action.path;
 
     this.state.authorizedClient.get(route).then(function(response: any) {
+
+      // Add the corresponding action to the response for later use.
+      response.action = this.state.action;
+
       this.setState({
         response: response
       });
@@ -106,7 +111,7 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   render() {
-    if (!this.state.authorizedClient.isAuthorized()) {
+    if (!this.state.authorizedClient.hasPreviouslyAuthorized()) {
       return r.a({
         className: "authorize-link",
         href: "#",
@@ -122,9 +127,9 @@ export class Component extends TypedReact.Component<Props, State> {
           }),
           RouteEntry.create({
             resource: this.state.resource,
-            route: this.state.route,
+            action: this.state.action,
             onFormSubmit: this.onSubmitRequest,
-            onRouteChange: this.onChangeRouteState
+            onActionChange: this.onChangeActionState
           }),
           JsonResponse.create({
             response: this.state.response

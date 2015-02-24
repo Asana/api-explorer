@@ -24,7 +24,7 @@ var EXPIRY_BUFFER_MS = 5 * 60 * 1000;
  */
 function isValid(credentials: Asana.auth.Credentials) {
   // If no credentials or expiry time, then mark as invalid.
-  if (credentials == null || credentials.expiry_timestamp == null) {
+  if (credentials === null || credentials.expiry_timestamp === null) {
     return false;
   }
 
@@ -40,6 +40,16 @@ function isValid(credentials: Asana.auth.Credentials) {
  */
 export function isValidFromClient(client: Asana.Client) {
   return isValid(getFromClient(client));
+}
+
+/**
+ * Returns true if the client has (possibly-expired) credentials.
+ *
+ * @param {Asana.Client} client
+ * @returns {boolean}
+ */
+export function isPossiblyValidFromClient(client: Asana.Client) {
+  return getFromClient(client) !== null;
 }
 
 /**

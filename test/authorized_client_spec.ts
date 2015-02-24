@@ -69,6 +69,17 @@ describe("AuthorizedClient", () => {
     });
   });
 
+  describe("#hasPreviouslyAuthorized", () => {
+    it("should pass through authorization check to credentials", () => {
+      var authorizedClient = new AuthorizedClient();
+      var stub = sand.stub(CredentialsManager, "isPossiblyValidFromClient");
+
+      authorizedClient.hasPreviouslyAuthorized();
+
+      sinon.assert.calledWith(stub, (<any>authorizedClient).client);
+    });
+  });
+
   describe("#authorizeIfExpired", () => {
     var authorizedClient: AuthorizedClient;
     var client: Asana.Client;
