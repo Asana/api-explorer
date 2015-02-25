@@ -1,15 +1,18 @@
+/// <reference path="../../src/asana.d.ts" />
 /// <reference path="../../src/asana_json.d.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
+import Asana = require("asana");
 import AsanaJson = require("asana-json");
 import chai = require("chai");
 import Promise = require("bluebird");
 import react = require("react/addons");
 import sinon = require("sinon");
 
-import AuthorizedClient = require("../../src/authorized_client");
+import constants = require("../../src/constants");
+import CredentialsManager = require("../../src/credentials_manager");
 import Explorer = require("../../src/components/explorer");
 import Resources = require("../../src/resources");
 import helpers = require("../helpers");
@@ -20,28 +23,32 @@ var testUtils = react.addons.TestUtils;
 describe("ExplorerComponent", () => {
   var sand: SinonSandbox;
 
-  var client: AuthorizedClient;
-  var hasPreviouslyAuthorizedStub: SinonStub;
+  var client: Asana.Client;
+  var isPossiblyValidFromClientStub: SinonStub;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    client = new AuthorizedClient();
-    hasPreviouslyAuthorizedStub = sand.stub(client, "hasPreviouslyAuthorized");
+    client = Asana.Client.create({
+      clientId: constants.CLIENT_ID,
+      redirectUri: constants.REDIRECT_URI
+    });
+    isPossiblyValidFromClientStub = sand.stub(
+      CredentialsManager, "isPossiblyValidFromClient");
   });
 
   afterEach(() => {
     sand.restore();
   });
 
-  it("should check authorization state", () => {
+  it("should check local storage authorization state", () => {
     testUtils.renderIntoDocument<Explorer.Component>(
       Explorer.create({
-        initialAuthorizedClient: client
+        initialClient: client
       })
     );
 
-    sinon.assert.called(hasPreviouslyAuthorizedStub);
+    sinon.assert.called(isPossiblyValidFromClientStub);
   });
 
   describe("initial state", () => {
@@ -50,7 +57,7 @@ describe("ExplorerComponent", () => {
       var valid_action = resource.actions[1];
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
-          initialAuthorizedClient: client,
+          initialClient: client,
           initial_resource_string:
             Resources.resourceNameFromResource(resource),
           initial_route: valid_action.path
@@ -65,7 +72,7 @@ describe("ExplorerComponent", () => {
       var resource = helpers.fetchResource(0);
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
-          initialAuthorizedClient: client,
+          initialClient: client,
           initial_resource_string:
             Resources.resourceNameFromResource(resource),
           initial_route: invalid_route
@@ -83,11 +90,11 @@ describe("ExplorerComponent", () => {
     var children: NodeList;
 
     beforeEach(() => {
-      hasPreviouslyAuthorizedStub.returns(false);
+      isPossiblyValidFromClientStub.returns(false);
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
-          initialAuthorizedClient: client
+          initialClient: client
         })
       );
       node = root.getDOMNode();
@@ -110,8 +117,8 @@ describe("ExplorerComponent", () => {
 
       // Stub authorization to set the client to authorized.
       var promise: Promise<any>;
-      var authorizeStub = sand.stub(client, "authorizeIfExpired", () => {
-          hasPreviouslyAuthorizedStub.returns(true);
+      var authorizeStub = sand.stub(client, "authorize", () => {
+          isPossiblyValidFromClientStub.returns(true);
           return promise = Promise.resolve();
         }
       );
@@ -149,14 +156,14 @@ describe("ExplorerComponent", () => {
     var initial_resource: AsanaJson.Resource;
 
     beforeEach(() => {
-      hasPreviouslyAuthorizedStub.returns(true);
+      isPossiblyValidFromClientStub.returns(true);
 
       initial_resource = helpers.fetchResource(0);
       initial_action = initial_resource.actions[0];
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
-          initialAuthorizedClient: client,
+          initialClient: client,
           initial_route: initial_action.path,
           initial_resource_string:
             Resources.resourceNameFromResource(initial_resource)
@@ -193,7 +200,7 @@ describe("ExplorerComponent", () => {
     it("should make a GET request on submit", (cb) => {
       // Stub get request to return json.
       var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client, "get").returns(json_promise);
+      var getStub = sand.stub(client.dispatcher, "get").returns(json_promise);
 
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
@@ -217,7 +224,7 @@ describe("ExplorerComponent", () => {
 
       // Stub get request to return json.
       var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client, "get")
+      var getStub = sand.stub(client.dispatcher, "get")
         .withArgs(other_action.path).returns(json_promise);
 
       // We change the resource, which in-turn will change the route.
@@ -246,7 +253,7 @@ describe("ExplorerComponent", () => {
 
       // Stub get request to return json.
       var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client, "get")
+      var getStub = sand.stub(client.dispatcher, "get")
         .withArgs(other_action.path).returns(json_promise);
 
       testUtils.Simulate.change(selectRoute, {

@@ -1,10 +1,13 @@
+/// <reference path="../asana.d.ts" />
 /// <reference path="../asana_json.d.ts" />
+import Asana = require("asana");
 import AsanaJson = require("asana-json");
-import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
 
-import AuthorizedClient = require("../authorized_client");
+import build = require("./build");
+import constants = require("../constants");
+import CredentialsManager = require("../credentials_manager");
 import JsonResponse = require("./json_response");
 import ResourceEntry = require("./resource_entry");
 import RouteEntry = require("./route_entry");
@@ -14,13 +17,13 @@ import Resources = require("../resources");
 var r = react.DOM;
 
 export interface Props {
-  initialAuthorizedClient?: AuthorizedClient;
+  initialClient?: Asana.Client;
   initial_resource_string?: string;
   initial_route?: string;
 }
 
 export interface State {
-  authorizedClient?: AuthorizedClient;
+  client?: Asana.Client;
   resource?: AsanaJson.Resource;
   action?: AsanaJson.Action;
   response?: any;
@@ -30,11 +33,27 @@ export interface State {
  * The main API Explorer component.
  */
 export class Component extends TypedReact.Component<Props, State> {
-  getInitialState() {
-    // If a client exists in props, use it. Otherwise, make a new one.
-    var authorizedClient =
-      this.props.initialAuthorizedClient || new AuthorizedClient();
+  /**
+   * If a client exists in props, use it. Otherwise, make a new one.
+   * Fetch OAuth information from localStorage, and put in the client.
+   *
+   * @returns {Asana.Client}
+   */
+  initializeClient(): Asana.Client {
+    var client = this.props.initialClient || Asana.Client.create({
+        clientId: constants.CLIENT_ID,
+        redirectUri: constants.REDIRECT_URI
+      });
+    // TODO: Should we use oauth if we didn't make a new client?
+    client.useOauth({
+      credentials: CredentialsManager.getFromLocalStorage(),
+      flowType: Asana.auth.PopupFlow
+    });
 
+    return client;
+  }
+
+  getInitialState() {
     // Fetch the resource JSON given in the props, if any.
     var resource =
       Resources.resourceFromResourceName(this.props.initial_resource_string) ||
@@ -46,7 +65,7 @@ export class Component extends TypedReact.Component<Props, State> {
       resource.actions[0];
 
     return {
-      authorizedClient: authorizedClient,
+      client: this.initializeClient(),
       resource: resource,
       action: action
     };
@@ -56,7 +75,9 @@ export class Component extends TypedReact.Component<Props, State> {
    * Authorize the client, if it has expired, and force a re-rendering.
    */
   authorize() {
-    this.state.authorizedClient.authorizeIfExpired().then(function() {
+    this.state.client.authorize().then(function() {
+      CredentialsManager.storeFromClient(this.state.client);
+
       if (this.isMounted()) {
         this.forceUpdate();
       }
@@ -98,9 +119,9 @@ export class Component extends TypedReact.Component<Props, State> {
     event.preventDefault();
 
     var route = this.state.action.path;
+    var dispatcher = this.state.client.dispatcher;
 
-    this.state.authorizedClient.get(route).then(function(response: any) {
-
+    dispatcher.get(route, null, null).then(function(response: any) {
       // Add the corresponding action to the response for later use.
       response.action = this.state.action;
 
@@ -111,7 +132,7 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   render() {
-    if (!this.state.authorizedClient.hasPreviouslyAuthorized()) {
+    if (!CredentialsManager.isPossiblyValidFromClient(this.state.client)) {
       return r.a({
         className: "authorize-link",
         href: "#",
