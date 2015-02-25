@@ -44,7 +44,6 @@ export class Component extends TypedReact.Component<Props, State> {
         clientId: constants.CLIENT_ID,
         redirectUri: constants.REDIRECT_URI
       });
-    // TODO: Should we use oauth if we didn't make a new client?
     client.useOauth({
       credentials: CredentialsManager.getFromLocalStorage(),
       flowType: Asana.auth.PopupFlow
@@ -128,6 +127,9 @@ export class Component extends TypedReact.Component<Props, State> {
       this.setState({
         response: response
       });
+
+      // Store possibly-updated credentials for later use.
+      CredentialsManager.storeFromClient(this.state.client);
     }.bind(this));
   }
 
