@@ -24,37 +24,6 @@ describe("CredentialsManager", () => {
     sand.restore();
   });
 
-  describe("#isValidFromClient", () => {
-    it("should fail with null credentials", () => {
-      var client = helpers.createOauthClient(null);
-      assert.isFalse(CredentialsManager.isValidFromClient(client));
-    });
-
-    it("should fail with expired credentials", () => {
-      var client = helpers.createOauthClient(
-        helpers.createCredentials(Date.now())
-      );
-      sand.clock.tick(500);
-      assert.isFalse(CredentialsManager.isValidFromClient(client));
-    });
-
-    it("should fail with soon-to-expire credentials", () => {
-      var client = helpers.createOauthClient(
-        helpers.createCredentials(Date.now() + 2 * MINUTE_IN_MS)
-      );
-
-      assert.isFalse(CredentialsManager.isValidFromClient(client));
-    });
-
-    it("should succeed with long-to-expire credentials", () => {
-      var client = helpers.createOauthClient(
-        helpers.createCredentials(Date.now() + 20 * MINUTE_IN_MS)
-      );
-
-      assert.isTrue(CredentialsManager.isValidFromClient(client));
-    });
-  });
-
   describe("#isPossiblyValidFromClient", () => {
     it("should fail with null credentials", () => {
       var client = helpers.createOauthClient(null);
