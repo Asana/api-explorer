@@ -50,7 +50,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "asana": "^0.5.9",
+    "asana": "^0.7.1",
     "asana-json": "^0.1.13",
     "bluebird": "^2.9.6",
     "react": "^0.12.2",

@@ -12,37 +12,6 @@ export var localStorage: Storage =
   typeof window !== "undefined" ? window.localStorage : null;
 
 /**
- * The time to subtract before we actually consider credentials expired.
- */
-var EXPIRY_BUFFER_MS = 5 * 60 * 1000;
-
-/**
- * Returns true if the credentials have not expired.
- *
- * @param {Asana.auth.Credentials} credentials
- * @returns {boolean}
- */
-function isValid(credentials: Asana.auth.Credentials) {
-  // If no credentials or expiry time, then mark as invalid.
-  if (credentials === null || credentials.expiry_timestamp === null) {
-    return false;
-  }
-
-  // We're valid when we have more than the buffer remaining before expiry.
-  return credentials.expiry_timestamp - Date.now() > EXPIRY_BUFFER_MS;
-}
-
-/**
- * Returns true if the client has valid credentials.
- *
- * @param {Asana.Client} client
- * @returns {boolean}
- */
-export function isValidFromClient(client: Asana.Client) {
-  return isValid(getFromClient(client));
-}
-
-/**
  * Returns true if the client has (possibly-expired) credentials.
  *
  * @param {Asana.Client} client
