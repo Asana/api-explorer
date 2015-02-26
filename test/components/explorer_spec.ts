@@ -157,6 +157,7 @@ describe("ExplorerComponent", () => {
 
     var raw_response_promise: Promise<any>;
     var json_response: string;
+    var getStub: SinonStub;
 
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(true);
@@ -165,8 +166,10 @@ describe("ExplorerComponent", () => {
       initial_action = initial_resource.actions[0];
 
       var raw_response = { data: "{ a: 2 }" };
-      raw_response_promise = Promise.resolve(raw_response);
       json_response = JSON.stringify(raw_response, undefined, 2);
+      getStub = sand.stub(client.dispatcher, "get", () => {
+        return raw_response_promise = Promise.resolve(raw_response);
+      });
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
@@ -198,7 +201,6 @@ describe("ExplorerComponent", () => {
     });
 
     it("should display the current route URL on submit", (cb) => {
-      sand.stub(client.dispatcher, "get").returns(raw_response_promise);
       testUtils.Simulate.submit(routeEntry.getDOMNode());
 
       raw_response_promise.then(function () {
@@ -215,7 +217,6 @@ describe("ExplorerComponent", () => {
     });
 
     it("should display the current route method on submit", (cb) => {
-      sand.stub(client.dispatcher, "get").returns(raw_response_promise);
       testUtils.Simulate.submit(routeEntry.getDOMNode());
 
       raw_response_promise.then(function () {
@@ -232,12 +233,8 @@ describe("ExplorerComponent", () => {
     });
 
     it("should make a GET request on submit", (cb) => {
-      // Stub get request to return json.
-      var getStub = sand.stub(client.dispatcher, "get")
-        .returns(raw_response_promise);
-
-      // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
+
       raw_response_promise.then(function () {
         sinon.assert.calledWith(getStub, initial_action.path);
 
@@ -255,10 +252,6 @@ describe("ExplorerComponent", () => {
     it("should make the correct GET request after changing resource", (cb) => {
       var other_resource = helpers.fetchResource(1);
       var other_action = other_resource.actions[0];
-
-      // Stub get request to return json.
-      var getStub = sand.stub(client.dispatcher, "get")
-        .withArgs(other_action.path).returns(raw_response_promise);
 
       // We change the resource, which in-turn will change the route.
       testUtils.Simulate.change(selectResource, {
@@ -283,10 +276,6 @@ describe("ExplorerComponent", () => {
 
     it("should make the correct GET request after changing route", (cb) => {
       var other_action = initial_resource.actions[1];
-
-      // Stub get request to return json.
-      var getStub = sand.stub(client.dispatcher, "get")
-        .withArgs(other_action.path).returns(raw_response_promise);
 
       testUtils.Simulate.change(selectRoute, {
         target: { value: other_action.name }
