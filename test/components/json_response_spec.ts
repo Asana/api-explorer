@@ -25,7 +25,13 @@ describe("JsonResponseComponent", () => {
     stringifySpy = sand.spy(JSON, "stringify");
 
     root = testUtils.renderIntoDocument<JsonResponse.Component>(
-      JsonResponse.create({ response: undefined })
+      JsonResponse.create({
+        response: <JsonResponse.ResponseData>{
+          action: undefined,
+          params: undefined,
+          raw_response: undefined
+        }
+      })
     );
     responseBlock = testUtils.findRenderedDOMComponentWithClass(
       root,
@@ -52,21 +58,30 @@ describe("JsonResponseComponent", () => {
   it("should show non-empty json response after updating props", () => {
     var action = helpers.fetchResource(0).actions[0];
     // Update the state to have a non-empty response.
-    var json = "{ test: { again: 2 } }";
+    var raw_response = { test: { again: 2 } };
     testUtils.findRenderedComponentWithType(
       root,
       JsonResponse.create
-    ).setProps({ response: { data: json, action: action } });
+    ).setProps({
+        response: {
+          action: action,
+          params: { },
+          raw_response: raw_response
+        }
+      });
 
     // We should stringify a non-empty string.
-    sinon.assert.calledWith(stringifySpy, json);
+    sinon.assert.calledWith(stringifySpy, raw_response);
 
     // Verify the DOM for the json response block.
     var node = responseBlock.getDOMNode();
     assert.equal(node.nodeName, "PRE");
     assert.equal(node.childNodes.length, 1);
     assert.equal(node.childNodes[0].nodeName, "CODE");
-    assert.equal(node.childNodes[0].textContent, "\"" + json + "\"");
+    assert.equal(
+      node.childNodes[0].textContent,
+      JSON.stringify(raw_response, undefined, 2)
+    );
 
     // Verify the DOM for the response header info.
     var responseInfo = testUtils.findRenderedDOMComponentWithClass(

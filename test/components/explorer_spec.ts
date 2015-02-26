@@ -155,11 +155,18 @@ describe("ExplorerComponent", () => {
     var initial_action: AsanaJson.Action;
     var initial_resource: AsanaJson.Resource;
 
+    var raw_response_promise: Promise<any>;
+    var json_response: string;
+
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(true);
 
       initial_resource = helpers.fetchResource(0);
       initial_action = initial_resource.actions[0];
+
+      var raw_response = { data: "{ a: 2 }" };
+      raw_response_promise = Promise.resolve(raw_response);
+      json_response = JSON.stringify(raw_response, undefined, 2);
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
@@ -199,18 +206,18 @@ describe("ExplorerComponent", () => {
 
     it("should make a GET request on submit", (cb) => {
       // Stub get request to return json.
-      var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client.dispatcher, "get").returns(json_promise);
+      var getStub = sand.stub(client.dispatcher, "get")
+        .returns(raw_response_promise);
 
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
-      json_promise.then(function () {
+      raw_response_promise.then(function () {
         sinon.assert.calledWith(getStub, initial_action.path);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,
           "json-response-block"
-        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+        ).getDOMNode().textContent, json_response);
 
         cb();
       }).catch(function (err) {
@@ -223,9 +230,8 @@ describe("ExplorerComponent", () => {
       var other_action = other_resource.actions[0];
 
       // Stub get request to return json.
-      var json_promise = Promise.resolve({data: "{ a: 2 }"});
       var getStub = sand.stub(client.dispatcher, "get")
-        .withArgs(other_action.path).returns(json_promise);
+        .withArgs(other_action.path).returns(raw_response_promise);
 
       // We change the resource, which in-turn will change the route.
       testUtils.Simulate.change(selectResource, {
@@ -234,13 +240,13 @@ describe("ExplorerComponent", () => {
 
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
-      json_promise.then(function () {
+      raw_response_promise.then(function () {
         sinon.assert.calledWith(getStub, other_action.path);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,
           "json-response-block"
-        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+        ).getDOMNode().textContent, json_response);
 
         cb();
       }).catch(function (err) {
@@ -252,9 +258,8 @@ describe("ExplorerComponent", () => {
       var other_action = initial_resource.actions[1];
 
       // Stub get request to return json.
-      var json_promise = Promise.resolve({data: "{ a: 2 }"});
       var getStub = sand.stub(client.dispatcher, "get")
-        .withArgs(other_action.path).returns(json_promise);
+        .withArgs(other_action.path).returns(raw_response_promise);
 
       testUtils.Simulate.change(selectRoute, {
         target: { value: other_action.name }
@@ -262,13 +267,13 @@ describe("ExplorerComponent", () => {
 
       // Clicking the link should send request with the correct route.
       testUtils.Simulate.submit(routeEntry.getDOMNode());
-      json_promise.then(function () {
+      raw_response_promise.then(function () {
         sinon.assert.calledWith(getStub, other_action.path);
 
         assert.equal(testUtils.findRenderedDOMComponentWithClass(
           root,
           "json-response-block"
-        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+        ).getDOMNode().textContent, json_response);
 
         cb();
       }).catch(function (err) {

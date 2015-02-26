@@ -23,10 +23,11 @@ export interface Props {
 }
 
 export interface State {
-  client?: Asana.Client;
-  resource?: AsanaJson.Resource;
   action?: AsanaJson.Action;
-  response?: any;
+  client?: Asana.Client;
+  params?: any;
+  resource?: AsanaJson.Resource;
+  response?: JsonResponse.ResponseData;
 }
 
 /**
@@ -64,9 +65,14 @@ export class Component extends TypedReact.Component<Props, State> {
       resource.actions[0];
 
     return {
+      action: action,
       client: this.initializeClient(),
+      params: { },
       resource: resource,
-      action: action
+      response: <JsonResponse.ResponseData>{
+        action: undefined,
+        raw_response: undefined
+      }
     };
   }
 
@@ -117,15 +123,17 @@ export class Component extends TypedReact.Component<Props, State> {
   onSubmitRequest(event: React.FormEvent) {
     event.preventDefault();
 
-    var route = this.state.action.path;
     var dispatcher = this.state.client.dispatcher;
+    var params = this.state.params;
+    var route = this.state.action.path;
 
-    dispatcher.get(route, null, null).then(function(response: any) {
-      // Add the corresponding action to the response for later use.
-      response.action = this.state.action;
-
+    dispatcher.get(route, params, null).then(function(response: any) {
       this.setState({
-        response: response
+        response: <JsonResponse.ResponseData>{
+          action: this.state.action,
+          params: params,
+          raw_response: response
+        }
       });
 
       // Store possibly-updated credentials for later use.
