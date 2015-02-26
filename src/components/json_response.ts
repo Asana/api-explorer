@@ -1,9 +1,10 @@
 /// <reference path="../asana_json.d.ts" />
 import AsanaJson = require("asana-json");
 import build = require("./build");
-import react = require("react");
+import react = require("react/addons");
 import TypedReact = require("typed-react");
 
+var cx = react.addons.classSet;
 var r = react.DOM;
 
 /**
@@ -12,6 +13,7 @@ var r = react.DOM;
  */
 export interface ResponseData {
   action: AsanaJson.Action;
+  error?: any;
   params: any;
   raw_response: any;
 }
@@ -42,7 +44,10 @@ export class Component extends TypedReact.Component<Props, {}> {
     return r.div({ },
       this._renderResponseHeaderInfo(),
       r.pre({
-        className: "json-response-block",
+        className: cx({
+            "json-response-block": true,
+            "json-error": this.props.response.error !== undefined
+          }),
         children: [
           r.code({
             className: "json"

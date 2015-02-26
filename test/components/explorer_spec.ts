@@ -197,11 +197,38 @@ describe("ExplorerComponent", () => {
       ).length, 0);
     });
 
-    it("should display the current route URL", () => {
-      assert.include(
-        (<HTMLInputElement>selectRoute.getDOMNode()).value,
-        initial_action.name
-      );
+    it("should display the current route URL on submit", (cb) => {
+      sand.stub(client.dispatcher, "get").returns(raw_response_promise);
+      testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+      raw_response_promise.then(function () {
+        assert.include(
+          testUtils.findRenderedDOMComponentWithClass(
+            root, "json-response-info").getDOMNode().textContent,
+          initial_action.path
+        );
+
+        cb();
+      }).catch(function (err) {
+        cb(err);
+      });
+    });
+
+    it("should display the current route method on submit", (cb) => {
+      sand.stub(client.dispatcher, "get").returns(raw_response_promise);
+      testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+      raw_response_promise.then(function () {
+        assert.include(
+          testUtils.findRenderedDOMComponentWithClass(
+            root, "json-response-info").getDOMNode().textContent,
+          initial_action.method
+        );
+
+        cb();
+      }).catch(function (err) {
+        cb(err);
+      });
     });
 
     it("should make a GET request on submit", (cb) => {

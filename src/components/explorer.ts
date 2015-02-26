@@ -135,7 +135,16 @@ export class Component extends TypedReact.Component<Props, State> {
           raw_response: response
         }
       });
-
+    }.bind(this)).error(function(e: any) {
+      this.setState({
+        response: <JsonResponse.ResponseData>{
+          action: this.state.action,
+          error: e,
+          params: params,
+          raw_response: e.value
+        }
+      });
+    }.bind(this)).finally(function() {
       // Store possibly-updated credentials for later use.
       CredentialsManager.storeFromClient(this.state.client);
     }.bind(this));
