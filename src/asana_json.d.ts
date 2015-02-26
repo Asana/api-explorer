@@ -4,14 +4,6 @@
 
 declare module "asana-json" {
 
-  interface Parameter {
-    name: string;
-    type: string;
-    example_values: string[];
-    comment: string;
-    required: boolean;
-  }
-
   interface Action {
     name: string;
     method: string;
@@ -20,11 +12,27 @@ declare module "asana-json" {
     params?: Parameter[];
   }
 
+  interface Parameter {
+    name: string;
+    type: string;
+    example_values: string[];
+    comment: string;
+    required: boolean;
+  }
+
+  interface Property {
+    name: string;
+    comment: string;
+    type: string;
+    example_values: string[];
+    values?: any[];
+  }
+
   interface Resource {
     name: string;
     comment: string;
     templates: any[];
-    properties: any[];
+    properties: Property[];
     actions: Action[];
   }
 

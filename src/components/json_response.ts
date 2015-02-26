@@ -3,7 +3,6 @@ import AsanaJson = require("asana-json");
 import build = require("./build");
 import react = require("react/addons");
 import TypedReact = require("typed-react");
-import url = require("url");
 
 var cx = react.addons.classSet;
 var r = react.DOM;
@@ -15,8 +14,8 @@ var r = react.DOM;
 export interface ResponseData {
   action: AsanaJson.Action;
   error?: any;
-  params: any;
   raw_response: any;
+  route: string;
 }
 
 export interface Props {
@@ -27,20 +26,13 @@ export interface Props {
  * The JSON response code block.
  */
 export class Component extends TypedReact.Component<Props, {}> {
-  private _getRequestUrl(): string {
-    var parsed = url.parse(this.props.response.action.path);
-    parsed.query = this.props.response.params;
-
-    return url.format(parsed);
-  }
-
   private _renderResponseHeaderInfo() {
     var action = this.props.response.action;
 
     return action === undefined ? null :
       r.div({
         className: "json-response-info"
-      }, action.method + " " + this._getRequestUrl());
+      }, action.method + " " + this.props.response.route);
   }
 
   render() {

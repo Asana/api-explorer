@@ -28,8 +28,8 @@ describe("JsonResponseComponent", () => {
       JsonResponse.create({
         response: <JsonResponse.ResponseData>{
           action: undefined,
-          params: undefined,
-          raw_response: undefined
+          raw_response: undefined,
+          route: undefined
         }
       })
     );
@@ -66,8 +66,8 @@ describe("JsonResponseComponent", () => {
         response: {
           action: action,
           error: "something",
-          params: { },
-          raw_response: raw_response
+          raw_response: raw_response,
+          route: action.path
         }
       });
 
@@ -107,7 +107,8 @@ describe("JsonResponseComponent", () => {
         response: {
           action: action,
           params: { },
-          raw_response: raw_response
+          raw_response: raw_response,
+          route: action.path
         }
       });
 

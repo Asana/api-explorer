@@ -181,7 +181,7 @@ gulp.task('server', ['web-setup'], function() {
  * Watch for changes for live reloading.
  */
 gulp.task('watch', function() {
-  gulp.watch(globs.ts(), ['browser-min', _.browserSync.reload]);
+  gulp.watch(globs.ts(), ['browser', _.browserSync.reload]);
   gulp.watch(globs.pubs(), ['public-files', _.browserSync.reload]);
 });
 

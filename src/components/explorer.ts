@@ -2,19 +2,27 @@
 /// <reference path="../asana_json.d.ts" />
 import Asana = require("asana");
 import AsanaJson = require("asana-json");
-import react = require("react");
+import react = require("react/addons");
 import TypedReact = require("typed-react");
+import url = require("url");
+import _ = require("lodash");
 
 import build = require("./build");
 import constants = require("../constants");
 import CredentialsManager = require("../credentials_manager");
 import JsonResponse = require("./json_response");
+import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
 import RouteEntry = require("./route_entry");
 
 import Resources = require("../resources");
 
 var r = react.DOM;
+
+interface ParamData {
+  expand_fields: string[];
+  include_fields: string[];
+}
 
 export interface Props {
   initialClient?: Asana.Client;
@@ -25,7 +33,7 @@ export interface Props {
 export interface State {
   action?: AsanaJson.Action;
   client?: Asana.Client;
-  params?: any;
+  params?: ParamData;
   resource?: AsanaJson.Resource;
   response?: JsonResponse.ResponseData;
 }
@@ -67,10 +75,14 @@ export class Component extends TypedReact.Component<Props, State> {
     return {
       action: action,
       client: this.initializeClient(),
-      params: { },
+      params: <ParamData>{
+        expand_fields: [],
+        include_fields: []
+      },
       resource: resource,
       response: <JsonResponse.ResponseData>{
         action: undefined,
+        route: undefined,
         raw_response: undefined
       }
     };
@@ -90,19 +102,52 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   /**
+   * Uses the state to return the properly-formatted request parameters.
+   */
+  requestParams() {
+    var params = { };
+
+    if (this.state.params.expand_fields.length > 0) {
+      params = _.extend(params, {
+        opt_expand: this.state.params.expand_fields.join()
+      });
+    }
+    if (this.state.params.include_fields.length > 0) {
+      params = _.extend(params, {
+        opt_fields: this.state.params.include_fields.join()
+      });
+    }
+
+    return params;
+  }
+
+  /**
+   * Uses the state to return the URL for the current API request.
+   * @returns {string}
+   */
+  requestUrl(): string {
+    var parsed = url.parse(this.state.action.path);
+    parsed.query = this.requestParams();
+
+    return url.format(parsed).replace(/%2C/g, ",");
+  }
+  /**
    * Updates the resource state following an onChange event.
    */
   onChangeResourceState(event: React.FormEvent) {
     var resource = Resources.resourceFromResourceName(
       (<HTMLSelectElement>event.target).value);
+    var has_changed = resource !== this.state.resource;
 
-    // If the resource has changed, also update the action.
-    var action = (resource !== this.state.resource) ?
-      resource.actions[0] : this.state.action;
+    // If the resource has changed, also reset relevant parts of state.
+    var action = !has_changed ? this.state.action : resource.actions[0];
+    var params = !has_changed ?
+      this.state.params : <ParamData>{ expand_fields: [], include_fields: [] };
 
     this.setState({
-      resource: resource,
-      action: action
+      action: action,
+      params: params,
+      resource: resource
     });
   }
 
@@ -117,6 +162,28 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   /**
+   * Returns a function to handle the onChange event for a given param_type.
+   * @param param_type
+   * @returns {function(React.FormEvent): void}
+   */
+  onChangePropertyChecked(param_type: string) {
+    return (event: React.FormEvent) => {
+      var target = <HTMLInputElement>event.target;
+      var params: any = this.state.params;
+
+      if (target.checked) {
+        params[param_type].push(target.value);
+      } else {
+        params[param_type] = _.without(params[param_type], target.value);
+      }
+
+      this.setState({
+        params: params
+      });
+    };
+  }
+
+  /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
    */
@@ -124,15 +191,15 @@ export class Component extends TypedReact.Component<Props, State> {
     event.preventDefault();
 
     var dispatcher = this.state.client.dispatcher;
-    var params = this.state.params;
     var route = this.state.action.path;
+    var params = this.requestParams();
 
     dispatcher.get(route, params, null).then(function(response: any) {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
-          params: params,
-          raw_response: response
+          raw_response: response,
+          route: this.requestUrl()
         }
       });
     }.bind(this)).error(function(e: any) {
@@ -140,8 +207,8 @@ export class Component extends TypedReact.Component<Props, State> {
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           error: e,
-          params: params,
-          raw_response: e.value
+          raw_response: e.value,
+          route: this.requestUrl()
         }
       });
     }.bind(this)).finally(function() {
@@ -171,6 +238,22 @@ export class Component extends TypedReact.Component<Props, State> {
             onFormSubmit: this.onSubmitRequest,
             onActionChange: this.onChangeActionState
           }),
+          r.div( { },
+            PropertyEntry.create({
+              text: "Include Fields: ",
+              properties: this.state.resource.properties,
+              useProperty: property =>
+                _.contains(this.state.params.include_fields, property),
+              isPropertyChecked: this.onChangePropertyChecked("include_fields")
+            }),
+            PropertyEntry.create({
+              text: "Expand Fields: ",
+              properties: this.state.resource.properties,
+              useProperty: property =>
+                _.contains(this.state.params.expand_fields, property),
+              isPropertyChecked: this.onChangePropertyChecked("expand_fields")
+            })
+          ),
           JsonResponse.create({
             response: this.state.response
           })

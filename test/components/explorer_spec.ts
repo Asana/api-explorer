@@ -87,7 +87,6 @@ describe("ExplorerComponent", () => {
   describe("when unauthorized", () => {
     var root: Explorer.Component;
     var node: Node;
-    var children: NodeList;
 
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(false);
@@ -98,7 +97,6 @@ describe("ExplorerComponent", () => {
         })
       );
       node = root.getDOMNode();
-      children = node.childNodes;
     });
 
     it("should not contain the api explorer", () => {
@@ -155,21 +153,11 @@ describe("ExplorerComponent", () => {
     var initial_action: AsanaJson.Action;
     var initial_resource: AsanaJson.Resource;
 
-    var raw_response_promise: Promise<any>;
-    var json_response: string;
-    var getStub: SinonStub;
-
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(true);
 
       initial_resource = helpers.fetchResource(0);
       initial_action = initial_resource.actions[0];
-
-      var raw_response = { data: "{ a: 2 }" };
-      json_response = JSON.stringify(raw_response, undefined, 2);
-      getStub = sand.stub(client.dispatcher, "get", () => {
-        return raw_response_promise = Promise.resolve(raw_response);
-      });
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
@@ -200,100 +188,163 @@ describe("ExplorerComponent", () => {
       ).length, 0);
     });
 
-    it("should display the current route URL on submit", (cb) => {
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
+    describe("on submit", () => {
+      var raw_response_promise: Promise<any>;
+      var json_response: string;
+      var getStub: SinonStub;
 
-      raw_response_promise.then(function () {
-        assert.include(
-          testUtils.findRenderedDOMComponentWithClass(
-            root, "json-response-info").getDOMNode().textContent,
-          initial_action.path
-        );
-
-        cb();
-      }).catch(function (err) {
-        cb(err);
-      });
-    });
-
-    it("should display the current route method on submit", (cb) => {
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
-
-      raw_response_promise.then(function () {
-        assert.include(
-          testUtils.findRenderedDOMComponentWithClass(
-            root, "json-response-info").getDOMNode().textContent,
-          initial_action.method
-        );
-
-        cb();
-      }).catch(function (err) {
-        cb(err);
-      });
-    });
-
-    it("should make a GET request on submit", (cb) => {
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
-
-      raw_response_promise.then(function () {
-        sinon.assert.calledWith(getStub, initial_action.path);
-
-        assert.equal(testUtils.findRenderedDOMComponentWithClass(
-          root,
-          "json-response-block"
-        ).getDOMNode().textContent, json_response);
-
-        cb();
-      }).catch(function (err) {
-        cb(err);
-      });
-    });
-
-    it("should make the correct GET request after changing resource", (cb) => {
-      var other_resource = helpers.fetchResource(1);
-      var other_action = other_resource.actions[0];
-
-      // We change the resource, which in-turn will change the route.
-      testUtils.Simulate.change(selectResource, {
-        target: { value: Resources.resourceNameFromResource(other_resource) }
+      beforeEach(() => {
+        var raw_response = {data: "{ a: 2 }"};
+        json_response = JSON.stringify(raw_response, undefined, 2);
+        getStub = sand.stub(client.dispatcher, "get", () => {
+          return raw_response_promise = Promise.resolve(raw_response);
+        });
       });
 
-      // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
-      raw_response_promise.then(function () {
-        sinon.assert.calledWith(getStub, other_action.path);
+      it("should display the current route URL", (cb) => {
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
 
-        assert.equal(testUtils.findRenderedDOMComponentWithClass(
-          root,
-          "json-response-block"
-        ).getDOMNode().textContent, json_response);
+        raw_response_promise.then(function () {
+          assert.include(
+            testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info").getDOMNode().textContent,
+            initial_action.path
+          );
 
-        cb();
-      }).catch(function (err) {
-        cb(err);
-      });
-    });
-
-    it("should make the correct GET request after changing route", (cb) => {
-      var other_action = initial_resource.actions[1];
-
-      testUtils.Simulate.change(selectRoute, {
-        target: { value: other_action.name }
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
       });
 
-      // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
-      raw_response_promise.then(function () {
-        sinon.assert.calledWith(getStub, other_action.path);
+      it("should display the current route URL with parameters", (cb) => {
+        root.state.params = {
+          expand_fields: ["test"],
+          include_fields: ["other", "this"]
+        };
 
-        assert.equal(testUtils.findRenderedDOMComponentWithClass(
-          root,
-          "json-response-block"
-        ).getDOMNode().textContent, json_response);
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
 
-        cb();
-      }).catch(function (err) {
-        cb(err);
+        raw_response_promise.then(function () {
+          assert.include(
+            testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info").getDOMNode().textContent,
+            initial_action.path + "?opt_expand=test&opt_fields=other,this"
+          );
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should display the current route method", (cb) => {
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+        raw_response_promise.then(function () {
+          assert.include(
+            testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info").getDOMNode().textContent,
+            initial_action.method
+          );
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make a GET request", (cb) => {
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(getStub, initial_action.path);
+
+          assert.equal(testUtils.findRenderedDOMComponentWithClass(
+            root,
+            "json-response-block"
+          ).getDOMNode().textContent, json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make a GET request with parameters", (cb) => {
+        root.state.params = {
+          expand_fields: ["test"],
+          include_fields: ["other", "this"]
+        };
+
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(
+            getStub,
+            initial_action.path,
+            { opt_expand: "test", opt_fields: "other,this" }
+          );
+
+          assert.equal(testUtils.findRenderedDOMComponentWithClass(
+            root,
+            "json-response-block"
+          ).getDOMNode().textContent, json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make the correct request after changing resource", (cb) => {
+        var other_resource = helpers.fetchResource(1);
+        var other_action = other_resource.actions[0];
+
+        // We change the resource, which in-turn will change the route.
+        testUtils.Simulate.change(selectResource, {
+          target: {value: Resources.resourceNameFromResource(other_resource)}
+        });
+
+        // Clicking the link should send request with the correct route.
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(getStub, other_action.path);
+
+          assert.equal(testUtils.findRenderedDOMComponentWithClass(
+            root,
+            "json-response-block"
+          ).getDOMNode().textContent, json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make the correct request after changing route", (cb) => {
+        var other_action = initial_resource.actions[1];
+
+        testUtils.Simulate.change(selectRoute, {
+          target: {value: other_action.name}
+        });
+
+        // Clicking the link should send request with the correct route.
+        testUtils.Simulate.submit(routeEntry.getDOMNode());
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(getStub, other_action.path);
+
+          assert.equal(testUtils.findRenderedDOMComponentWithClass(
+            root,
+            "json-response-block"
+          ).getDOMNode().textContent, json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
       });
     });
   });
