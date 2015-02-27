@@ -220,7 +220,9 @@ describe("ExplorerComponent", () => {
       it("should display the current route URL with parameters", (cb) => {
         root.state.params = {
           expand_fields: ["test"],
-          include_fields: ["other", "this"]
+          include_fields: ["other", "this"],
+          required_params: {},
+          optional_params: {}
         };
 
         testUtils.Simulate.submit(routeEntry.getDOMNode());
@@ -274,7 +276,9 @@ describe("ExplorerComponent", () => {
       it("should make a GET request with parameters", (cb) => {
         root.state.params = {
           expand_fields: ["test"],
-          include_fields: ["other", "this"]
+          include_fields: ["other", "this"],
+          required_params: {},
+          optional_params: {}
         };
 
         testUtils.Simulate.submit(routeEntry.getDOMNode());

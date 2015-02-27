@@ -34,6 +34,9 @@ export function resourceNameFromResource(resource: AsanaJson.Resource): string {
 /**
  * Return the action for a given resource and path string.
  *
+ * @param {AsanaJson.Resource} resource
+ * @param {string} path
+ * @returns {AsanaJson.Action}
  */
 export function actionFromResourcePath(resource: AsanaJson.Resource, path: string): AsanaJson.Action {
   return resource.actions.filter(
@@ -43,8 +46,12 @@ export function actionFromResourcePath(resource: AsanaJson.Resource, path: strin
 
 /**
  * Returns the action by its resource and name.
+ *
+ * @param {AsanaJson.Resource} resource
+ * @param {string} action_name
+ * @returns {AsanaJson.Action}
  */
-export function actionFromName(resource: AsanaJson.Resource, action_name: string): AsanaJson.Action {
+export function actionFromResourceAndName(resource: AsanaJson.Resource, action_name: string): AsanaJson.Action {
   return resource.actions.filter(
     action => { return action_name === action.name; }
   )[0];

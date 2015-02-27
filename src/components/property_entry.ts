@@ -15,12 +15,12 @@ export interface Props {
 }
 
 /**
- * The resource entry area
+ * The property toggling area
  */
 export class Component extends TypedReact.Component<Props, {}> {
   unique_id: string;
 
-  private _renderPropertyCheckbox(property: any) {
+  private _renderPropertyCheckbox(property: AsanaJson.Property) {
     var checkbox_id = this.unique_id + "-checkbox-" + property.name;
 
     return r.span({ key: property.name },

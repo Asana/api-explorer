@@ -5,12 +5,14 @@ import AsanaJson = require("asana-json");
 import react = require("react/addons");
 import TypedReact = require("typed-react");
 import url = require("url");
+import util = require("util");
 import _ = require("lodash");
 
 import build = require("./build");
 import constants = require("../constants");
 import CredentialsManager = require("../credentials_manager");
 import JsonResponse = require("./json_response");
+import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
 import RouteEntry = require("./route_entry");
@@ -18,10 +20,13 @@ import RouteEntry = require("./route_entry");
 import Resources = require("../resources");
 
 var r = react.DOM;
+var update = react.addons.update;
 
 interface ParamData {
   expand_fields: string[];
   include_fields: string[];
+  required_params: any;
+  optional_params: any;
 }
 
 export interface Props {
@@ -61,6 +66,15 @@ export class Component extends TypedReact.Component<Props, State> {
     return client;
   }
 
+  emptyParams(): ParamData {
+    return {
+      expand_fields: [],
+      include_fields: [],
+      required_params: {},
+      optional_params: {}
+    };
+  }
+
   getInitialState() {
     // Fetch the resource JSON given in the props, if any.
     var resource =
@@ -75,10 +89,7 @@ export class Component extends TypedReact.Component<Props, State> {
     return {
       action: action,
       client: this.initializeClient(),
-      params: <ParamData>{
-        expand_fields: [],
-        include_fields: []
-      },
+      params: this.emptyParams(),
       resource: resource,
       response: <JsonResponse.ResponseData>{
         action: undefined,
@@ -104,7 +115,7 @@ export class Component extends TypedReact.Component<Props, State> {
   /**
    * Uses the state to return the properly-formatted request parameters.
    */
-  requestParams() {
+  requestParameters() {
     var params = { };
 
     if (this.state.params.expand_fields.length > 0) {
@@ -117,20 +128,39 @@ export class Component extends TypedReact.Component<Props, State> {
         opt_fields: this.state.params.include_fields.join()
       });
     }
+    params = _.extend(params, this.state.params.optional_params);
 
     return params;
   }
 
   /**
-   * Uses the state to return the URL for the current API request.
+   * Uses the state to return the URL for the current request.
    * @returns {string}
    */
   requestUrl(): string {
-    var parsed = url.parse(this.state.action.path);
-    parsed.query = this.requestParams();
+    // Assumes we have at-most one required parameter to put in the URL.
+    var required_params = this.state.params.required_params;
 
+    return !_.isEmpty(required_params) ?
+      util.format(this.state.action.path, _.values(required_params)[0]) :
+      this.state.action.path;
+  }
+
+  /**
+   * Uses the state to return the URL with parameters for the current request.
+   * @returns {string}
+   */
+  requestUrlWithOptionalParams(): string {
+    var base_url = this.requestUrl();
+
+    // Add the optional parameters to the URL.
+    var parsed = url.parse(base_url);
+    parsed.query = this.requestParameters();
+
+    // Format the URL and use commas for readability.
     return url.format(parsed).replace(/%2C/g, ",");
   }
+
   /**
    * Updates the resource state following an onChange event.
    */
@@ -141,8 +171,7 @@ export class Component extends TypedReact.Component<Props, State> {
 
     // If the resource has changed, also reset relevant parts of state.
     var action = !has_changed ? this.state.action : resource.actions[0];
-    var params = !has_changed ?
-      this.state.params : <ParamData>{ expand_fields: [], include_fields: [] };
+    var params = !has_changed ? this.state.params : this.emptyParams();
 
     this.setState({
       action: action,
@@ -155,9 +184,16 @@ export class Component extends TypedReact.Component<Props, State> {
    * Updates the action state following an onChange event.
    */
   onChangeActionState(event: React.FormEvent) {
-    var action_name = (<HTMLSelectElement>event.target).value;
+    var action = Resources.actionFromResourceAndName(
+      this.state.resource, (<HTMLSelectElement>event.target).value);
+    var has_changed = action !== this.state.action;
+
+    // If the action has changed, also reset relevant parts of state.
+    var params = !has_changed ? this.state.params : this.emptyParams();
+
     this.setState({
-      action: Resources.actionFromName(this.state.resource, action_name)
+      action: action,
+      params: params
     });
   }
 
@@ -171,6 +207,7 @@ export class Component extends TypedReact.Component<Props, State> {
       var target = <HTMLInputElement>event.target;
       var params: any = this.state.params;
 
+      // TODO: Add tests for adding vs removing checks.
       if (target.checked) {
         params[param_type].push(target.value);
       } else {
@@ -184,6 +221,27 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 
   /**
+   * Updates the parameter state following an onChange event.
+   */
+  onChangeParameterState(event: React.FormEvent) {
+    var target = <HTMLInputElement>event.target;
+
+    var is_required = target.classList.contains("required-param");
+    var parameter = ParameterEntry.parameterFromInputClassName(
+      target.className.replace("required-param", "")
+    );
+
+    // TODO: Add tests for optional vs required parameters.
+    this.setState(update(this.state, <any>{
+      params: { $merge:
+        _.object([is_required ? "required_params" : "optional_params"],
+          [_.object([parameter], [target.value])]
+        )
+      }
+    }));
+  }
+
+  /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
    */
@@ -191,15 +249,15 @@ export class Component extends TypedReact.Component<Props, State> {
     event.preventDefault();
 
     var dispatcher = this.state.client.dispatcher;
-    var route = this.state.action.path;
-    var params = this.requestParams();
+    var route = this.requestUrl();
+    var params = this.requestParameters();
 
     dispatcher.get(route, params, null).then(function(response: any) {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           raw_response: response,
-          route: this.requestUrl()
+          route: this.requestUrlWithOptionalParams()
         }
       });
     }.bind(this)).error(function(e: any) {
@@ -208,7 +266,7 @@ export class Component extends TypedReact.Component<Props, State> {
           action: this.state.action,
           error: e,
           raw_response: e.value,
-          route: this.requestUrl()
+          route: this.requestUrlWithOptionalParams()
         }
       });
     }.bind(this)).finally(function() {
@@ -252,6 +310,11 @@ export class Component extends TypedReact.Component<Props, State> {
               useProperty: property =>
                 _.contains(this.state.params.expand_fields, property),
               isPropertyChecked: this.onChangePropertyChecked("expand_fields")
+            }),
+            ParameterEntry.create({
+              text: "Attribute parameters: ",
+              parameters: this.state.action.params,
+              onParameterChange: this.onChangeParameterState
             })
           ),
           JsonResponse.create({
