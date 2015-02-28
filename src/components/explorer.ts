@@ -227,9 +227,7 @@ export class Component extends TypedReact.Component<Props, State> {
     var target = <HTMLInputElement>event.target;
 
     var is_required = target.classList.contains("required-param");
-    var parameter = ParameterEntry.parameterFromInputClassName(
-      target.className.replace("required-param", "")
-    );
+    var parameter = ParameterEntry.parameterFromInputId(target.id);
 
     // TODO: Add tests for optional vs required parameters.
     this.setState(update(this.state, <any>{

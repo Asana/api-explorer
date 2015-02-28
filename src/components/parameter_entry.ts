@@ -15,14 +15,14 @@ export interface Props {
 }
 
 /**
- * Given the className from an input rendered from _renderParameterInput,
+ * Given the id from an input rendered from _renderParameterInput,
  * extract the parameter name and return it.
  *
- * @param className
+ * @param idName
  * @returns {string}
  */
-export function parameterFromInputClassName(className: string): string {
-  return _.last(className.split("-"));
+export function parameterFromInputId(idName: string): string {
+  return _.last(idName.split("_"));
 }
 /**
  * The parameter input area
@@ -31,19 +31,15 @@ export class Component extends TypedReact.Component<Props, {}> {
   unique_id: string;
 
   private _renderParameterInput(parameter: AsanaJson.Parameter) {
-    var input_id = this.unique_id + "-input-" + parameter.name;
-
     return r.span({ key: parameter.name },
       r.input({
         type: "text",
+        id: this.unique_id + "_input_" + parameter.name,
         className: cx({
-            input_id: true,
-            "required-param": parameter.required
+          "parameter-input": true,
+          "required-param": parameter.required
         }),
         onChange: this.props.onParameterChange
-      }),
-      r.label({
-        htmlFor: input_id
       }, parameter.name)
     );
   }
@@ -52,11 +48,11 @@ export class Component extends TypedReact.Component<Props, {}> {
     this.unique_id = _.uniqueId("parameter");
 
     return r.div({
-        className: this.unique_id + "-entry",
+        className: "parameter-entry",
         children: [
           this.props.text,
           r.span({
-            className: this.unique_id + "-inputs"
+            className: "parameter-inputs"
           }, this.props.parameters === undefined ? "" :
             this.props.parameters.map(this._renderParameterInput))
         ]

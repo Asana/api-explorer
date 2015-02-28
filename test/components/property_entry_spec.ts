@@ -7,6 +7,7 @@ import AsanaJson = require("asana-json");
 import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
+import _ = require("lodash");
 
 import PropertyEntry = require("../../src/components/property_entry");
 import helpers = require("../helpers");
@@ -18,20 +19,12 @@ describe("PropertyEntryComponent", () => {
   var sand: SinonSandbox;
 
   var properties: AsanaJson.Property[];
-  var unique_id: string;
 
   var isPropertyCheckedStub: SinonStub;
   var usePropertyStub: SinonStub;
 
   var root: PropertyEntry.Component;
-  var checkboxesSpan: React.HTMLComponent;
-
-  function findCheckboxForProperty(property: AsanaJson.Property): HTMLInputElement {
-    return <HTMLInputElement>testUtils.findRenderedDOMComponentWithClass(
-      checkboxesSpan,
-      unique_id + "-checkbox-" + property.name
-    ).getDOMNode();
-  }
+  var checkboxes: React.HTMLComponent[];
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
@@ -49,10 +42,9 @@ describe("PropertyEntryComponent", () => {
         useProperty: usePropertyStub
       })
     );
-    unique_id = root.unique_id;
-    checkboxesSpan = testUtils.findRenderedDOMComponentWithClass(
+    checkboxes = testUtils.scryRenderedDOMComponentsWithClass(
       root,
-      unique_id + "-checkboxes"
+      "property-checkbox"
     );
   });
 
@@ -61,11 +53,14 @@ describe("PropertyEntryComponent", () => {
   });
 
   it("should contain a checkbox for each property", () => {
-    var children = checkboxesSpan.getDOMNode().childNodes;
+    var property_names = _.pluck(properties, "name");
 
-    assert.equal(children.length, properties.length);
-    properties.forEach(property => {
-      assert.equal(findCheckboxForProperty(property).value, property.name);
+    assert.equal(checkboxes.length, properties.length);
+    checkboxes.forEach(checkbox => {
+      assert.include(
+        property_names,
+        (<HTMLInputElement>checkbox.getDOMNode()).value
+      );
     });
   });
 
@@ -75,12 +70,14 @@ describe("PropertyEntryComponent", () => {
     });
   });
 
-  it("should trigger onChange property on check action", () => {
-    var checkbox = findCheckboxForProperty(properties[0]);
+  it("should trigger onChange property on each check action", () => {
+    checkboxes.forEach(checkbox => {
+      var checkbox_node = <HTMLInputElement>checkbox.getDOMNode();
 
-    testUtils.Simulate.change(checkbox, {
-      checked: !checkbox.checked
+      testUtils.Simulate.change(checkbox, {
+        checked: !checkbox_node.checked
+      });
     });
-    sinon.assert.called(isPropertyCheckedStub);
+    sinon.assert.callCount(isPropertyCheckedStub, properties.length);
   });
 });

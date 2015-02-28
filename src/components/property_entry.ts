@@ -21,18 +21,14 @@ export class Component extends TypedReact.Component<Props, {}> {
   unique_id: string;
 
   private _renderPropertyCheckbox(property: AsanaJson.Property) {
-    var checkbox_id = this.unique_id + "-checkbox-" + property.name;
-
     return r.span({ key: property.name },
       r.input({
         type: "checkbox",
-        className: checkbox_id,
+        id: this.unique_id + "_checkbox_" + property.name,
+        className: "property-checkbox",
         checked: this.props.useProperty(property.name),
         onChange: this.props.isPropertyChecked,
         value: property.name
-      }),
-      r.label({
-        htmlFor: checkbox_id
       }, property.name)
     );
   }
@@ -41,11 +37,11 @@ export class Component extends TypedReact.Component<Props, {}> {
     this.unique_id = _.uniqueId("property");
 
     return r.div({
-        className: this.unique_id + "-entry",
+        className: "property-entry",
         children: [
           this.props.text,
           r.span({
-            className: this.unique_id + "-checkboxes"
+            className: "property-checkboxes"
           }, this.props.properties.map(this._renderPropertyCheckbox))
         ]
       }
