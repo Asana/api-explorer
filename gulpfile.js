@@ -250,10 +250,6 @@ gulp.task('scripts', ['tslint'], function() {
  * Run the tests
  */
 gulp.task('spec', ['scripts'], function(callback) {
-  var reporters = ['text', 'text-summary'];
-  if (!env.isTravis()) {
-    reporters.push('html');
-  }
   gulp.src(globs.scripts())
       .pipe(_.istanbul({
         includeUntested: true
@@ -261,8 +257,12 @@ gulp.task('spec', ['scripts'], function(callback) {
       .pipe(_.istanbul.hookRequire())
       .on('finish', function() {
         gulp.src(globs.tests())
-            .pipe(_.mocha())
-            .pipe(_.istanbul.writeReports())
+            .pipe(_.mocha({
+            reporter: env.isTravis() ? "spec" : "nyan"
+          }))
+            .pipe(_.istanbul.writeReports({
+            reporters: ["text-summary", "html"]
+          }))
             .on('end', callback);
       });
 });
