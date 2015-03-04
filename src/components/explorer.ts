@@ -44,37 +44,42 @@ export interface State {
 }
 
 /**
+ * If a client exists in props, use it. Otherwise, make a new one.
+ * Fetch OAuth information from localStorage, and put in the client.
+ *
+ * @returns {Asana.Client}
+ */
+function initializeClient(initialClient?: Asana.Client): Asana.Client {
+  var client = initialClient || Asana.Client.create({
+      clientId: constants.CLIENT_ID,
+      redirectUri: constants.REDIRECT_URI
+    });
+  client.useOauth({
+    credentials: CredentialsManager.getFromLocalStorage(),
+    flowType: Asana.auth.PopupFlow
+  });
+
+  return client;
+}
+
+/**
+ * Initializes a set of empty parameters.
+ *
+ * @returns {ParamData}
+ */
+export function emptyParams(): ParamData {
+  return {
+    expand_fields: [],
+    include_fields: [],
+    required_params: {},
+    optional_params: {}
+  };
+}
+
+/**
  * The main API Explorer component.
  */
 export class Component extends TypedReact.Component<Props, State> {
-  /**
-   * If a client exists in props, use it. Otherwise, make a new one.
-   * Fetch OAuth information from localStorage, and put in the client.
-   *
-   * @returns {Asana.Client}
-   */
-  initializeClient(): Asana.Client {
-    var client = this.props.initialClient || Asana.Client.create({
-        clientId: constants.CLIENT_ID,
-        redirectUri: constants.REDIRECT_URI
-      });
-    client.useOauth({
-      credentials: CredentialsManager.getFromLocalStorage(),
-      flowType: Asana.auth.PopupFlow
-    });
-
-    return client;
-  }
-
-  emptyParams(): ParamData {
-    return {
-      expand_fields: [],
-      include_fields: [],
-      required_params: {},
-      optional_params: {}
-    };
-  }
-
   getInitialState() {
     // Fetch the resource JSON given in the props, if any.
     var resource =
@@ -88,8 +93,8 @@ export class Component extends TypedReact.Component<Props, State> {
 
     return {
       action: action,
-      client: this.initializeClient(),
-      params: this.emptyParams(),
+      client: initializeClient(this.props.initialClient),
+      params: emptyParams(),
       resource: resource,
       response: <JsonResponse.ResponseData>{
         action: undefined,
@@ -171,7 +176,7 @@ export class Component extends TypedReact.Component<Props, State> {
 
     // If the resource has changed, also reset relevant parts of state.
     var action = !has_changed ? this.state.action : resource.actions[0];
-    var params = !has_changed ? this.state.params : this.emptyParams();
+    var params = !has_changed ? this.state.params : emptyParams();
 
     this.setState({
       action: action,
@@ -189,7 +194,7 @@ export class Component extends TypedReact.Component<Props, State> {
     var has_changed = action !== this.state.action;
 
     // If the action has changed, also reset relevant parts of state.
-    var params = !has_changed ? this.state.params : this.emptyParams();
+    var params = !has_changed ? this.state.params : emptyParams();
 
     this.setState({
       action: action,
@@ -207,7 +212,6 @@ export class Component extends TypedReact.Component<Props, State> {
       var target = <HTMLInputElement>event.target;
       var params: any = this.state.params;
 
-      // TODO: Add tests for adding vs removing checks.
       if (target.checked) {
         params[param_type].push(target.value);
       } else {
@@ -296,6 +300,7 @@ export class Component extends TypedReact.Component<Props, State> {
           }),
           r.div( { },
             PropertyEntry.create({
+              class_suffix: "include",
               text: "Include Fields: ",
               properties: this.state.resource.properties,
               useProperty: property =>
@@ -303,6 +308,7 @@ export class Component extends TypedReact.Component<Props, State> {
               isPropertyChecked: this.onChangePropertyChecked("include_fields")
             }),
             PropertyEntry.create({
+              class_suffix: "expand",
               text: "Expand Fields: ",
               properties: this.state.resource.properties,
               useProperty: property =>

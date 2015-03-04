@@ -36,6 +36,7 @@ describe("PropertyEntryComponent", () => {
 
     root = testUtils.renderIntoDocument<PropertyEntry.Component>(
       PropertyEntry.create({
+        class_suffix: "test",
         text: "this is a test",
         properties: properties,
         isPropertyChecked: isPropertyCheckedStub,
@@ -44,7 +45,7 @@ describe("PropertyEntryComponent", () => {
     );
     checkboxes = testUtils.scryRenderedDOMComponentsWithClass(
       root,
-      "property-checkbox"
+      "property-checkbox-test"
     );
   });
 

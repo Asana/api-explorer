@@ -28,13 +28,11 @@ export function parameterFromInputId(idName: string): string {
  * The parameter input area
  */
 export class Component extends TypedReact.Component<Props, {}> {
-  unique_id: string;
-
   private _renderParameterInput(parameter: AsanaJson.Parameter) {
     return r.span({ key: parameter.name },
       r.input({
         type: "text",
-        id: this.unique_id + "_input_" + parameter.name,
+        id: "parameter_input_" + parameter.name,
         className: cx({
           "parameter-input": true,
           "required-param": parameter.required
@@ -45,8 +43,6 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 
   render() {
-    this.unique_id = _.uniqueId("parameter");
-
     return r.div({
         className: "parameter-entry",
         children: [

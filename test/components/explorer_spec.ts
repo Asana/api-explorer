@@ -188,6 +188,171 @@ describe("ExplorerComponent", () => {
       ).length, 0);
     });
 
+    describe("state updates", () => {
+      describe("on no resource change", () => {
+        var old_action: AsanaJson.Action;
+        var old_params: any;
+
+        beforeEach(() => {
+          old_action = root.state.action;
+          old_params = root.state.params;
+
+          root.state.params.include_fields.push("test");
+
+          testUtils.Simulate.change(selectResource, {
+            target: {value: Resources.resourceNameFromResource(initial_resource)}
+          });
+        });
+
+        it("should not change resource", () => {
+          assert.equal(root.state.resource, initial_resource);
+        });
+
+        it("should not change action", () => {
+          assert.equal(root.state.action, initial_action);
+          assert.include(initial_resource.actions, root.state.action);
+        });
+
+        it("should not clear params", () => {
+          assert.deepEqual(root.state.params, old_params);
+        });
+      });
+
+      describe("on resource change", () => {
+        var other_resource: AsanaJson.Resource;
+
+        beforeEach(() => {
+          other_resource = helpers.fetchResource(1);
+
+          root.state.params.include_fields.push("test");
+
+          testUtils.Simulate.change(selectResource, {
+            target: {value: Resources.resourceNameFromResource(other_resource)}
+          });
+        });
+
+        it("should update resource", () => {
+          assert.notEqual(initial_resource, other_resource);
+          assert.equal(root.state.resource, other_resource);
+        });
+
+        it("should reset action to a valid state", () => {
+          assert.notEqual(root.state.action, initial_action);
+          assert.include(other_resource.actions, root.state.action);
+        });
+
+        it("should clear params", () => {
+          assert.deepEqual(root.state.params, Explorer.emptyParams());
+        });
+      });
+
+      describe("on no action change", () => {
+        var old_params: any;
+
+        beforeEach(() => {
+          old_params = root.state.params;
+
+          root.state.params.include_fields.push("test");
+
+          testUtils.Simulate.change(selectRoute, {
+            target: {value: initial_action.name}
+          });
+        });
+
+        it("should not change action", () => {
+          assert.equal(root.state.action, initial_action);
+          assert.include(initial_resource.actions, root.state.action);
+        });
+
+        it("should not clear params", () => {
+          assert.deepEqual(root.state.params, old_params);
+        });
+      });
+
+      describe("on action change", () => {
+        var other_action: AsanaJson.Action;
+
+        beforeEach(() => {
+          other_action = initial_resource.actions[1];
+
+          testUtils.Simulate.change(selectRoute, {
+            target: {value: other_action.name}
+          });
+        });
+
+        it("should update action", () => {
+          assert.notEqual(root.state.action, initial_action);
+          assert.include(initial_resource.actions, root.state.action);
+        });
+
+        it("should clear params", () => {
+          assert.deepEqual(root.state.params, Explorer.emptyParams());
+        });
+      });
+
+      describe("on property check", () => {
+        var propertyCheckboxes: React.HTMLComponent[];
+
+        beforeEach(() => {
+          propertyCheckboxes = testUtils.scryRenderedDOMComponentsWithClass(
+            root,
+            "property-checkbox-include"
+          );
+
+          // Add an existing field to ensure no data clobbering.
+          root.state.params.include_fields.push("example");
+        });
+
+        it("should add property to params if previously unchecked", () => {
+          assert.sameMembers(root.state.params.include_fields, ["example"]);
+
+          var checkbox = propertyCheckboxes[0];
+          testUtils.Simulate.change(checkbox, {
+            target: {
+              checked: true,
+              value: (<HTMLInputElement>checkbox.getDOMNode()).value
+            }
+          });
+
+          assert.sameMembers(
+            root.state.params.include_fields,
+            ["example", checkbox.props.value]
+          );
+        });
+
+        it("should remove property from params if previously checked", () => {
+          var checkbox = propertyCheckboxes[0];
+          var value = (<HTMLInputElement>checkbox.getDOMNode()).value;
+
+          root.state.params.include_fields.push(value);
+          testUtils.Simulate.change(checkbox, {
+            target: {
+              checked: false,
+              value: value
+            }
+          });
+
+          assert.sameMembers(
+            root.state.params.include_fields,
+            ["example"]
+          );
+        });
+      });
+
+      describe("on parameter input", () => {
+        beforeEach(() => {
+          // Use a resource/action with multiple inputs.
+          testUtils.Simulate.change(selectResource, {
+            target: {value: "Events"}
+          });
+        });
+
+        it("should test", () => {
+          // TODO: required and optional parameters
+        });
+      });
+    });
+
     describe("on submit", () => {
       var raw_response_promise: Promise<any>;
       var json_response: string;
