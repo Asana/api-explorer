@@ -10,6 +10,7 @@ import chai = require("chai");
 import Promise = require("bluebird");
 import react = require("react/addons");
 import sinon = require("sinon");
+import _ = require("lodash");
 
 import constants = require("../../src/constants");
 import CredentialsManager = require("../../src/credentials_manager");
@@ -340,15 +341,45 @@ describe("ExplorerComponent", () => {
       });
 
       describe("on parameter input", () => {
+        var required_param: React.HTMLComponent;
+        var optional_param: React.HTMLComponent;
+
         beforeEach(() => {
-          // Use a resource/action with multiple inputs.
+          // Use a resource/action that has both a required and optional input.
           testUtils.Simulate.change(selectResource, {
             target: {value: "Events"}
           });
+
+          // Fetch the required and optional params.
+          var params = testUtils.scryRenderedDOMComponentsWithClass(
+            root, "parameter-input");
+          required_param = _.find(params, param =>
+              _.contains(param.props.className, "required-param"));
+          optional_param = _.find(params, param =>
+            !_.contains(param.props.className, "required-param"));
         });
 
-        it("should test", () => {
-          // TODO: required and optional parameters
+        describe("should store value for required param", () => {
+          beforeEach(() => {
+            // Add an existing parameters to ensure no data clobbering.
+            //root.state.params.required_params.push("example");
+          });
+
+          it("test TODO REMOVE", () => {
+            //console.log(required_param.props.id);
+            //console.log(optional_param.props.id);
+          });
+
+          // TODO: Add tests.
+        });
+
+        describe("should store value for optional param", () => {
+          beforeEach(() => {
+            // Add an existing parameters to ensure no data clobbering.
+            //root.state.params.optional_params.push("other_example");
+          });
+
+          // TODO: Add tests.
         });
       });
     });
