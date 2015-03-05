@@ -14,7 +14,7 @@ import sinon = require("sinon");
 import constants = require("../../src/constants");
 import CredentialsManager = require("../../src/credentials_manager");
 import Explorer = require("../../src/components/explorer");
-import Resources = require("../../src/resources");
+import Resources = require("../../src/resources/index");
 import helpers = require("../helpers");
 
 var assert = chai.assert;
@@ -59,7 +59,7 @@ describe("ExplorerComponent", () => {
         Explorer.create({
           initialClient: client,
           initial_resource_string:
-            Resources.resourceNameFromResource(resource),
+            Resources.Helpers.resourceNameFromResource(resource),
           initial_route: valid_action.path
         })
       );
@@ -74,7 +74,7 @@ describe("ExplorerComponent", () => {
         Explorer.create({
           initialClient: client,
           initial_resource_string:
-            Resources.resourceNameFromResource(resource),
+            Resources.Helpers.resourceNameFromResource(resource),
           initial_route: invalid_route
         })
       );
@@ -166,7 +166,7 @@ describe("ExplorerComponent", () => {
           initialClient: client,
           initial_route: initial_action.path,
           initial_resource_string:
-            Resources.resourceNameFromResource(initial_resource)
+            Resources.Helpers.resourceNameFromResource(initial_resource)
         })
       );
       selectResource = testUtils.findRenderedDOMComponentWithClass(
@@ -229,7 +229,9 @@ describe("ExplorerComponent", () => {
 
       // We change the resource, which in-turn will change the route.
       testUtils.Simulate.change(selectResource, {
-        target: { value: Resources.resourceNameFromResource(other_resource) }
+        target: {
+          value: Resources.Helpers.resourceNameFromResource(other_resource)
+        }
       });
 
       // Clicking the link should send request with the correct route.

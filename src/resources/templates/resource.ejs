@@ -1,2 +1,6 @@
-<%= JSON.stringify(resource, null, 2) %>
+/* tslint:disable */
+
+// TODO: Add type information from asana_json.d.ts
+var json = <%= JSON.stringify(resource, null, 2) %>;
+export = json;
 
