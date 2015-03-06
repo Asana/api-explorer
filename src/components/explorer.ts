@@ -1,7 +1,7 @@
 /// <reference path="../asana.d.ts" />
 /// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
-import react = require("react");
+import react = require("react/addons");
 import TypedReact = require("typed-react");
 import url = require("url");
 import util = require("util");
@@ -19,6 +19,7 @@ import RouteEntry = require("./route_entry");
 import ResourcesHelpers = require("../resources/helpers");
 
 var r = react.DOM;
+var update = react.addons.update;
 
 interface ParamData {
   expand_fields: string[];
@@ -235,14 +236,14 @@ export class Component extends TypedReact.Component<Props, State> {
       ? "required_params" : "optional_params";
 
     // Update or remove the parameter accordingly.
-    this.setState(_.extend(this.state, {
-      params: _.object([param_type], [
-        target.value === "" ?
+    this.setState(update(this.state, <any>{
+      params: _.object([param_type], [{
+        $set: target.value === "" ?
           _.omit((<any>this.state.params)[param_type], parameter) :
           _.extend(
             (<any>this.state.params)[param_type],
             _.object([parameter], [target.value]))
-      ])
+      }])
     }));
   }
 

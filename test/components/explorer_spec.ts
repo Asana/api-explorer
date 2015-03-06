@@ -372,6 +372,7 @@ describe("ExplorerComponent", () => {
 
             // Add an existing parameters to ensure no data clobbering.
             root.state.params.required_params.example = "data here";
+            root.state.params.optional_params.other_example = "other data";
           });
 
           it("should add parameter when previously empty", () => {
@@ -386,6 +387,12 @@ describe("ExplorerComponent", () => {
             assert.deepEqual(
               root.state.params.required_params,
               _.object(["example", param_name], ["data here", "some content"])
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
             );
           });
 
@@ -409,6 +416,12 @@ describe("ExplorerComponent", () => {
               root.state.params.required_params,
               _.object(["example", param_name], ["data here", "new content!"])
             );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
           });
 
           it("should remove parameter when unset", () => {
@@ -431,6 +444,12 @@ describe("ExplorerComponent", () => {
               root.state.params.required_params,
               { example: "data here" }
             );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
           });
         });
 
@@ -442,6 +461,7 @@ describe("ExplorerComponent", () => {
               optionalParam.props.id);
 
             // Add an existing parameters to ensure no data clobbering.
+            root.state.params.required_params.example = "data here";
             root.state.params.optional_params.other_example = "other data";
           });
 
@@ -459,6 +479,12 @@ describe("ExplorerComponent", () => {
               _.object(
                 ["other_example", param_name],
                 ["other data", "some content"])
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
             );
           });
 
@@ -486,6 +512,12 @@ describe("ExplorerComponent", () => {
                 ["other_example", param_name],
                 ["other data", "new content!"])
             );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
           });
 
           it("should remove parameter when unset", () => {
@@ -508,6 +540,12 @@ describe("ExplorerComponent", () => {
             assert.deepEqual(
               root.state.params.optional_params,
               { other_example: "other data" }
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
             );
           });
         });
