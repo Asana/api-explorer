@@ -1,5 +1,4 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
@@ -7,8 +6,8 @@ import TypedReact = require("typed-react");
 var r = react.DOM;
 
 export interface Props {
-  resource: AsanaJson.Resource;
-  action: AsanaJson.Action;
+  resource: Resource;
+  action: Action;
   onFormSubmit: (event?: React.FormEvent) => void;
   onActionChange: (event?: React.FormEvent) => void;
 }

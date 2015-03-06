@@ -7,7 +7,7 @@ import react = require("react/addons");
 import sinon = require("sinon");
 
 import JsonResponse = require("../../src/components/json_response");
-import helpers = require("../helpers");
+import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -50,7 +50,7 @@ describe("JsonResponseComponent", () => {
   });
 
   it("should show non-empty json response after updating props", () => {
-    var action = helpers.fetchResource(0).actions[0];
+    var action = Resources.Attachments.actions[0];
     // Update the state to have a non-empty response.
     var json = "{ test: { again: 2 } }";
     testUtils.findRenderedComponentWithType(

@@ -1,5 +1,4 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
@@ -19,7 +18,7 @@ export class Component extends TypedReact.Component<Props, {}> {
       return null;
     }
 
-    var action: AsanaJson.Action = this.props.response.action;
+    var action: Action = this.props.response.action;
     return r.div({
       className: "json-response-info"
     }, action.method + " " + action.path);
