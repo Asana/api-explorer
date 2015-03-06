@@ -1,15 +1,14 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
 
-import Resources = require("../resources");
+import ResourcesHelpers = require("../resources/helpers");
 
 var r = react.DOM;
 
 export interface Props {
-  resource: AsanaJson.Resource;
+  resource: Resource;
   onResourceChange: (event?: React.FormEvent) => void;
 }
 
@@ -22,8 +21,8 @@ export class Component extends TypedReact.Component<Props, {}> {
     return r.select({
       className: "select-resource",
       onChange: this.props.onResourceChange,
-      value: Resources.resourceNameFromResource(this.props.resource),
-      children: Resources.names().map(resource => {
+      value: ResourcesHelpers.resourceNameFromResource(this.props.resource),
+      children: ResourcesHelpers.names().map(resource => {
         return r.option({
           value: resource
         }, resource);

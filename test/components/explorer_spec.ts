@@ -1,11 +1,10 @@
 /// <reference path="../../src/asana.d.ts" />
-/// <reference path="../../src/asana_json.d.ts" />
+/// <reference path="../../src/resources/interfaces.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
 import Asana = require("asana");
-import AsanaJson = require("asana-json");
 import chai = require("chai");
 import Promise = require("bluebird");
 import react = require("react/addons");
@@ -15,8 +14,8 @@ import _ = require("lodash");
 import constants = require("../../src/constants");
 import CredentialsManager = require("../../src/credentials_manager");
 import Explorer = require("../../src/components/explorer");
-import Resources = require("../../src/resources");
-import helpers = require("../helpers");
+import Resources = require("../../src/resources/resources");
+import ResourcesHelpers = require("../../src/resources/helpers");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -54,13 +53,13 @@ describe("ExplorerComponent", () => {
 
   describe("initial state", () => {
     it("should set initial routes if found in the resource", () => {
-      var resource = helpers.fetchResource(0);
+      var resource = Resources.Attachments;
       var valid_action = resource.actions[1];
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
           initialClient: client,
           initial_resource_string:
-            Resources.resourceNameFromResource(resource),
+            ResourcesHelpers.resourceNameFromResource(resource),
           initial_route: valid_action.path
         })
       );
@@ -70,12 +69,12 @@ describe("ExplorerComponent", () => {
 
     it("should ignore initial routes if not found in the resource", () => {
       var invalid_route = "/this/does/not/exist";
-      var resource = helpers.fetchResource(0);
+      var resource = Resources.Attachments;
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
           initialClient: client,
           initial_resource_string:
-            Resources.resourceNameFromResource(resource),
+            ResourcesHelpers.resourceNameFromResource(resource),
           initial_route: invalid_route
         })
       );
@@ -151,13 +150,13 @@ describe("ExplorerComponent", () => {
     var selectRoute: React.HTMLComponent;
     var routeEntry: React.HTMLComponent;
 
-    var initial_action: AsanaJson.Action;
-    var initial_resource: AsanaJson.Resource;
+    var initial_action: Action;
+    var initial_resource: Resource;
 
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(true);
 
-      initial_resource = helpers.fetchResource(0);
+      initial_resource = Resources.Attachments;
       initial_action = initial_resource.actions[0];
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
@@ -165,7 +164,7 @@ describe("ExplorerComponent", () => {
           initialClient: client,
           initial_route: initial_action.path,
           initial_resource_string:
-            Resources.resourceNameFromResource(initial_resource)
+            ResourcesHelpers.resourceNameFromResource(initial_resource)
         })
       );
       selectResource = testUtils.findRenderedDOMComponentWithClass(
@@ -191,7 +190,7 @@ describe("ExplorerComponent", () => {
 
     describe("state updates", () => {
       describe("on no resource change", () => {
-        var old_action: AsanaJson.Action;
+        var old_action: Action;
         var old_params: any;
 
         beforeEach(() => {
@@ -201,7 +200,9 @@ describe("ExplorerComponent", () => {
           root.state.params.include_fields.push("test");
 
           testUtils.Simulate.change(selectResource, {
-            target: {value: Resources.resourceNameFromResource(initial_resource)}
+            target: {
+              value: ResourcesHelpers.resourceNameFromResource(initial_resource)
+            }
           });
         });
 
@@ -220,15 +221,17 @@ describe("ExplorerComponent", () => {
       });
 
       describe("on resource change", () => {
-        var other_resource: AsanaJson.Resource;
+        var other_resource: Resource;
 
         beforeEach(() => {
-          other_resource = helpers.fetchResource(1);
+          other_resource = Resources.Events;
 
           root.state.params.include_fields.push("test");
 
           testUtils.Simulate.change(selectResource, {
-            target: {value: Resources.resourceNameFromResource(other_resource)}
+            target: {
+              value: ResourcesHelpers.resourceNameFromResource(other_resource)
+            }
           });
         });
 
@@ -271,7 +274,7 @@ describe("ExplorerComponent", () => {
       });
 
       describe("on action change", () => {
-        var other_action: AsanaJson.Action;
+        var other_action: Action;
 
         beforeEach(() => {
           other_action = initial_resource.actions[1];
@@ -498,12 +501,14 @@ describe("ExplorerComponent", () => {
       });
 
       it("should make the correct request after changing resource", (cb) => {
-        var other_resource = helpers.fetchResource(1);
+        var other_resource = Resources.Events;
         var other_action = other_resource.actions[0];
 
         // We change the resource, which in-turn will change the route.
         testUtils.Simulate.change(selectResource, {
-          target: {value: Resources.resourceNameFromResource(other_resource)}
+          target: {
+            value: ResourcesHelpers.resourceNameFromResource(other_resource)
+          }
         });
 
         // Clicking the link should send request with the correct route.

@@ -1,5 +1,4 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react/addons");
 import TypedReact = require("typed-react");
@@ -10,7 +9,7 @@ var r = react.DOM;
 
 export interface Props {
   text: string;
-  parameters: AsanaJson.Parameter[];
+  parameters: Parameter[];
   onParameterChange: (event?: React.FormEvent) => void;
 }
 
@@ -28,7 +27,7 @@ export function parameterFromInputId(idName: string): string {
  * The parameter input area
  */
 export class Component extends TypedReact.Component<Props, {}> {
-  private _renderParameterInput(parameter: AsanaJson.Parameter) {
+  private _renderParameterInput(parameter: Parameter) {
     return r.span({ key: parameter.name },
       r.input({
         type: "text",

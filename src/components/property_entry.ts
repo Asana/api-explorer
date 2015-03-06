@@ -1,5 +1,4 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
@@ -9,7 +8,7 @@ var r = react.DOM;
 export interface Props {
   class_suffix: string;
   text: string;
-  properties: AsanaJson.Property[];
+  properties: Property[];
   useProperty: (property: string) => boolean;
   isPropertyChecked: (event?: React.FormEvent) => void;
 }
@@ -18,7 +17,7 @@ export interface Props {
  * The property toggling area
  */
 export class Component extends TypedReact.Component<Props, {}> {
-  private _renderPropertyCheckbox(property: AsanaJson.Property) {
+  private _renderPropertyCheckbox(property: Property) {
     return r.span({ key: property.name },
       r.input({
         type: "checkbox",

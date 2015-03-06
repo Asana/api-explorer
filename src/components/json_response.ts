@@ -1,5 +1,4 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react/addons");
 import TypedReact = require("typed-react");
@@ -12,7 +11,7 @@ var r = react.DOM;
  * This is set after the user submits a query.
  */
 export interface ResponseData {
-  action: AsanaJson.Action;
+  action: Action;
   error?: any;
   raw_response: any;
   route: string;

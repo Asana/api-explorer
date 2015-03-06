@@ -1,16 +1,15 @@
-/// <reference path="../../src/asana_json.d.ts" />
+/// <reference path="../../src/resources/interfaces.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
-import AsanaJson = require("asana-json");
 import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
 import _ = require("lodash");
 
 import PropertyEntry = require("../../src/components/property_entry");
-import helpers = require("../helpers");
+import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -18,7 +17,7 @@ var testUtils = react.addons.TestUtils;
 describe("PropertyEntryComponent", () => {
   var sand: SinonSandbox;
 
-  var properties: AsanaJson.Property[];
+  var properties: Property[];
 
   var isPropertyCheckedStub: SinonStub;
   var usePropertyStub: SinonStub;
@@ -29,7 +28,7 @@ describe("PropertyEntryComponent", () => {
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    properties = helpers.fetchResource(1).properties;
+    properties = Resources.Events.properties;
 
     isPropertyCheckedStub = sand.stub();
     usePropertyStub = sand.stub();

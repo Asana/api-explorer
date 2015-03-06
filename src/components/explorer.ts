@@ -1,7 +1,6 @@
 /// <reference path="../asana.d.ts" />
-/// <reference path="../asana_json.d.ts" />
+/// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
-import AsanaJson = require("asana-json");
 import react = require("react/addons");
 import TypedReact = require("typed-react");
 import url = require("url");
@@ -17,7 +16,7 @@ import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
 import RouteEntry = require("./route_entry");
 
-import Resources = require("../resources");
+import ResourcesHelpers = require("../resources/helpers");
 
 var r = react.DOM;
 var update = react.addons.update;
@@ -36,10 +35,10 @@ export interface Props {
 }
 
 export interface State {
-  action?: AsanaJson.Action;
+  action?: Action;
   client?: Asana.Client;
   params?: ParamData;
-  resource?: AsanaJson.Resource;
+  resource?: Resource;
   response?: JsonResponse.ResponseData;
 }
 
@@ -83,12 +82,14 @@ export class Component extends TypedReact.Component<Props, State> {
   getInitialState() {
     // Fetch the resource JSON given in the props, if any.
     var resource =
-      Resources.resourceFromResourceName(this.props.initial_resource_string) ||
-      Resources.resourceFromResourceName("Users");
+      ResourcesHelpers.resourceFromResourceName(
+        this.props.initial_resource_string) ||
+      ResourcesHelpers.resourceFromResourceName("Users");
 
     // If the initial route is valid, use it. Otherwise, use a valid one.
     var action =
-      Resources.actionFromResourcePath(resource, this.props.initial_route) ||
+      ResourcesHelpers.actionFromResourcePath(
+        resource, this.props.initial_route) ||
       resource.actions[0];
 
     return {
@@ -170,7 +171,7 @@ export class Component extends TypedReact.Component<Props, State> {
    * Updates the resource state following an onChange event.
    */
   onChangeResourceState(event: React.FormEvent) {
-    var resource = Resources.resourceFromResourceName(
+    var resource = ResourcesHelpers.resourceFromResourceName(
       (<HTMLSelectElement>event.target).value);
     var has_changed = resource !== this.state.resource;
 
@@ -189,7 +190,7 @@ export class Component extends TypedReact.Component<Props, State> {
    * Updates the action state following an onChange event.
    */
   onChangeActionState(event: React.FormEvent) {
-    var action = Resources.actionFromResourceAndName(
+    var action = ResourcesHelpers.actionFromResourceAndName(
       this.state.resource, (<HTMLSelectElement>event.target).value);
     var has_changed = action !== this.state.action;
 
