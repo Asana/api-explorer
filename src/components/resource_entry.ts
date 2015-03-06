@@ -3,7 +3,7 @@ import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
 
-import Resources = require("../resources/index"); // TODO: Do i need to specify index?
+import ResourcesHelpers = require("../resources/helpers");
 
 var r = react.DOM;
 
@@ -21,8 +21,8 @@ export class Component extends TypedReact.Component<Props, {}> {
     return r.select({
       className: "select-resource",
       onChange: this.props.onResourceChange,
-      value: Resources.Helpers.resourceNameFromResource(this.props.resource),
-      children: Resources.Helpers.names().map(resource => {
+      value: ResourcesHelpers.resourceNameFromResource(this.props.resource),
+      children: ResourcesHelpers.names().map(resource => {
         return r.option({
           value: resource
         }, resource);

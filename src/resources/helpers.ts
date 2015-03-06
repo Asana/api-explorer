@@ -1,6 +1,6 @@
 // <reference path="./interfaces.ts" />
 
-import Resources = require("./index");
+import Resources = require("./resources");
 
 /**
  * Returns the names of all valid resources.

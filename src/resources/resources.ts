@@ -1,5 +1,3 @@
-export import Helpers = require("./helpers");
-
 export import Attachments = require("./gen/attachments");
 export import Events = require("./gen/events");
 export import Projects = require("./gen/projects");

@@ -7,8 +7,8 @@ import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
 
-import Resources = require("../../src/resources/index");
 import ResourceEntry = require("../../src/components/resource_entry");
+import ResourcesHelpers = require("../../src/resources/helpers");
 import helpers = require("../helpers");
 
 var assert = chai.assert;
@@ -50,13 +50,13 @@ describe("ResourceEntryComponent", () => {
   it("should select the current resource", () => {
     assert.include(
       (<HTMLInputElement>selectResource.getDOMNode()).value,
-      Resources.Helpers.resourceNameFromResource(initial_resource)
+      ResourcesHelpers.resourceNameFromResource(initial_resource)
     );
   });
 
   it("should contain dropdown with other resources", () => {
     var children = selectResource.getDOMNode().childNodes;
-    var resource_names = Resources.Helpers.names();
+    var resource_names = ResourcesHelpers.names();
 
     assert.equal(children.length, resource_names.length);
     resource_names.forEach((resource_name, idx) => {

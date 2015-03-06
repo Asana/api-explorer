@@ -1,7 +1,7 @@
 /// <reference path="../src/asana.d.ts" />
 /// <reference path="../src/resources/interfaces.ts" />
 import Asana = require("asana");
-import Resources = require("../src/resources/index");
+import Resources = require("../src/resources/resources");
 
 var noop = () => { return; };
 

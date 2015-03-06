@@ -11,7 +11,7 @@ import JsonResponse = require("./json_response");
 import ResourceEntry = require("./resource_entry");
 import RouteEntry = require("./route_entry");
 
-import Resources = require("../resources/index");
+import ResourcesHelpers = require("../resources/helpers");
 
 var r = react.DOM;
 
@@ -54,13 +54,13 @@ export class Component extends TypedReact.Component<Props, State> {
   getInitialState() {
     // Fetch the resource JSON given in the props, if any.
     var resource =
-      Resources.Helpers.resourceFromResourceName(
+      ResourcesHelpers.resourceFromResourceName(
         this.props.initial_resource_string) ||
-      Resources.Helpers.resourceFromResourceName("Users");
+      ResourcesHelpers.resourceFromResourceName("Users");
 
     // If the initial route is valid, use it. Otherwise, use a valid one.
     var action =
-      Resources.Helpers.actionFromResourcePath(
+      ResourcesHelpers.actionFromResourcePath(
         resource, this.props.initial_route) ||
       resource.actions[0];
 
@@ -88,7 +88,7 @@ export class Component extends TypedReact.Component<Props, State> {
    * Updates the resource state following an onChange event.
    */
   onChangeResourceState(event: React.FormEvent) {
-    var resource = Resources.Helpers.resourceFromResourceName(
+    var resource = ResourcesHelpers.resourceFromResourceName(
       (<HTMLSelectElement>event.target).value);
 
     // If the resource has changed, also update the action.
@@ -107,7 +107,7 @@ export class Component extends TypedReact.Component<Props, State> {
   onChangeActionState(event: React.FormEvent) {
     var action_name = (<HTMLSelectElement>event.target).value;
     this.setState({
-      action: Resources.Helpers.actionFromName(this.state.resource, action_name)
+      action: ResourcesHelpers.actionFromName(this.state.resource, action_name)
     });
   }
 
