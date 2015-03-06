@@ -1,7 +1,7 @@
 /// <reference path="../asana.d.ts" />
 /// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
-import react = require("react/addons");
+import react = require("react");
 import TypedReact = require("typed-react");
 import url = require("url");
 import util = require("util");
@@ -19,7 +19,6 @@ import RouteEntry = require("./route_entry");
 import ResourcesHelpers = require("../resources/helpers");
 
 var r = react.DOM;
-var update = react.addons.update;
 
 interface ParamData {
   expand_fields: string[];
@@ -231,16 +230,19 @@ export class Component extends TypedReact.Component<Props, State> {
   onChangeParameterState(event: React.FormEvent) {
     var target = <HTMLInputElement>event.target;
 
-    var is_required = target.classList.contains("required-param");
     var parameter = ParameterEntry.parameterFromInputId(target.id);
+    var param_type = _.contains(target.className, "required-param")
+      ? "required_params" : "optional_params";
 
-    // TODO: Add tests for optional vs required parameters.
-    this.setState(update(this.state, <any>{
-      params: { $merge:
-        _.object([is_required ? "required_params" : "optional_params"],
-          [_.object([parameter], [target.value])]
-        )
-      }
+    // Update or remove the parameter accordingly.
+    this.setState(_.extend(this.state, {
+      params: _.object([param_type], [
+        target.value === "" ?
+          _.omit((<any>this.state.params)[param_type], parameter) :
+          _.extend(
+            (<any>this.state.params)[param_type],
+            _.object([parameter], [target.value]))
+      ])
     }));
   }
 

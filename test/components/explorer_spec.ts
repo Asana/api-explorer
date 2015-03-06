@@ -14,6 +14,7 @@ import _ = require("lodash");
 import constants = require("../../src/constants");
 import CredentialsManager = require("../../src/credentials_manager");
 import Explorer = require("../../src/components/explorer");
+import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 
@@ -344,8 +345,8 @@ describe("ExplorerComponent", () => {
       });
 
       describe("on parameter input", () => {
-        var required_param: React.HTMLComponent;
-        var optional_param: React.HTMLComponent;
+        var requiredParam: React.HTMLComponent;
+        var optionalParam: React.HTMLComponent;
 
         beforeEach(() => {
           // Use a resource/action that has both a required and optional input.
@@ -356,33 +357,159 @@ describe("ExplorerComponent", () => {
           // Fetch the required and optional params.
           var params = testUtils.scryRenderedDOMComponentsWithClass(
             root, "parameter-input");
-          required_param = _.find(params, param =>
+          requiredParam = _.find(params, param =>
               _.contains(param.props.className, "required-param"));
-          optional_param = _.find(params, param =>
+          optionalParam = _.find(params, param =>
             !_.contains(param.props.className, "required-param"));
         });
 
-        describe("should store value for required param", () => {
+        describe("with required parameters", () => {
+          var param_name: string;
+
           beforeEach(() => {
+            param_name = ParameterEntry.parameterFromInputId(
+              requiredParam.props.id);
+
             // Add an existing parameters to ensure no data clobbering.
-            //root.state.params.required_params.push("example");
+            root.state.params.required_params.example = "data here";
           });
 
-          it("test TODO REMOVE", () => {
-            //console.log(required_param.props.id);
-            //console.log(optional_param.props.id);
+          it("should add parameter when previously empty", () => {
+            testUtils.Simulate.change(requiredParam, {
+              target: {
+                className: requiredParam.props.className,
+                id: requiredParam.props.id,
+                value: "some content"
+              }
+            });
+
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "some content"])
+            );
           });
 
-          // TODO: Add tests.
+          it("should update parameter when previously set", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.required_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(requiredParam, {
+              target: {
+                className: requiredParam.props.className,
+                id: requiredParam.props.id,
+                value: "new content!"
+              }
+            });
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "new content!"])
+            );
+          });
+
+          it("should remove parameter when unset", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.required_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(requiredParam, {
+              target: {
+                className: requiredParam.props.className,
+                id: requiredParam.props.id,
+                value: ""
+              }
+            });
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+          });
         });
 
-        describe("should store value for optional param", () => {
+        describe("with optional parameters", () => {
+          var param_name: string;
+
           beforeEach(() => {
+            param_name = ParameterEntry.parameterFromInputId(
+              optionalParam.props.id);
+
             // Add an existing parameters to ensure no data clobbering.
-            //root.state.params.optional_params.push("other_example");
+            root.state.params.optional_params.other_example = "other data";
           });
 
-          // TODO: Add tests.
+          it("should add parameter when previously empty", () => {
+            testUtils.Simulate.change(optionalParam, {
+              target: {
+                className: optionalParam.props.className,
+                id: optionalParam.props.id,
+                value: "some content"
+              }
+            });
+
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name],
+                ["other data", "some content"])
+            );
+          });
+
+          it("should update parameter when previously set", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.optional_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name],
+                ["other data", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(optionalParam, {
+              target: {
+                className: optionalParam.props.className,
+                id: optionalParam.props.id,
+                value: "new content!"
+              }
+            });
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name],
+                ["other data", "new content!"])
+            );
+          });
+
+          it("should remove parameter when unset", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.optional_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name], ["other data", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(optionalParam, {
+              target: {
+                className: optionalParam.props.className,
+                id: optionalParam.props.id,
+                value: ""
+              }
+            });
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+          });
         });
       });
     });
