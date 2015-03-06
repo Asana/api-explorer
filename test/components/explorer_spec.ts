@@ -1,11 +1,10 @@
 /// <reference path="../../src/asana.d.ts" />
-/// <reference path="../../src/asana_json.d.ts" />
+/// <reference path="../../src/resources/interfaces.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
 import Asana = require("asana");
-import AsanaJson = require("asana-json");
 import chai = require("chai");
 import Promise = require("bluebird");
 import react = require("react/addons");
@@ -152,8 +151,8 @@ describe("ExplorerComponent", () => {
     var selectRoute: React.HTMLComponent;
     var routeEntry: React.HTMLComponent;
 
-    var initial_action: AsanaJson.Action;
-    var initial_resource: AsanaJson.Resource;
+    var initial_action: Action;
+    var initial_resource: Resource;
 
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(true);

@@ -1,9 +1,8 @@
-/// <reference path="../../src/asana_json.d.ts" />
+/// <reference path="../../src/resources/interfaces.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
-import AsanaJson = require("asana-json");
 import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
@@ -18,7 +17,7 @@ var testUtils = react.addons.TestUtils;
 describe("ResourceEntryComponent", () => {
   var sand: SinonSandbox;
 
-  var initial_resource: AsanaJson.Resource;
+  var initial_resource: Resource;
 
   var onResourceChangeStub: SinonStub;
 

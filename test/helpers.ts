@@ -1,7 +1,7 @@
 /// <reference path="../src/asana.d.ts" />
-/// <reference path="../src/asana_json.d.ts" />
+/// <reference path="../src/resources/interfaces.ts" />
 import Asana = require("asana");
-import AsanaJson = require("asana-json");
+import Resources = require("../src/resources/index");
 
 var noop = () => { return; };
 
@@ -37,13 +37,13 @@ export function createOauthClient(credentials?: Asana.auth.Credentials): Asana.C
  * Note that assumes key ordering will persist within tests.
  *
  * @param {number} idx
- * @returns {AsanaJson.Resource}
+ * @returns {Resource}
  */
-export function fetchResource(idx: number): AsanaJson.Resource {
-  var keys = Object.keys(AsanaJson);
+export function fetchResource(idx: number): Resource {
+  var keys = Object.keys(Resources);
 
   // Return the resource at the index idx, unless it doesn't exist.
-  return (idx < keys.length) ? (<any>AsanaJson)[keys[idx]] : null;
+  return (idx < keys.length) ? (<any>Resources)[keys[idx]] : null;
 }
 
 /**

@@ -1,9 +1,8 @@
-/// <reference path="../../src/asana_json.d.ts" />
+/// <reference path="../../src/resources/interfaces.ts" />
 /* tslint:disable:no-unused-variable */
 import mock_dom = require("../mock_dom");
 /* tslint:enable:no-unused-variable */
 
-import AsanaJson = require("asana-json");
 import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
@@ -17,8 +16,8 @@ var testUtils = react.addons.TestUtils;
 describe("RouteEntryComponent", () => {
   var sand: SinonSandbox;
 
-  var initial_action: AsanaJson.Action;
-  var initial_resource: AsanaJson.Resource;
+  var initial_action: Action;
+  var initial_resource: Resource;
 
   var onFormSubmitStub: SinonStub;
   var onActionChangeStub: SinonStub;

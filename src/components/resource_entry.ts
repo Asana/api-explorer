@@ -1,5 +1,4 @@
-/// <reference path="../asana_json.d.ts" />
-import AsanaJson = require("asana-json");
+/// <reference path="../resources/interfaces.ts" />
 import build = require("./build");
 import react = require("react");
 import TypedReact = require("typed-react");
@@ -9,7 +8,7 @@ import Resources = require("../resources/index"); // TODO: Do i need to specify 
 var r = react.DOM;
 
 export interface Props {
-  resource: AsanaJson.Resource;
+  resource: Resource;
   onResourceChange: (event?: React.FormEvent) => void;
 }
 

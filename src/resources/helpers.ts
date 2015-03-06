@@ -1,4 +1,6 @@
-import AsanaJson = require("asana-json");
+// <reference path="./interfaces.ts" />
+
+import Resources = require("./index");
 
 /**
  * Returns the names of all valid resources.
@@ -6,7 +8,7 @@ import AsanaJson = require("asana-json");
  * @returns {string[]}
  */
 export function names(): string[] {
-  return Object.keys(AsanaJson);
+  return Object.keys(Resources);
 }
 
 /**
@@ -15,19 +17,19 @@ export function names(): string[] {
  * @param name
  * @returns {any}
  */
-export function resourceFromResourceName(name: string): AsanaJson.Resource {
-  return (<any>AsanaJson)[name];
+export function resourceFromResourceName(name: string): Resource {
+  return (<any>Resources)[name];
 }
 
 /**
- * Returns the resource name (key of AsanaJson) for a given resource.
+ * Returns the resource name (key of Resources) for a given resource.
  *
  * @param resource
  * @returns {any}
  */
-export function resourceNameFromResource(resource: AsanaJson.Resource): string {
-  return Object.keys(AsanaJson).filter(
-      key => { return (<any>AsanaJson)[key] === resource; }
+export function resourceNameFromResource(resource: Resource): string {
+  return Object.keys(Resources).filter(
+      key => { return (<any>Resources)[key] === resource; }
   )[0];
 }
 
@@ -35,7 +37,7 @@ export function resourceNameFromResource(resource: AsanaJson.Resource): string {
  * Return the action for a given resource and path string.
  *
  */
-export function actionFromResourcePath(resource: AsanaJson.Resource, path: string): AsanaJson.Action {
+export function actionFromResourcePath(resource: Resource, path: string): Action {
   return resource.actions.filter(
     action => { return path === action.path; }
   )[0];
@@ -44,7 +46,7 @@ export function actionFromResourcePath(resource: AsanaJson.Resource, path: strin
 /**
  * Returns the action by its resource and name.
  */
-export function actionFromName(resource: AsanaJson.Resource, action_name: string): AsanaJson.Action {
+export function actionFromName(resource: Resource, action_name: string): Action {
   return resource.actions.filter(
     action => { return action_name === action.name; }
   )[0];

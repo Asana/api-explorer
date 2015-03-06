@@ -1,7 +1,6 @@
 /// <reference path="../asana.d.ts" />
-/// <reference path="../asana_json.d.ts" />
+/// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
-import AsanaJson = require("asana-json");
 import react = require("react");
 import TypedReact = require("typed-react");
 
@@ -24,8 +23,8 @@ export interface Props {
 
 export interface State {
   client?: Asana.Client;
-  resource?: AsanaJson.Resource;
-  action?: AsanaJson.Action;
+  resource?: Resource;
+  action?: Action;
   response?: any;
 }
 
