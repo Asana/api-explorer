@@ -17,7 +17,6 @@ interface Action {
 interface Resource {
   name: string;
   comment: string;
-  templates: any[];
   properties: any[];
   actions: Action[];
 }
