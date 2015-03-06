@@ -1,9 +1,9 @@
 interface Parameter {
   name: string;
   type: string;
-  example_values: string[];
+  example_values?: string[];
   comment: string;
-  required: boolean;
+  required?: boolean;
 }
 
 interface Action {
