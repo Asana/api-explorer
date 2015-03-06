@@ -8,8 +8,8 @@ import react = require("react/addons");
 import sinon = require("sinon");
 
 import ResourceEntry = require("../../src/components/resource_entry");
+import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
-import helpers = require("../helpers");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -27,7 +27,7 @@ describe("ResourceEntryComponent", () => {
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    initial_resource = helpers.fetchResource(1);
+    initial_resource = Resources.Events;
 
     onResourceChangeStub = sand.stub();
 
@@ -68,7 +68,7 @@ describe("ResourceEntryComponent", () => {
   });
 
   it("should trigger onResourceChange property on resource change", () => {
-    var other_resource = helpers.fetchResource(0);
+    var other_resource = Resources.Attachments;
 
     testUtils.Simulate.change(selectResource, {
       target: { value: other_resource }

@@ -7,8 +7,8 @@ import chai = require("chai");
 import react = require("react/addons");
 import sinon = require("sinon");
 
+import Resources = require("../../src/resources/resources");
 import RouteEntry = require("../../src/components/route_entry");
-import helpers = require("../helpers");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -28,7 +28,7 @@ describe("RouteEntryComponent", () => {
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    initial_resource = helpers.fetchResource(2);
+    initial_resource = Resources.Projects;
     initial_action = initial_resource.actions[0];
 
     onFormSubmitStub = sand.stub();

@@ -13,8 +13,8 @@ import sinon = require("sinon");
 import constants = require("../../src/constants");
 import CredentialsManager = require("../../src/credentials_manager");
 import Explorer = require("../../src/components/explorer");
+import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
-import helpers = require("../helpers");
 
 var assert = chai.assert;
 var testUtils = react.addons.TestUtils;
@@ -52,7 +52,7 @@ describe("ExplorerComponent", () => {
 
   describe("initial state", () => {
     it("should set initial routes if found in the resource", () => {
-      var resource = helpers.fetchResource(0);
+      var resource = Resources.Attachments;
       var valid_action = resource.actions[1];
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
@@ -68,7 +68,7 @@ describe("ExplorerComponent", () => {
 
     it("should ignore initial routes if not found in the resource", () => {
       var invalid_route = "/this/does/not/exist";
-      var resource = helpers.fetchResource(0);
+      var resource = Resources.Attachments;
       var explorer = testUtils.renderIntoDocument<Explorer.Component>(
         Explorer.create({
           initialClient: client,
@@ -157,7 +157,7 @@ describe("ExplorerComponent", () => {
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(true);
 
-      initial_resource = helpers.fetchResource(0);
+      initial_resource = Resources.Attachments;
       initial_action = initial_resource.actions[0];
 
       root = testUtils.renderIntoDocument<Explorer.Component>(
@@ -218,7 +218,7 @@ describe("ExplorerComponent", () => {
     });
 
     it("should make the correct GET request after changing resource", (cb) => {
-      var other_resource = helpers.fetchResource(1);
+      var other_resource = Resources.Events;
       var other_action = other_resource.actions[0];
 
       // Stub get request to return json.
