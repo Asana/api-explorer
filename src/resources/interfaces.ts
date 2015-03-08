@@ -24,7 +24,6 @@ interface Property {
 interface Resource {
   name: string;
   comment: string;
-  templates: any[];
   properties: Property[];
   actions: Action[];
 }
