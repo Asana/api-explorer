@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var gh_deploy = require('gulp-gh-pages');
 var loadPlugins = require('gulp-load-plugins');
 var path = require('path');
 var envify = require('envify/custom');
@@ -37,7 +36,10 @@ _ = loadPlugins({
   ].join(',') + '}',
   scope: [
     'devDependencies'
-  ]
+  ],
+  rename: {
+    'gulp-gh-pages': 'gh_deploy'
+  }
 });
 
 /**
@@ -289,5 +291,5 @@ gulp.task('tslint', function() {
  * Push to gh-pages branch.
  */
 gulp.task('gh-pages', ['browser-gh-pages', 'public-files'], function() {
-  return gulp.src(globs.dists()).pipe(gh_deploy({}));
+  return gulp.src(globs.dists()).pipe(_.gh_deploy({}));
 });
