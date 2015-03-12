@@ -7,7 +7,7 @@ import mock_dom = require("../mock_dom");
 import Asana = require("asana");
 import chai = require("chai");
 import Promise = require("bluebird");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 
 import constants = require("../../src/constants");
@@ -17,7 +17,7 @@ import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("ExplorerComponent", () => {
   var sand: SinonSandbox;
@@ -41,7 +41,7 @@ describe("ExplorerComponent", () => {
   });
 
   it("should check local storage authorization state", () => {
-    testUtils.renderIntoDocument<Explorer.Component>(
+    testUtils.renderIntoDocument<Explorer>(
       Explorer.create({
         initialClient: client
       })
@@ -54,7 +54,7 @@ describe("ExplorerComponent", () => {
     it("should set initial routes if found in the resource", () => {
       var resource = Resources.Attachments;
       var valid_action = resource.actions[1];
-      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+      var explorer = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
           initial_resource_string:
@@ -69,7 +69,7 @@ describe("ExplorerComponent", () => {
     it("should ignore initial routes if not found in the resource", () => {
       var invalid_route = "/this/does/not/exist";
       var resource = Resources.Attachments;
-      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+      var explorer = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
           initial_resource_string:
@@ -84,20 +84,18 @@ describe("ExplorerComponent", () => {
   });
 
   describe("when unauthorized", () => {
-    var root: Explorer.Component;
-    var node: Node;
+    var root: Explorer;
     var children: NodeList;
 
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(false);
 
-      root = testUtils.renderIntoDocument<Explorer.Component>(
+      root = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client
         })
       );
-      node = root.getDOMNode();
-      children = node.childNodes;
+      children = React.findDOMNode(root).childNodes;
     });
 
     it("should not contain the api explorer", () => {
@@ -123,7 +121,7 @@ describe("ExplorerComponent", () => {
       );
 
       // Clicking the link send an authorization.
-      testUtils.Simulate.click(link.getDOMNode());
+      testUtils.Simulate.click(React.findDOMNode(link));
       promise.then(function () {
         sinon.assert.called(authorizeStub);
 
@@ -146,7 +144,7 @@ describe("ExplorerComponent", () => {
   });
 
   describe("when authorized", () => {
-    var root: Explorer.Component;
+    var root: Explorer;
     var selectResource: React.HTMLComponent;
     var selectRoute: React.HTMLComponent;
     var routeEntry: React.HTMLComponent;
@@ -160,7 +158,7 @@ describe("ExplorerComponent", () => {
       initial_resource = Resources.Attachments;
       initial_action = initial_resource.actions[0];
 
-      root = testUtils.renderIntoDocument<Explorer.Component>(
+      root = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
           initial_route: initial_action.path,
@@ -191,7 +189,7 @@ describe("ExplorerComponent", () => {
 
     it("should display the current route URL", () => {
       assert.include(
-        (<HTMLInputElement>selectRoute.getDOMNode()).value,
+        (React.findDOMNode<HTMLInputElement>(selectRoute)).value,
         initial_action.name
       );
     });
@@ -202,14 +200,14 @@ describe("ExplorerComponent", () => {
       var getStub = sand.stub(client.dispatcher, "get").returns(json_promise);
 
       // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
+      testUtils.Simulate.submit(React.findDOMNode(routeEntry));
       json_promise.then(function () {
         sinon.assert.calledWith(getStub, initial_action.path);
 
-        assert.equal(testUtils.findRenderedDOMComponentWithClass(
-          root,
-          "json-response-block"
-        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+        assert.equal(
+          React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+            root, "json-response-block")).textContent,
+          "\"{ a: 2 }\"");
 
         cb();
       }).catch(function (err) {
@@ -234,14 +232,14 @@ describe("ExplorerComponent", () => {
       });
 
       // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
+      testUtils.Simulate.submit(React.findDOMNode(routeEntry));
       json_promise.then(function () {
         sinon.assert.calledWith(getStub, other_action.path);
 
-        assert.equal(testUtils.findRenderedDOMComponentWithClass(
-          root,
-          "json-response-block"
-        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+        assert.equal(
+          React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+            root, "json-response-block")).textContent,
+          "\"{ a: 2 }\"");
 
         cb();
       }).catch(function (err) {
@@ -262,14 +260,14 @@ describe("ExplorerComponent", () => {
       });
 
       // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(routeEntry.getDOMNode());
+      testUtils.Simulate.submit(React.findDOMNode(routeEntry));
       json_promise.then(function () {
         sinon.assert.calledWith(getStub, other_action.path);
 
-        assert.equal(testUtils.findRenderedDOMComponentWithClass(
-          root,
-          "json-response-block"
-        ).getDOMNode().textContent, "\"{ a: 2 }\"");
+        assert.equal(
+          React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+            root, "json-response-block")).textContent,
+          "\"{ a: 2 }\"");
 
         cb();
       }).catch(function (err) {

@@ -1,44 +1,54 @@
 /// <reference path="../asana.d.ts" />
 /// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
-import react = require("react");
-import TypedReact = require("typed-react");
+import React = require("react");
 
-import build = require("./build");
 import constants = require("../constants");
 import CredentialsManager = require("../credentials_manager");
 import JsonResponse = require("./json_response");
 import ResourceEntry = require("./resource_entry");
+import Resources = require("../resources/resources");
 import RouteEntry = require("./route_entry");
 
 import ResourcesHelpers = require("../resources/helpers");
 
-var r = react.DOM;
-
-export interface Props {
-  initialClient?: Asana.Client;
-  initial_resource_string?: string;
-  initial_route?: string;
-}
-
-export interface State {
-  client?: Asana.Client;
-  resource?: Resource;
-  action?: Action;
-  response?: any;
-}
+var r = React.DOM;
 
 /**
  * The main API Explorer component.
  */
-export class Component extends TypedReact.Component<Props, State> {
+class Explorer extends React.Component<Explorer.Props, Explorer.State> {
+  static create = React.createFactory(Explorer);
+
+  constructor(props: Explorer.Props, context: any) {
+    super(props, context);
+
+    // Fetch the resource JSON given in the props, if any.
+    var resource =
+      ResourcesHelpers.resourceFromResourceName(
+        this.props.initial_resource_string) ||
+      Resources.Users;
+
+    // If the initial route is valid, use it. Otherwise, use a valid one.
+    var action =
+      ResourcesHelpers.actionFromResourcePath(
+        resource, this.props.initial_route) ||
+      resource.actions[0];
+
+    this.state = {
+      client: this.initializeClient(),
+      resource: resource,
+      action: action
+    };
+  }
+
   /**
    * If a client exists in props, use it. Otherwise, make a new one.
    * Fetch OAuth information from localStorage, and put in the client.
    *
    * @returns {Asana.Client}
    */
-  initializeClient(): Asana.Client {
+  initializeClient = (): Asana.Client => {
     var client = this.props.initialClient || Asana.Client.create({
         clientId: constants.CLIENT_ID,
         redirectUri: constants.REDIRECT_URI
@@ -49,45 +59,23 @@ export class Component extends TypedReact.Component<Props, State> {
     });
 
     return client;
-  }
-
-  getInitialState() {
-    // Fetch the resource JSON given in the props, if any.
-    var resource =
-      ResourcesHelpers.resourceFromResourceName(
-        this.props.initial_resource_string) ||
-      ResourcesHelpers.resourceFromResourceName("Users");
-
-    // If the initial route is valid, use it. Otherwise, use a valid one.
-    var action =
-      ResourcesHelpers.actionFromResourcePath(
-        resource, this.props.initial_route) ||
-      resource.actions[0];
-
-    return {
-      client: this.initializeClient(),
-      resource: resource,
-      action: action
-    };
-  }
+  };
 
   /**
    * Authorize the client, if it has expired, and force a re-rendering.
    */
-  authorize() {
+  authorize = (): void => {
     this.state.client.authorize().then(function() {
       CredentialsManager.storeFromClient(this.state.client);
 
-      if (this.isMounted()) {
-        this.forceUpdate();
-      }
+      this.forceUpdate();
     }.bind(this));
-  }
+  };
 
   /**
    * Updates the resource state following an onChange event.
    */
-  onChangeResourceState(event: React.FormEvent) {
+  onChangeResourceState = (event: React.FormEvent): void => {
     var resource = ResourcesHelpers.resourceFromResourceName(
       (<HTMLSelectElement>event.target).value);
 
@@ -99,23 +87,23 @@ export class Component extends TypedReact.Component<Props, State> {
       resource: resource,
       action: action
     });
-  }
+  };
 
   /**
    * Updates the action state following an onChange event.
    */
-  onChangeActionState(event: React.FormEvent) {
+  onChangeActionState = (event: React.FormEvent): void => {
     var action_name = (<HTMLSelectElement>event.target).value;
     this.setState({
       action: ResourcesHelpers.actionFromName(this.state.resource, action_name)
     });
-  }
+  };
 
   /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
    */
-  onSubmitRequest(event: React.FormEvent) {
+  onSubmitRequest = (event: React.FormEvent): void => {
     event.preventDefault();
 
     var route = this.state.action.path;
@@ -132,7 +120,7 @@ export class Component extends TypedReact.Component<Props, State> {
       // Store possibly-updated credentials for later use.
       CredentialsManager.storeFromClient(this.state.client);
     }.bind(this));
-  }
+  };
 
   render() {
     if (!CredentialsManager.isPossiblyValidFromClient(this.state.client)) {
@@ -164,4 +152,19 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 }
 
-export var create = build(Component);
+module Explorer {
+  export interface Props {
+    initialClient?: Asana.Client;
+    initial_resource_string?: string;
+    initial_route?: string;
+  }
+
+  export interface State {
+    client?: Asana.Client;
+    resource?: Resource;
+    action?: Action;
+    response?: any;
+  }
+}
+
+export = Explorer;

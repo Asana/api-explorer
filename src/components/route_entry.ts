@@ -1,21 +1,13 @@
 /// <reference path="../resources/interfaces.ts" />
-import build = require("./build");
-import react = require("react");
-import TypedReact = require("typed-react");
+import React = require("react");
 
-var r = react.DOM;
-
-export interface Props {
-  resource: Resource;
-  action: Action;
-  onFormSubmit: (event?: React.FormEvent) => void;
-  onActionChange: (event?: React.FormEvent) => void;
-}
+var r = React.DOM;
 
 /**
  * The route entry area.
  */
-export class Component extends TypedReact.Component<Props, {}> {
+class RouteEntry extends React.Component<RouteEntry.Props, {}> {
+  static create = React.createFactory(RouteEntry);
 
   private _renderSelectRoute() {
     return r.select({
@@ -66,4 +58,13 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 }
 
-export var create = build(Component);
+module RouteEntry {
+  export interface Props {
+    resource: Resource;
+    action: Action;
+    onFormSubmit: (event?: React.FormEvent) => void;
+    onActionChange: (event?: React.FormEvent) => void;
+  }
+}
+
+export = RouteEntry;

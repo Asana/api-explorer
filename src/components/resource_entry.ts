@@ -1,21 +1,15 @@
 /// <reference path="../resources/interfaces.ts" />
-import build = require("./build");
-import react = require("react");
-import TypedReact = require("typed-react");
+import React = require("react");
 
 import ResourcesHelpers = require("../resources/helpers");
 
-var r = react.DOM;
-
-export interface Props {
-  resource: Resource;
-  onResourceChange: (event?: React.FormEvent) => void;
-}
+var r = React.DOM;
 
 /**
  * The resource entry area
  */
-export class Component extends TypedReact.Component<Props, {}> {
+class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
+  static create = React.createFactory(ResourceEntry);
 
   private _renderSelectResource() {
     return r.select({
@@ -53,4 +47,11 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 }
 
-export var create = build(Component);
+module ResourceEntry {
+  export interface Props {
+    resource: Resource;
+    onResourceChange: (event?: React.FormEvent) => void;
+  }
+}
+
+export = ResourceEntry;

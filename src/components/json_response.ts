@@ -1,18 +1,14 @@
 /// <reference path="../resources/interfaces.ts" />
-import build = require("./build");
-import react = require("react");
-import TypedReact = require("typed-react");
+import React = require("react");
 
-var r = react.DOM;
-
-export interface Props {
-  response: any;
-}
+var r = React.DOM;
 
 /**
  * The JSON response code block.
  */
-export class Component extends TypedReact.Component<Props, {}> {
+class JsonResponse extends React.Component<JsonResponse.Props, {}> {
+  static create = React.createFactory(JsonResponse);
+
   private _renderResponseHeaderInfo() {
     if (this.props.response === undefined) {
       return null;
@@ -42,4 +38,10 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 }
 
-export var create = build(Component);
+module JsonResponse {
+  export interface Props {
+    response: any;
+  }
+}
+
+export = JsonResponse;
