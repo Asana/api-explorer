@@ -9,7 +9,7 @@ var r = React.DOM;
 class RouteEntry extends React.Component<RouteEntry.Props, {}> {
   static create = React.createFactory(RouteEntry);
 
-  private _renderSelectRoute() {
+  private _renderSelectRoute = () => {
     return r.select({
       className: "select-route",
       onChange: this.props.onActionChange,
@@ -21,9 +21,9 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
           }, action.path);
         })
     });
-  }
+  };
 
-  private _renderRouteInfo() {
+  private _renderRouteInfo = () => {
     return r.div({ },
       r.div({ },
         r.strong({ }, "Route description: "),
@@ -40,8 +40,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
         this.props.action.method
       )
     );
-
-  }
+  };
 
   render() {
     return r.form({

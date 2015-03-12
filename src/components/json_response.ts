@@ -9,7 +9,7 @@ var r = React.DOM;
 class JsonResponse extends React.Component<JsonResponse.Props, {}> {
   static create = React.createFactory(JsonResponse);
 
-  private _renderResponseHeaderInfo() {
+  private _renderResponseHeaderInfo = () => {
     if (this.props.response === undefined) {
       return null;
     }
@@ -18,7 +18,7 @@ class JsonResponse extends React.Component<JsonResponse.Props, {}> {
     return r.div({
       className: "json-response-info"
     }, action.method + " " + action.path);
-  }
+  };
 
   render() {
     var json_string = this.props.response === undefined ? null :
