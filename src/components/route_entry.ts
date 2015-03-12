@@ -49,7 +49,8 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
       children: [
         this._renderSelectRoute(),
         r.button({
-          className: "submit-request"
+          className: "submit-request",
+          disabled: this.props.submit_disabled
         }, "Submit!"),
         this._renderRouteInfo()
       ]
@@ -63,6 +64,7 @@ module RouteEntry {
     action: Action;
     onFormSubmit: (event?: React.FormEvent) => void;
     onActionChange: (event?: React.FormEvent) => void;
+    submit_disabled: boolean;
   }
 }
 

@@ -214,6 +214,26 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   };
 
   /**
+   * Returns true iff the user can submit a request.
+   */
+  canSubmitRequest = (): boolean => {
+    // Require GET request.
+    if (this.state.action.method !== "GET") {
+      return false;
+    }
+
+    // Ensure all required parameters are set.
+    var num_required_params =
+      _.filter(this.state.action.params, param => param.required).length;
+    if (num_required_params !== _.size(this.state.params.required_params)) {
+      return false;
+    }
+
+    // At this point, we've passed all constraints.
+    return true;
+  };
+
+  /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
    */
@@ -266,7 +286,8 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             resource: this.state.resource,
             action: this.state.action,
             onFormSubmit: this.onSubmitRequest,
-            onActionChange: this.onChangeActionState
+            onActionChange: this.onChangeActionState,
+            submit_disabled: !this.canSubmitRequest()
           }),
           r.div( { },
             PropertyEntry.create({
