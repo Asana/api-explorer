@@ -97,8 +97,7 @@ globs = {
     return [
       globs.ts(),
       'lib/**/*.d.ts',
-      'typings/**/*.d.ts',
-      'node_modules/typed-react/dist/typed-react.d.ts'
+      'typings/**/*.d.ts'
     ];
   }),
   gulp: val(function() {
@@ -250,6 +249,14 @@ gulp.task('scripts', ['tslint'], function() {
  * Run the tests
  */
 gulp.task('spec', ['scripts'], function(callback) {
+  // Don't clutter test output for React isDOMNode warnings
+  var consoleWarn = console.warn;
+  console.warn = function(message) {
+    if (message.indexOf("getDOMNode") === -1) {
+      consoleWarn.apply(null, arguments);
+    }
+  };
+
   var reporters = ['text', 'text-summary'];
   if (!env.isTravis()) {
     reporters.push('html');
