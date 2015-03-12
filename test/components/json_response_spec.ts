@@ -1,7 +1,3 @@
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import chai = require("chai");
 import React = require("react/addons");
 import sinon = require("sinon");

@@ -1,9 +1,5 @@
 /// <reference path="../../src/asana.d.ts" />
 /// <reference path="../../src/resources/interfaces.ts" />
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import Asana = require("asana");
 import chai = require("chai");
 import Promise = require("bluebird");
