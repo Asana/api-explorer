@@ -10,3 +10,7 @@ sudo: false
 before_install:
 - openssl aes-256-cbc -K $encrypted_d04ead2b6c5a_key -iv $encrypted_d04ead2b6c5a_iv
   -in .tsdrc.enc -out .tsdrc -d
+after_success:
+  - git config --global user.email "git@asana.com"
+  - git config --global user.name "Asana"
+  - gulp gh-pages
