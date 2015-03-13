@@ -122,7 +122,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    * Uses the state to return the URL with parameters for the current request.
    * @returns {string}
    */
-  requestUrlWithOptionalParams = (): string => {
+  requestUrlWithFullParams = (): string => {
     var base_url = this.requestUrl();
 
     // Add the optional parameters to the URL.
@@ -214,6 +214,26 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   };
 
   /**
+   * Returns true iff the user can submit a request.
+   */
+  canSubmitRequest = (): boolean => {
+    // Require GET request.
+    if (this.state.action.method !== "GET") {
+      return false;
+    }
+
+    // Ensure all required parameters are set.
+    var num_required_params =
+      _.filter(this.state.action.params, param => param.required).length;
+    if (num_required_params !== _.size(this.state.params.required_params)) {
+      return false;
+    }
+
+    // At this point, we've passed all constraints.
+    return true;
+  };
+
+  /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
    */
@@ -229,7 +249,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           raw_response: response,
-          route: this.requestUrlWithOptionalParams()
+          route: this.requestUrlWithFullParams()
         }
       });
     }.bind(this)).error(function(e: any) {
@@ -238,7 +258,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           action: this.state.action,
           error: e,
           raw_response: e.value,
-          route: this.requestUrlWithOptionalParams()
+          route: this.requestUrlWithFullParams()
         }
       });
     }.bind(this)).finally(function() {
@@ -263,10 +283,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             onResourceChange: this.onChangeResourceState
           }),
           RouteEntry.create({
-            resource: this.state.resource,
             action: this.state.action,
+            current_request_url: this.requestUrlWithFullParams(),
+            onActionChange: this.onChangeActionState,
             onFormSubmit: this.onSubmitRequest,
-            onActionChange: this.onChangeActionState
+            resource: this.state.resource,
+            submit_disabled: !this.canSubmitRequest()
           }),
           r.div( { },
             PropertyEntry.create({
@@ -291,6 +313,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
               onParameterChange: this.onChangeParameterState
             })
           ),
+          r.hr(),
           JsonResponse.create({
             response: this.state.response
           })

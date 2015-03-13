@@ -15,6 +15,7 @@ describe("RouteEntryComponent", () => {
   var initial_action: Action;
   var initial_resource: Resource;
 
+  var canSubmitRequestStub: SinonStub;
   var onFormSubmitStub: SinonStub;
   var onActionChangeStub: SinonStub;
 
@@ -27,56 +28,98 @@ describe("RouteEntryComponent", () => {
     initial_resource = Resources.Projects;
     initial_action = initial_resource.actions[0];
 
+    canSubmitRequestStub = sand.stub();
     onFormSubmitStub = sand.stub();
     onActionChangeStub = sand.stub();
-
-    root = testUtils.renderIntoDocument<RouteEntry>(
-      RouteEntry.create({
-        action: initial_action,
-        resource: initial_resource,
-        onFormSubmit: onFormSubmitStub,
-        onActionChange: onActionChangeStub
-      })
-    );
-    selectRoute = testUtils.findRenderedDOMComponentWithClass(
-      root,
-      "select-route"
-    );
   });
 
   afterEach(() => {
     sand.restore();
   });
 
-  it("should select the current route", () => {
-    assert.include(
-      React.findDOMNode<HTMLInputElement>(selectRoute).value,
-      initial_action.name
+  function renderRoot() {
+    root = testUtils.renderIntoDocument<RouteEntry>(
+      RouteEntry.create({
+        action: initial_action,
+        current_request_url: "URL_HERE",
+        onActionChange: onActionChangeStub,
+        onFormSubmit: onFormSubmitStub,
+        resource: initial_resource,
+        submit_disabled: !canSubmitRequestStub()
+      })
     );
-  });
+    selectRoute = testUtils.findRenderedDOMComponentWithClass(
+      root,
+      "select-route"
+    );
+  }
 
-  it("should contain dropdown with other routes", () => {
-    var children = React.findDOMNode(selectRoute).childNodes;
+  describe("when can submit", () => {
+    beforeEach(() => {
+      canSubmitRequestStub.returns(true);
+      renderRoot();
+    });
 
-    assert.equal(children.length, initial_resource.actions.length);
-    initial_resource.actions.forEach((action, idx) => {
-      var child_item = (<HTMLOptionElement>children.item(idx));
-      assert.equal(child_item.value, action.name);
-      assert.equal(child_item.text, action.path);
+    it("should have enabled submit button", () => {
+      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
+        root, "submit-request");
+
+      sinon.assert.calledOnce(canSubmitRequestStub);
+      assert.isFalse(submitRequest.props.disabled);
+    });
+
+    it("should select the current route", () => {
+      assert.include(
+        React.findDOMNode<HTMLInputElement>(selectRoute).value,
+        initial_action.name
+      );
+    });
+
+    it("should display the current route url", () => {
+      assert.include(
+        React.findDOMNode(root).textContent,
+        initial_action.method + " " + "URL_HERE"
+      );
+    });
+
+    it("should contain dropdown with other routes", () => {
+      var children = React.findDOMNode(selectRoute).childNodes;
+
+      assert.equal(children.length, initial_resource.actions.length);
+      initial_resource.actions.forEach((action, idx) => {
+        var child_item = (<HTMLOptionElement>children.item(idx));
+        assert.equal(child_item.value, action.name);
+        assert.equal(child_item.text, action.path);
+      });
+    });
+
+    it("should trigger onFormSubmit property on submit", () => {
+      testUtils.Simulate.submit(React.findDOMNode(root));
+      sinon.assert.called(onFormSubmitStub);
+    });
+
+    it("should trigger onRouteChange property on route change", () => {
+      var other_action = initial_resource.actions[1];
+
+      testUtils.Simulate.change(selectRoute, {
+        target: { value: other_action.name }
+      });
+      sinon.assert.called(onActionChangeStub);
     });
   });
 
-  it("should trigger onFormSubmit property on submit", () => {
-    testUtils.Simulate.submit(React.findDOMNode(root));
-    sinon.assert.called(onFormSubmitStub);
-  });
-
-  it("should trigger onRouteChange property on route change", () => {
-    var other_action = initial_resource.actions[1];
-
-    testUtils.Simulate.change(selectRoute, {
-      target: { value: other_action.name }
+  describe("when cannot submit", () => {
+    beforeEach(() => {
+      canSubmitRequestStub.returns(false);
+      renderRoot();
     });
-    sinon.assert.called(onActionChangeStub);
+
+    it("should have disabled submit button", () => {
+      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
+        root, "submit-request");
+
+      sinon.assert.calledOnce(canSubmitRequestStub);
+      assert.isTrue(submitRequest.props.disabled);
+    });
   });
 });

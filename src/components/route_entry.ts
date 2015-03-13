@@ -30,14 +30,8 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
         this.props.action.comment
       ),
       r.div({ },
-        r.strong({ }, "Current route attributes: "),
-        this.props.action.params !== undefined ?
-          this.props.action.params.map(parameter => parameter.name).join() :
-          ""
-      ),
-      r.div({ },
-        r.strong({ }, "Route method: "),
-        this.props.action.method
+        r.strong({ }, "Current request URL: "),
+        this.props.action.method + " " + this.props.current_request_url
       )
     );
   };
@@ -49,7 +43,8 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
       children: [
         this._renderSelectRoute(),
         r.button({
-          className: "submit-request"
+          className: "submit-request",
+          disabled: this.props.submit_disabled
         }, "Submit!"),
         this._renderRouteInfo()
       ]
@@ -59,10 +54,12 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
 
 module RouteEntry {
   export interface Props {
-    resource: Resource;
     action: Action;
-    onFormSubmit: (event?: React.FormEvent) => void;
+    current_request_url: string;
     onActionChange: (event?: React.FormEvent) => void;
+    onFormSubmit: (event?: React.FormEvent) => void;
+    resource: Resource;
+    submit_disabled: boolean;
   }
 }
 

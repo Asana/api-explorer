@@ -561,7 +561,7 @@ describe("ExplorerComponent", () => {
         });
       });
 
-      it("should display the current route URL", (cb) => {
+      it("should display the submitted route URL", (cb) => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
@@ -577,7 +577,7 @@ describe("ExplorerComponent", () => {
         });
       });
 
-      it("should display the current route URL with parameters", (cb) => {
+      it("should display the submitted route URL with parameters", (cb) => {
         root.state.params = {
           expand_fields: ["test"],
           include_fields: ["other", "this"],
@@ -712,6 +712,53 @@ describe("ExplorerComponent", () => {
           cb(err);
         });
       });
+
+    });
+
+    describe("submit state", () => {
+      var submitRequest: React.HTMLComponent;
+
+      beforeEach(() => {
+        submitRequest = testUtils.findRenderedDOMComponentWithClass(
+          root, "submit-request");
+      });
+
+      it("should be disabled with unset required param with get request", () => {
+        assert.equal(root.state.action.method, "GET");
+        assert.propertyVal(root.state.action.params[0], "required", true);
+        assert.isTrue(submitRequest.props.disabled);
+      });
+
+      it("should be enabled with set required param with get request", () => {
+        var requiredParam = testUtils.findRenderedDOMComponentWithClass(
+          root, "required-param");
+
+        testUtils.Simulate.change(requiredParam, {
+          target: {
+            className: requiredParam.props.className,
+            id: requiredParam.props.id,
+            value: "hi there"
+          }
+        });
+        assert.isFalse(submitRequest.props.disabled);
+      });
+    });
+
+    it("should be disabled with non-get request", () => {
+      var other_resource = Resources.Tasks;
+
+      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
+        root, "submit-request");
+
+      testUtils.Simulate.change(selectResource, {
+        target: {
+          value: ResourcesHelpers.resourceNameFromResource(other_resource)
+        }
+      });
+
+      assert.equal(root.state.resource, other_resource);
+      assert.notEqual(root.state.action.method, "GET");
+      assert.isTrue(submitRequest.props.disabled);
     });
   });
 });
