@@ -1,13 +1,9 @@
 /// <reference path="../../src/asana.d.ts" />
 /// <reference path="../../src/resources/interfaces.ts" />
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import Asana = require("asana");
 import chai = require("chai");
 import Promise = require("bluebird");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 import _ = require("lodash");
 
@@ -19,7 +15,7 @@ import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("ExplorerComponent", () => {
   var sand: SinonSandbox;
@@ -43,7 +39,7 @@ describe("ExplorerComponent", () => {
   });
 
   it("should check local storage authorization state", () => {
-    testUtils.renderIntoDocument<Explorer.Component>(
+    testUtils.renderIntoDocument<Explorer>(
       Explorer.create({
         initialClient: client
       })
@@ -56,7 +52,7 @@ describe("ExplorerComponent", () => {
     it("should set initial routes if found in the resource", () => {
       var resource = Resources.Attachments;
       var valid_action = resource.actions[1];
-      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+      var explorer = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
           initial_resource_string:
@@ -71,7 +67,7 @@ describe("ExplorerComponent", () => {
     it("should ignore initial routes if not found in the resource", () => {
       var invalid_route = "/this/does/not/exist";
       var resource = Resources.Attachments;
-      var explorer = testUtils.renderIntoDocument<Explorer.Component>(
+      var explorer = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
           initial_resource_string:
@@ -86,18 +82,18 @@ describe("ExplorerComponent", () => {
   });
 
   describe("when unauthorized", () => {
-    var root: Explorer.Component;
-    var node: Node;
+    var root: Explorer;
+    var children: NodeList;
 
     beforeEach(() => {
       isPossiblyValidFromClientStub.returns(false);
 
-      root = testUtils.renderIntoDocument<Explorer.Component>(
+      root = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client
         })
       );
-      node = root.getDOMNode();
+      children = React.findDOMNode(root).childNodes;
     });
 
     it("should not contain the api explorer", () => {
@@ -123,7 +119,7 @@ describe("ExplorerComponent", () => {
       );
 
       // Clicking the link send an authorization.
-      testUtils.Simulate.click(link.getDOMNode());
+      testUtils.Simulate.click(React.findDOMNode(link));
       promise.then(function () {
         sinon.assert.called(authorizeStub);
 
@@ -146,7 +142,7 @@ describe("ExplorerComponent", () => {
   });
 
   describe("when authorized", () => {
-    var root: Explorer.Component;
+    var root: Explorer;
     var selectResource: React.HTMLComponent;
     var selectRoute: React.HTMLComponent;
     var routeEntry: React.HTMLComponent;
@@ -160,7 +156,7 @@ describe("ExplorerComponent", () => {
       initial_resource = Resources.Attachments;
       initial_action = initial_resource.actions[0];
 
-      root = testUtils.renderIntoDocument<Explorer.Component>(
+      root = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
           initial_route: initial_action.path,
@@ -315,7 +311,7 @@ describe("ExplorerComponent", () => {
           testUtils.Simulate.change(checkbox, {
             target: {
               checked: true,
-              value: (<HTMLInputElement>checkbox.getDOMNode()).value
+              value: React.findDOMNode<HTMLInputElement>(checkbox).value
             }
           });
 
@@ -327,7 +323,7 @@ describe("ExplorerComponent", () => {
 
         it("should remove property from params if previously checked", () => {
           var checkbox = propertyCheckboxes[0];
-          var value = (<HTMLInputElement>checkbox.getDOMNode()).value;
+          var value = React.findDOMNode<HTMLInputElement>(checkbox).value;
 
           root.state.params.include_fields.push(value);
           testUtils.Simulate.change(checkbox, {
@@ -566,12 +562,12 @@ describe("ExplorerComponent", () => {
       });
 
       it("should display the current route URL", (cb) => {
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           assert.include(
-            testUtils.findRenderedDOMComponentWithClass(
-              root, "json-response-info").getDOMNode().textContent,
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info")).textContent,
             initial_action.path
           );
 
@@ -589,12 +585,12 @@ describe("ExplorerComponent", () => {
           optional_params: {}
         };
 
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           assert.include(
-            testUtils.findRenderedDOMComponentWithClass(
-              root, "json-response-info").getDOMNode().textContent,
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info")).textContent,
             initial_action.path + "?opt_expand=test&opt_fields=other,this"
           );
 
@@ -605,12 +601,12 @@ describe("ExplorerComponent", () => {
       });
 
       it("should display the current route method", (cb) => {
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           assert.include(
-            testUtils.findRenderedDOMComponentWithClass(
-              root, "json-response-info").getDOMNode().textContent,
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info")).textContent,
             initial_action.method
           );
 
@@ -621,15 +617,15 @@ describe("ExplorerComponent", () => {
       });
 
       it("should make a GET request", (cb) => {
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           sinon.assert.calledWith(getStub, initial_action.path);
 
-          assert.equal(testUtils.findRenderedDOMComponentWithClass(
-            root,
-            "json-response-block"
-          ).getDOMNode().textContent, json_response);
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
 
           cb();
         }).catch(function (err) {
@@ -645,7 +641,7 @@ describe("ExplorerComponent", () => {
           optional_params: {}
         };
 
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           sinon.assert.calledWith(
@@ -654,10 +650,10 @@ describe("ExplorerComponent", () => {
             { opt_expand: "test", opt_fields: "other,this" }
           );
 
-          assert.equal(testUtils.findRenderedDOMComponentWithClass(
-            root,
-            "json-response-block"
-          ).getDOMNode().textContent, json_response);
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
 
           cb();
         }).catch(function (err) {
@@ -677,15 +673,15 @@ describe("ExplorerComponent", () => {
         });
 
         // Clicking the link should send request with the correct route.
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           sinon.assert.calledWith(getStub, other_action.path);
 
-          assert.equal(testUtils.findRenderedDOMComponentWithClass(
-            root,
-            "json-response-block"
-          ).getDOMNode().textContent, json_response);
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
 
           cb();
         }).catch(function (err) {
@@ -701,15 +697,15 @@ describe("ExplorerComponent", () => {
         });
 
         // Clicking the link should send request with the correct route.
-        testUtils.Simulate.submit(routeEntry.getDOMNode());
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
           sinon.assert.calledWith(getStub, other_action.path);
 
-          assert.equal(testUtils.findRenderedDOMComponentWithClass(
-            root,
-            "json-response-block"
-          ).getDOMNode().textContent, json_response);
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
 
           cb();
         }).catch(function (err) {

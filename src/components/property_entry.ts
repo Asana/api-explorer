@@ -1,23 +1,15 @@
 /// <reference path="../resources/interfaces.ts" />
-import build = require("./build");
-import react = require("react");
-import TypedReact = require("typed-react");
+import React = require("react");
 
-var r = react.DOM;
-
-export interface Props {
-  class_suffix: string;
-  text: string;
-  properties: Property[];
-  useProperty: (property: string) => boolean;
-  isPropertyChecked: (event?: React.FormEvent) => void;
-}
+var r = React.DOM;
 
 /**
  * The property toggling area
  */
-export class Component extends TypedReact.Component<Props, {}> {
-  private _renderPropertyCheckbox(property: Property) {
+class PropertyEntry extends React.Component<PropertyEntry.Props, {}> {
+  static create = React.createFactory(PropertyEntry);
+
+  private _renderPropertyCheckbox = (property: Property) => {
     return r.span({ key: property.name },
       r.input({
         type: "checkbox",
@@ -28,7 +20,7 @@ export class Component extends TypedReact.Component<Props, {}> {
         value: property.name
       }, property.name)
     );
-  }
+  };
 
   render() {
     return r.div({
@@ -44,4 +36,13 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 }
 
-export var create = build(Component);
+module PropertyEntry {
+  export interface Props {
+    class_suffix: string;
+    text: string;
+    properties: Property[];
+    useProperty: (property: string) => boolean;
+    isPropertyChecked: (event?: React.FormEvent) => void;
+  }
+}
+export = PropertyEntry;

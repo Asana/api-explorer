@@ -1,10 +1,6 @@
 /// <reference path="../../src/resources/interfaces.ts" />
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import chai = require("chai");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 import _ = require("lodash");
 
@@ -12,7 +8,7 @@ import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("ParameterEntryComponent", () => {
   var sand: SinonSandbox;
@@ -21,7 +17,7 @@ describe("ParameterEntryComponent", () => {
 
   var onParameterChangeStub: SinonStub;
 
-  var root: ParameterEntry.Component;
+  var root: ParameterEntry;
   var inputs: React.HTMLComponent[];
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("ParameterEntryComponent", () => {
 
     onParameterChangeStub = sand.stub();
 
-    root = testUtils.renderIntoDocument<ParameterEntry.Component>(
+    root = testUtils.renderIntoDocument<ParameterEntry>(
       ParameterEntry.create({
         text: "this is a test",
         parameters: parameters,
@@ -65,7 +61,7 @@ describe("ParameterEntryComponent", () => {
 
     assert.equal(inputs.length, parameters.length);
     inputs.forEach(input => {
-      var input_id = (<HTMLInputElement>input.getDOMNode()).id;
+      var input_id = (React.findDOMNode<HTMLInputElement>(input)).id;
       assert.include(
         parameter_names,
         ParameterEntry.parameterFromInputId(input_id)

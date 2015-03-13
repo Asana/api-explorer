@@ -1,54 +1,55 @@
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import chai = require("chai");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 
 import JsonResponse = require("../../src/components/json_response");
 import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("JsonResponseComponent", () => {
   var sand: SinonSandbox;
 
-  var root: JsonResponse.Component;
+  var root: JsonResponse;
   var responseBlock: React.HTMLComponent;
   var stringifySpy: SinonSpy;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
-
     stringifySpy = sand.spy(JSON, "stringify");
+  });
 
-    root = testUtils.renderIntoDocument<JsonResponse.Component>(
-      JsonResponse.create({
-        response: <JsonResponse.ResponseData>{
-          action: undefined,
-          raw_response: undefined,
-          route: undefined
-        }
-      })
+  function renderWithProps(props?: JsonResponse.Props) {
+    props = props || {
+      response: <JsonResponse.ResponseData>{
+        action: undefined,
+        raw_response: undefined,
+        route: undefined
+      }
+    };
+
+    root = testUtils.renderIntoDocument<JsonResponse>(
+      JsonResponse.create(props)
     );
     responseBlock = testUtils.findRenderedDOMComponentWithClass(
       root,
       "json-response-block"
     );
-  });
+  }
 
   afterEach(() => {
     sand.restore();
   });
 
   it("should show an empty json response when undefined", () => {
+    renderWithProps();
+
     // We shouldn't stringify an undefined string.
     sinon.assert.notCalled(stringifySpy);
 
     // Verify the DOM is as expected.
-    var node = responseBlock.getDOMNode();
+    var node = React.findDOMNode(responseBlock);
     assert.equal(node.nodeName, "PRE");
     assert.equal(node.childNodes.length, 1);
     assert.equal(node.childNodes[0].nodeName, "CODE");
@@ -57,12 +58,10 @@ describe("JsonResponseComponent", () => {
 
   it("should show error json response when response fails", () => {
     var action = Resources.Attachments.actions[0];
-    // Update the state to have a non-empty response.
+
+    // Set the props to have a non-empty response.
     var raw_response = { error: { again: 2 } };
-    testUtils.findRenderedComponentWithType(
-      root,
-      JsonResponse.create
-    ).setProps({
+    renderWithProps({
         response: {
           action: action,
           error: "something",
@@ -75,7 +74,7 @@ describe("JsonResponseComponent", () => {
     sinon.assert.calledWith(stringifySpy, raw_response);
 
     // Verify the DOM for the json response block.
-    var node = <HTMLElement>responseBlock.getDOMNode();
+    var node = React.findDOMNode<HTMLElement>(responseBlock);
     assert.equal(node.nodeName, "PRE");
     assert.equal(node.childNodes.length, 1);
     assert.equal(node.childNodes[0].nodeName, "CODE");
@@ -92,31 +91,30 @@ describe("JsonResponseComponent", () => {
       root,
       "json-response-info"
     );
-    assert.include(responseInfo.getDOMNode().textContent, action.method);
-    assert.include(responseInfo.getDOMNode().textContent, action.path);
+    var text_content = React.findDOMNode(responseInfo).textContent;
+    assert.include(text_content, action.method);
+    assert.include(text_content, action.path);
   });
 
   it("should show non-empty json response after updating props", () => {
     var action = Resources.Attachments.actions[0];
-    // Update the state to have a non-empty response.
+
+    // Set the props to have a non-empty response.
     var raw_response = { test: { again: 2 } };
-    testUtils.findRenderedComponentWithType(
-      root,
-      JsonResponse.create
-    ).setProps({
-        response: {
-          action: action,
-          params: { },
-          raw_response: raw_response,
-          route: action.path
-        }
-      });
+    renderWithProps({
+      response: {
+        action: action,
+        params: { },
+        raw_response: raw_response,
+        route: action.path
+      }
+    });
 
     // We should stringify a non-empty string.
     sinon.assert.calledWith(stringifySpy, raw_response);
 
     // Verify the DOM for the json response block.
-    var node = responseBlock.getDOMNode();
+    var node = React.findDOMNode(responseBlock);
     assert.equal(node.nodeName, "PRE");
     assert.equal(node.childNodes.length, 1);
     assert.equal(node.childNodes[0].nodeName, "CODE");
@@ -130,7 +128,7 @@ describe("JsonResponseComponent", () => {
       root,
       "json-response-info"
     );
-    assert.include(responseInfo.getDOMNode().textContent, action.method);
-    assert.include(responseInfo.getDOMNode().textContent, action.path);
+    assert.include(React.findDOMNode(responseInfo).textContent, action.method);
+    assert.include(React.findDOMNode(responseInfo).textContent, action.path);
   });
 });

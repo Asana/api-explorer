@@ -8,8 +8,7 @@ import constants = require("./constants");
 // This would provide the ability for auto-renewal in the client
 
 // Allows us to mock out localStorage in tests.
-export var localStorage: Storage =
-  typeof window !== "undefined" ? window.localStorage : null;
+export var localStorage: Storage = window.localStorage;
 
 /**
  * Returns true if the client has (possibly-expired) credentials.
@@ -40,8 +39,7 @@ function getFromClient(client: Asana.Client): Asana.auth.Credentials {
  * @returns {Asana.auth.Credentials}
  */
 export function getFromLocalStorage(): Asana.auth.Credentials {
-  // If we don't have access to local storage, then we can't do anything.
-  if (localStorage !== null) {
+  if (localStorage !== undefined) {
     return JSON.parse(
       localStorage.getItem(constants.LOCALSTORAGE_KEY)
     );
@@ -54,8 +52,7 @@ export function getFromLocalStorage(): Asana.auth.Credentials {
  * @param {Asana.Client} client
  */
 export function storeFromClient(client: Asana.Client): void {
-  // If we don't have access to local storage, then we can't do anything.
-  if (localStorage !== null) {
+  if (localStorage !== undefined) {
     var credentials = getFromClient(client);
 
     if (credentials === null) {

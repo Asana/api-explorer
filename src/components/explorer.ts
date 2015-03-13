@@ -1,46 +1,24 @@
 /// <reference path="../asana.d.ts" />
 /// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
-import react = require("react/addons");
-import TypedReact = require("typed-react");
+import React = require("react/addons");
 import url = require("url");
 import util = require("util");
 import _ = require("lodash");
 
-import build = require("./build");
 import constants = require("../constants");
 import CredentialsManager = require("../credentials_manager");
 import JsonResponse = require("./json_response");
 import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
+import Resources = require("../resources/resources");
 import RouteEntry = require("./route_entry");
 
 import ResourcesHelpers = require("../resources/helpers");
 
-var r = react.DOM;
-var update = react.addons.update;
-
-interface ParamData {
-  expand_fields: string[];
-  include_fields: string[];
-  required_params: any;
-  optional_params: any;
-}
-
-export interface Props {
-  initialClient?: Asana.Client;
-  initial_resource_string?: string;
-  initial_route?: string;
-}
-
-export interface State {
-  action?: Action;
-  client?: Asana.Client;
-  params?: ParamData;
-  resource?: Resource;
-  response?: JsonResponse.ResponseData;
-}
+var r = React.DOM;
+var update = React.addons.update;
 
 /**
  * If a client exists in props, use it. Otherwise, make a new one.
@@ -62,29 +40,19 @@ function initializeClient(initialClient?: Asana.Client): Asana.Client {
 }
 
 /**
- * Initializes a set of empty parameters.
- *
- * @returns {ParamData}
- */
-export function emptyParams(): ParamData {
-  return {
-    expand_fields: [],
-    include_fields: [],
-    required_params: {},
-    optional_params: {}
-  };
-}
-
-/**
  * The main API Explorer component.
  */
-export class Component extends TypedReact.Component<Props, State> {
-  getInitialState() {
+class Explorer extends React.Component<Explorer.Props, Explorer.State> {
+  static create = React.createFactory(Explorer);
+
+  constructor(props: Explorer.Props, context: any) {
+    super(props, context);
+
     // Fetch the resource JSON given in the props, if any.
     var resource =
       ResourcesHelpers.resourceFromResourceName(
         this.props.initial_resource_string) ||
-      ResourcesHelpers.resourceFromResourceName("Users");
+      Resources.Users;
 
     // If the initial route is valid, use it. Otherwise, use a valid one.
     var action =
@@ -92,10 +60,10 @@ export class Component extends TypedReact.Component<Props, State> {
         resource, this.props.initial_route) ||
       resource.actions[0];
 
-    return {
+    this.state = {
       action: action,
       client: initializeClient(this.props.initialClient),
-      params: emptyParams(),
+      params: Explorer.emptyParams(),
       resource: resource,
       response: <JsonResponse.ResponseData>{
         action: undefined,
@@ -108,20 +76,18 @@ export class Component extends TypedReact.Component<Props, State> {
   /**
    * Authorize the client, if it has expired, and force a re-rendering.
    */
-  authorize() {
+  authorize = (): void => {
     this.state.client.authorize().then(function() {
       CredentialsManager.storeFromClient(this.state.client);
 
-      if (this.isMounted()) {
-        this.forceUpdate();
-      }
+      this.forceUpdate();
     }.bind(this));
-  }
+  };
 
   /**
    * Uses the state to return the properly-formatted request parameters.
    */
-  requestParameters() {
+  requestParameters = () => {
     var params = { };
 
     if (this.state.params.expand_fields.length > 0) {
@@ -137,26 +103,26 @@ export class Component extends TypedReact.Component<Props, State> {
     params = _.extend(params, this.state.params.optional_params);
 
     return params;
-  }
+  };
 
   /**
    * Uses the state to return the URL for the current request.
    * @returns {string}
    */
-  requestUrl(): string {
+  requestUrl = (): string => {
     // Assumes we have at-most one required parameter to put in the URL.
     var required_params = this.state.params.required_params;
 
     return !_.isEmpty(required_params) ?
       util.format(this.state.action.path, _.values(required_params)[0]) :
       this.state.action.path;
-  }
+  };
 
   /**
    * Uses the state to return the URL with parameters for the current request.
    * @returns {string}
    */
-  requestUrlWithOptionalParams(): string {
+  requestUrlWithOptionalParams = (): string => {
     var base_url = this.requestUrl();
 
     // Add the optional parameters to the URL.
@@ -165,50 +131,50 @@ export class Component extends TypedReact.Component<Props, State> {
 
     // Format the URL and use commas for readability.
     return url.format(parsed).replace(/%2C/g, ",");
-  }
+  };
 
   /**
    * Updates the resource state following an onChange event.
    */
-  onChangeResourceState(event: React.FormEvent) {
+  onChangeResourceState = (event: React.FormEvent): void => {
     var resource = ResourcesHelpers.resourceFromResourceName(
       (<HTMLSelectElement>event.target).value);
     var has_changed = resource !== this.state.resource;
 
     // If the resource has changed, also reset relevant parts of state.
     var action = !has_changed ? this.state.action : resource.actions[0];
-    var params = !has_changed ? this.state.params : emptyParams();
+    var params = !has_changed ? this.state.params : Explorer.emptyParams();
 
     this.setState({
       action: action,
       params: params,
       resource: resource
     });
-  }
+  };
 
   /**
    * Updates the action state following an onChange event.
    */
-  onChangeActionState(event: React.FormEvent) {
+  onChangeActionState = (event: React.FormEvent): void => {
     var action = ResourcesHelpers.actionFromResourceAndName(
       this.state.resource, (<HTMLSelectElement>event.target).value);
     var has_changed = action !== this.state.action;
 
     // If the action has changed, also reset relevant parts of state.
-    var params = !has_changed ? this.state.params : emptyParams();
+    var params = !has_changed ? this.state.params : Explorer.emptyParams();
 
     this.setState({
       action: action,
       params: params
     });
-  }
+  };
 
   /**
    * Returns a function to handle the onChange event for a given param_type.
    * @param param_type
    * @returns {function(React.FormEvent): void}
    */
-  onChangePropertyChecked(param_type: string) {
+  onChangePropertyChecked = (param_type: string) => {
     return (event: React.FormEvent) => {
       var target = <HTMLInputElement>event.target;
       var params: any = this.state.params;
@@ -223,12 +189,12 @@ export class Component extends TypedReact.Component<Props, State> {
         params: params
       });
     };
-  }
+  };
 
   /**
    * Updates the parameter state following an onChange event.
    */
-  onChangeParameterState(event: React.FormEvent) {
+  onChangeParameterState = (event: React.FormEvent): void => {
     var target = <HTMLInputElement>event.target;
 
     var parameter = ParameterEntry.parameterFromInputId(target.id);
@@ -245,13 +211,13 @@ export class Component extends TypedReact.Component<Props, State> {
             _.object([parameter], [target.value]))
       }])
     }));
-  }
+  };
 
   /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
    */
-  onSubmitRequest(event: React.FormEvent) {
+  onSubmitRequest = (event: React.FormEvent): void => {
     event.preventDefault();
 
     var dispatcher = this.state.client.dispatcher;
@@ -279,7 +245,7 @@ export class Component extends TypedReact.Component<Props, State> {
       // Store possibly-updated credentials for later use.
       CredentialsManager.storeFromClient(this.state.client);
     }.bind(this));
-  }
+  };
 
   render() {
     if (!CredentialsManager.isPossiblyValidFromClient(this.state.client)) {
@@ -334,4 +300,36 @@ export class Component extends TypedReact.Component<Props, State> {
   }
 }
 
-export var create = build(Component);
+module Explorer {
+  export function emptyParams(): ParamData {
+    return {
+      expand_fields: [],
+      include_fields: [],
+      required_params: {},
+      optional_params: {}
+    };
+  }
+
+  export interface ParamData {
+    expand_fields: string[];
+    include_fields: string[];
+    required_params: any;
+    optional_params: any;
+  }
+
+  export interface Props {
+    initialClient?: Asana.Client;
+    initial_resource_string?: string;
+    initial_route?: string;
+  }
+
+  export interface State {
+    action?: Action;
+    client?: Asana.Client;
+    params?: ParamData;
+    resource?: Resource;
+    response?: JsonResponse.ResponseData;
+  }
+}
+
+export = Explorer;

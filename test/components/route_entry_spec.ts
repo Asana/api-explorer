@@ -1,17 +1,13 @@
 /// <reference path="../../src/resources/interfaces.ts" />
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import chai = require("chai");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 
 import Resources = require("../../src/resources/resources");
 import RouteEntry = require("../../src/components/route_entry");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("RouteEntryComponent", () => {
   var sand: SinonSandbox;
@@ -22,7 +18,7 @@ describe("RouteEntryComponent", () => {
   var onFormSubmitStub: SinonStub;
   var onActionChangeStub: SinonStub;
 
-  var root: RouteEntry.Component;
+  var root: RouteEntry;
   var selectRoute: React.HTMLComponent;
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("RouteEntryComponent", () => {
     onFormSubmitStub = sand.stub();
     onActionChangeStub = sand.stub();
 
-    root = testUtils.renderIntoDocument<RouteEntry.Component>(
+    root = testUtils.renderIntoDocument<RouteEntry>(
       RouteEntry.create({
         action: initial_action,
         resource: initial_resource,
@@ -54,13 +50,13 @@ describe("RouteEntryComponent", () => {
 
   it("should select the current route", () => {
     assert.include(
-      (<HTMLInputElement>selectRoute.getDOMNode()).value,
+      React.findDOMNode<HTMLInputElement>(selectRoute).value,
       initial_action.name
     );
   });
 
   it("should contain dropdown with other routes", () => {
-    var children = selectRoute.getDOMNode().childNodes;
+    var children = React.findDOMNode(selectRoute).childNodes;
 
     assert.equal(children.length, initial_resource.actions.length);
     initial_resource.actions.forEach((action, idx) => {
@@ -71,7 +67,7 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should trigger onFormSubmit property on submit", () => {
-    testUtils.Simulate.submit(root.getDOMNode());
+    testUtils.Simulate.submit(React.findDOMNode(root));
     sinon.assert.called(onFormSubmitStub);
   });
 

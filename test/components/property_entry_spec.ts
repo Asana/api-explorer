@@ -1,10 +1,6 @@
 /// <reference path="../../src/resources/interfaces.ts" />
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import chai = require("chai");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 import _ = require("lodash");
 
@@ -12,7 +8,7 @@ import PropertyEntry = require("../../src/components/property_entry");
 import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("PropertyEntryComponent", () => {
   var sand: SinonSandbox;
@@ -22,7 +18,7 @@ describe("PropertyEntryComponent", () => {
   var isPropertyCheckedStub: SinonStub;
   var usePropertyStub: SinonStub;
 
-  var root: PropertyEntry.Component;
+  var root: PropertyEntry;
   var checkboxes: React.HTMLComponent[];
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("PropertyEntryComponent", () => {
     isPropertyCheckedStub = sand.stub();
     usePropertyStub = sand.stub();
 
-    root = testUtils.renderIntoDocument<PropertyEntry.Component>(
+    root = testUtils.renderIntoDocument<PropertyEntry>(
       PropertyEntry.create({
         class_suffix: "test",
         text: "this is a test",
@@ -59,7 +55,7 @@ describe("PropertyEntryComponent", () => {
     checkboxes.forEach(checkbox => {
       assert.include(
         property_names,
-        (<HTMLInputElement>checkbox.getDOMNode()).value
+        (React.findDOMNode<HTMLInputElement>(checkbox)).value
       );
     });
   });
@@ -72,7 +68,7 @@ describe("PropertyEntryComponent", () => {
 
   it("should trigger onChange property on each check action", () => {
     checkboxes.forEach(checkbox => {
-      var checkbox_node = <HTMLInputElement>checkbox.getDOMNode();
+      var checkbox_node = React.findDOMNode<HTMLInputElement>(checkbox);
 
       testUtils.Simulate.change(checkbox, {
         checked: !checkbox_node.checked

@@ -1,33 +1,18 @@
 /// <reference path="../resources/interfaces.ts" />
-import build = require("./build");
-import react = require("react/addons");
-import TypedReact = require("typed-react");
+import React = require("react/addons");
 import _ = require("lodash");
 
-var cx = react.addons.classSet;
-var r = react.DOM;
+// TODO: Remove deprecated classSet.
+var cx = React.addons.classSet;
+var r = React.DOM;
 
-export interface Props {
-  text: string;
-  parameters: Parameter[];
-  onParameterChange: (event?: React.FormEvent) => void;
-}
-
-/**
- * Given the id from an input rendered from _renderParameterInput,
- * extract the parameter name and return it.
- *
- * @param idName
- * @returns {string}
- */
-export function parameterFromInputId(idName: string): string {
-  return _.last(idName.split("_"));
-}
 /**
  * The parameter input area
  */
-export class Component extends TypedReact.Component<Props, {}> {
-  private _renderParameterInput(parameter: Parameter) {
+class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
+  static create = React.createFactory(ParameterEntry);
+
+  private _renderParameterInput = (parameter: Parameter) => {
     return r.span({ key: parameter.name },
       r.input({
         type: "text",
@@ -39,7 +24,7 @@ export class Component extends TypedReact.Component<Props, {}> {
         onChange: this.props.onParameterChange
       }, parameter.name)
     );
-  }
+  };
 
   render() {
     return r.div({
@@ -56,4 +41,23 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 }
 
-export var create = build(Component);
+module ParameterEntry {
+  /**
+   * Given the id from an input rendered from _renderParameterInput,
+   * extract the parameter name and return it.
+   *
+   * @param idName
+   * @returns {string}
+   */
+  export function parameterFromInputId(idName: string): string {
+    return _.last(idName.split("_"));
+  }
+
+  export interface Props {
+    text: string;
+    parameters: Parameter[];
+    onParameterChange: (event?: React.FormEvent) => void;
+  }
+}
+
+export = ParameterEntry;
