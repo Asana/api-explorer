@@ -29,6 +29,7 @@ _ = loadPlugins({
     'event-stream',
     'glob',
     'gulp-*',
+    'jsdom',
     'typescript-formatter',
     'vinyl-buffer',
     'vinyl-source-stream'
@@ -97,8 +98,7 @@ globs = {
     return [
       globs.ts(),
       'lib/**/*.d.ts',
-      'typings/**/*.d.ts',
-      'node_modules/typed-react/dist/typed-react.d.ts'
+      'typings/**/*.d.ts'
     ];
   }),
   gulp: val(function() {
@@ -250,6 +250,22 @@ gulp.task('scripts', ['tslint'], function() {
  * Run the tests
  */
 gulp.task('spec', ['scripts'], function(callback) {
+  // Don't clutter test output for React isDOMNode warnings
+  var consoleWarn = console.warn;
+  console.warn = function(message) {
+    if (message.indexOf("getDOMNode") === -1) {
+      consoleWarn.apply(null, arguments);
+    }
+  };
+
+  // Set up globals to emulate running on the browser.
+  if (global.document === undefined) {
+    // These need to exist before requiring React so canUseDOM is true.
+    global.document = _.jsdom.jsdom("<body></body>");
+    global.window = global.document.parentWindow;
+    global.navigator = global.window.navigator;
+  }
+
   var reporters = ['text', 'text-summary'];
   if (!env.isTravis()) {
     reporters.push('html');
