@@ -561,7 +561,7 @@ describe("ExplorerComponent", () => {
         });
       });
 
-      it("should display the current route URL", (cb) => {
+      it("should display the submitted route URL", (cb) => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
@@ -577,7 +577,7 @@ describe("ExplorerComponent", () => {
         });
       });
 
-      it("should display the current route URL with parameters", (cb) => {
+      it("should display the submitted route URL with parameters", (cb) => {
         root.state.params = {
           expand_fields: ["test"],
           include_fields: ["other", "this"],

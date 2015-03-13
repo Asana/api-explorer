@@ -122,7 +122,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    * Uses the state to return the URL with parameters for the current request.
    * @returns {string}
    */
-  requestUrlWithOptionalParams = (): string => {
+  requestUrlWithFullParams = (): string => {
     var base_url = this.requestUrl();
 
     // Add the optional parameters to the URL.
@@ -249,7 +249,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           raw_response: response,
-          route: this.requestUrlWithOptionalParams()
+          route: this.requestUrlWithFullParams()
         }
       });
     }.bind(this)).error(function(e: any) {
@@ -258,7 +258,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           action: this.state.action,
           error: e,
           raw_response: e.value,
-          route: this.requestUrlWithOptionalParams()
+          route: this.requestUrlWithFullParams()
         }
       });
     }.bind(this)).finally(function() {
@@ -283,10 +283,11 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             onResourceChange: this.onChangeResourceState
           }),
           RouteEntry.create({
-            resource: this.state.resource,
             action: this.state.action,
-            onFormSubmit: this.onSubmitRequest,
+            current_request_url: this.requestUrlWithFullParams(),
             onActionChange: this.onChangeActionState,
+            onFormSubmit: this.onSubmitRequest,
+            resource: this.state.resource,
             submit_disabled: !this.canSubmitRequest()
           }),
           r.div( { },
@@ -312,6 +313,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
               onParameterChange: this.onChangeParameterState
             })
           ),
+          r.hr(),
           JsonResponse.create({
             response: this.state.response
           })

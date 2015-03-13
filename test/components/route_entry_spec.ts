@@ -41,9 +41,10 @@ describe("RouteEntryComponent", () => {
     root = testUtils.renderIntoDocument<RouteEntry>(
       RouteEntry.create({
         action: initial_action,
-        resource: initial_resource,
-        onFormSubmit: onFormSubmitStub,
+        current_request_url: "URL_HERE",
         onActionChange: onActionChangeStub,
+        onFormSubmit: onFormSubmitStub,
+        resource: initial_resource,
         submit_disabled: !canSubmitRequestStub()
       })
     );
@@ -71,6 +72,13 @@ describe("RouteEntryComponent", () => {
       assert.include(
         React.findDOMNode<HTMLInputElement>(selectRoute).value,
         initial_action.name
+      );
+    });
+
+    it("should display the current route url", () => {
+      assert.include(
+        React.findDOMNode(root).textContent,
+        initial_action.method + " " + "URL_HERE"
       );
     });
 
