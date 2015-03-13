@@ -312,5 +312,8 @@ gulp.task('tslint', function() {
  * Push to gh-pages branch.
  */
 gulp.task('gh-pages', ['browser-gh-pages', 'public-files'], function() {
-  return gulp.src(globs.dists()).pipe(_.gh_deploy({}));
+  return gulp.src(globs.dists())
+    .pipe(_.gh_deploy({
+      remoteUrl: "https://" + process.env.ASANA_GITHUB_TOKEN + "@github.com/{username}/{projectname}.git"
+    }));
 });

@@ -14,3 +14,7 @@ after_success:
   - git config --global user.email "git@asana.com"
   - git config --global user.name "Asana"
   - gulp gh-pages
+env:
+  global:
+    # ASANA_GITHUB_TOKEN = ...
+    - secure: "krbw7SRVcFTRWGkg60V9qk3uJGGGCQgYGYbUC6KG3tQDT9/z9D8+vKvrhtfeMDisF1xgCN0vcUVRjm9qhjrjZhIK0Lcexp9QICOVrKbnlU72E532tg0pf5nJlzN6x3EMl10jBt9HWWA7gUK2rPZ6w84MjU5MfUijoxmbytFnMj8="
