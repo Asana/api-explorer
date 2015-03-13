@@ -161,7 +161,7 @@ function browserTask(minify, use_gh_pages) {
 }
 gulp.task('browser', ['scripts'], browserTask(false));
 gulp.task('browser-min', ['scripts'], browserTask(true));
-gulp.task('browser-gh-pages', ['scripts'], browserTask(true, true));
+gulp.task('browser-gh-pages', ['scripts'], browserTask(false, true));
 
 /**
  * Set up files before running the web server.
