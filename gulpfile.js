@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var loadPlugins = require('gulp-load-plugins');
 var path = require('path');
+var envify = require('envify/custom');
 
 /**
  * High Level Tasks
@@ -27,6 +28,7 @@ _ = loadPlugins({
     'dts-bundle',
     'del',
     'event-stream',
+    'gh-pages',
     'glob',
     'gulp-*',
     'jsdom',
@@ -36,7 +38,10 @@ _ = loadPlugins({
   ].join(',') + '}',
   scope: [
     'devDependencies'
-  ]
+  ],
+  rename: {
+    'gh-pages': 'ghpages'
+  }
 });
 
 /**
@@ -134,13 +139,14 @@ globs = {
 /**
  * Bundles the code, full version to `asana.js` and minified to `asana-min.js`
  */
-function browserTask(minify) {
+function browserTask(minify, use_gh_pages) {
     return function() {
         var task = _.browserify(
             {
                 entries: [globs.build_index()],
                 standalone: 'AsanaTester'
             })
+            .transform(envify({ USE_GH_PAGES: use_gh_pages || false }))
             .bundle()
             .pipe(_.vinylSourceStream('asana-tester' + (minify ? '-min' : '') + '.js'));
         if (minify) {
@@ -153,6 +159,7 @@ function browserTask(minify) {
 }
 gulp.task('browser', ['scripts'], browserTask(false));
 gulp.task('browser-min', ['scripts'], browserTask(true));
+gulp.task('browser-gh-pages', ['scripts'], browserTask(false, true));
 
 /**
  * Set up files before running the web server.
@@ -297,4 +304,23 @@ gulp.task('tslint', function() {
       .pipe(_.tslint.report({
         emitError: env.isTest()
       }));
+});
+
+/**
+ * Push to gh-pages branch.
+ */
+gulp.task('gh-pages', ['browser-gh-pages', 'public-files'], function(cb) {
+  _.ghpages.publish(
+    path.join(process.cwd(), globs.dist()),
+    {
+      repo: "https://" + process.env.ASANA_GITHUB_TOKEN + "@github.com/" + process.env.TRAVIS_REPO_SLUG + ".git",
+      message: "Auto-generated commit",
+      user: {
+        name: "Asana",
+        email: "git@asana.com"
+      },
+      silent: true
+    },
+    cb
+  );
 });
