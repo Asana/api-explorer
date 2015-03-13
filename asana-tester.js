@@ -444,9 +444,18 @@ var RouteEntry = (function (_super) {
 module.exports = RouteEntry;
 
 },{"react":276}],8:[function(require,module,exports){
-exports.CLIENT_ID = "23824292948206";
-exports.REDIRECT_URI = "http://localhost:8338/popup_receiver.html";
-exports.LOCALSTORAGE_KEY = "api_tester_credentials";
+var ghPagesConstants = {
+    LOCALSTORAGE_KEY: "api_tester_credentials",
+    CLIENT_ID: "29147353239426",
+    REDIRECT_URI: "https://asana.github.io/node-asana-tester/popup_receiver.html"
+};
+var localhostConstants = {
+    LOCALSTORAGE_KEY: "api_tester_credentials",
+    CLIENT_ID: "23824292948206",
+    REDIRECT_URI: "http://localhost:8338/popup_receiver.html"
+};
+var constants = true ? ghPagesConstants : localhostConstants;
+module.exports = constants;
 
 },{}],9:[function(require,module,exports){
 var constants = require("./constants");
