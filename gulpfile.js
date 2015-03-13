@@ -181,7 +181,7 @@ gulp.task('server', ['web-setup'], function() {
  * Watch for changes for live reloading.
  */
 gulp.task('watch', function() {
-  gulp.watch(globs.ts(), ['browser-min', _.browserSync.reload]);
+  gulp.watch(globs.ts(), ['browser', _.browserSync.reload]);
   gulp.watch(globs.pubs(), ['public-files', _.browserSync.reload]);
 });
 
@@ -270,6 +270,7 @@ gulp.task('spec', ['scripts'], function(callback) {
   if (!env.isTravis()) {
     reporters.push('html');
   }
+
   gulp.src(globs.scripts())
       .pipe(_.istanbul({
         includeUntested: true
@@ -277,8 +278,12 @@ gulp.task('spec', ['scripts'], function(callback) {
       .pipe(_.istanbul.hookRequire())
       .on('finish', function() {
         gulp.src(globs.tests())
-            .pipe(_.mocha())
-            .pipe(_.istanbul.writeReports())
+            .pipe(_.mocha({
+            reporter: env.isTravis() ? "spec" : "nyan"
+          }))
+            .pipe(_.istanbul.writeReports({
+            reporters: ["text-summary", "html"]
+          }))
             .on('end', callback);
       });
 });

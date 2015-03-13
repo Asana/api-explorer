@@ -31,10 +31,6 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
       r.div({ },
         r.strong({ }, "Resource description: "),
         resource.comment
-      ),
-      r.div({ },
-        r.strong({ }, "Current resource properties: "),
-        resource.properties.map(property => property.name).join()
       )
     );
   };

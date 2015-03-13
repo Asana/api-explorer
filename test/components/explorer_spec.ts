@@ -5,10 +5,12 @@ import chai = require("chai");
 import Promise = require("bluebird");
 import React = require("react/addons");
 import sinon = require("sinon");
+import _ = require("lodash");
 
 import constants = require("../../src/constants");
 import CredentialsManager = require("../../src/credentials_manager");
 import Explorer = require("../../src/components/explorer");
+import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 
@@ -183,91 +185,532 @@ describe("ExplorerComponent", () => {
       ).length, 0);
     });
 
-    it("should display the current route URL", () => {
-      assert.include(
-        (React.findDOMNode<HTMLInputElement>(selectRoute)).value,
-        initial_action.name
-      );
-    });
+    describe("state updates", () => {
+      describe("on no resource change", () => {
+        var old_action: Action;
+        var old_params: any;
 
-    it("should make a GET request on submit", (cb) => {
-      // Stub get request to return json.
-      var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client.dispatcher, "get").returns(json_promise);
+        beforeEach(() => {
+          old_action = root.state.action;
+          old_params = root.state.params;
 
-      // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(React.findDOMNode(routeEntry));
-      json_promise.then(function () {
-        sinon.assert.calledWith(getStub, initial_action.path);
+          root.state.params.include_fields.push("test");
 
-        assert.equal(
-          React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
-            root, "json-response-block")).textContent,
-          "\"{ a: 2 }\"");
+          testUtils.Simulate.change(selectResource, {
+            target: {
+              value: ResourcesHelpers.resourceNameFromResource(initial_resource)
+            }
+          });
+        });
 
-        cb();
-      }).catch(function (err) {
-        cb(err);
+        it("should not change resource", () => {
+          assert.equal(root.state.resource, initial_resource);
+        });
+
+        it("should not change action", () => {
+          assert.equal(root.state.action, initial_action);
+          assert.include(initial_resource.actions, root.state.action);
+        });
+
+        it("should not clear params", () => {
+          assert.deepEqual(root.state.params, old_params);
+        });
+      });
+
+      describe("on resource change", () => {
+        var other_resource: Resource;
+
+        beforeEach(() => {
+          other_resource = Resources.Events;
+
+          root.state.params.include_fields.push("test");
+
+          testUtils.Simulate.change(selectResource, {
+            target: {
+              value: ResourcesHelpers.resourceNameFromResource(other_resource)
+            }
+          });
+        });
+
+        it("should update resource", () => {
+          assert.notEqual(initial_resource, other_resource);
+          assert.equal(root.state.resource, other_resource);
+        });
+
+        it("should reset action to a valid state", () => {
+          assert.notEqual(root.state.action, initial_action);
+          assert.include(other_resource.actions, root.state.action);
+        });
+
+        it("should clear params", () => {
+          assert.deepEqual(root.state.params, Explorer.emptyParams());
+        });
+      });
+
+      describe("on no action change", () => {
+        var old_params: any;
+
+        beforeEach(() => {
+          old_params = root.state.params;
+
+          root.state.params.include_fields.push("test");
+
+          testUtils.Simulate.change(selectRoute, {
+            target: {value: initial_action.name}
+          });
+        });
+
+        it("should not change action", () => {
+          assert.equal(root.state.action, initial_action);
+          assert.include(initial_resource.actions, root.state.action);
+        });
+
+        it("should not clear params", () => {
+          assert.deepEqual(root.state.params, old_params);
+        });
+      });
+
+      describe("on action change", () => {
+        var other_action: Action;
+
+        beforeEach(() => {
+          other_action = initial_resource.actions[1];
+
+          testUtils.Simulate.change(selectRoute, {
+            target: {value: other_action.name}
+          });
+        });
+
+        it("should update action", () => {
+          assert.notEqual(root.state.action, initial_action);
+          assert.include(initial_resource.actions, root.state.action);
+        });
+
+        it("should clear params", () => {
+          assert.deepEqual(root.state.params, Explorer.emptyParams());
+        });
+      });
+
+      describe("on property check", () => {
+        var propertyCheckboxes: React.HTMLComponent[];
+
+        beforeEach(() => {
+          propertyCheckboxes = testUtils.scryRenderedDOMComponentsWithClass(
+            root,
+            "property-checkbox-include"
+          );
+
+          // Add an existing field to ensure no data clobbering.
+          root.state.params.include_fields.push("example");
+        });
+
+        it("should add property to params if previously unchecked", () => {
+          assert.sameMembers(root.state.params.include_fields, ["example"]);
+
+          var checkbox = propertyCheckboxes[0];
+          testUtils.Simulate.change(checkbox, {
+            target: {
+              checked: true,
+              value: React.findDOMNode<HTMLInputElement>(checkbox).value
+            }
+          });
+
+          assert.sameMembers(
+            root.state.params.include_fields,
+            ["example", checkbox.props.value]
+          );
+        });
+
+        it("should remove property from params if previously checked", () => {
+          var checkbox = propertyCheckboxes[0];
+          var value = React.findDOMNode<HTMLInputElement>(checkbox).value;
+
+          root.state.params.include_fields.push(value);
+          testUtils.Simulate.change(checkbox, {
+            target: {
+              checked: false,
+              value: value
+            }
+          });
+
+          assert.sameMembers(
+            root.state.params.include_fields,
+            ["example"]
+          );
+        });
+      });
+
+      describe("on parameter input", () => {
+        var requiredParam: React.HTMLComponent;
+        var optionalParam: React.HTMLComponent;
+
+        beforeEach(() => {
+          // Use a resource/action that has both a required and optional input.
+          testUtils.Simulate.change(selectResource, {
+            target: {value: "Events"}
+          });
+
+          // Fetch the required and optional params.
+          var params = testUtils.scryRenderedDOMComponentsWithClass(
+            root, "parameter-input");
+          requiredParam = _.find(params, param =>
+              _.contains(param.props.className, "required-param"));
+          optionalParam = _.find(params, param =>
+            !_.contains(param.props.className, "required-param"));
+        });
+
+        describe("with required parameters", () => {
+          var param_name: string;
+
+          beforeEach(() => {
+            param_name = ParameterEntry.parameterFromInputId(
+              requiredParam.props.id);
+
+            // Add an existing parameters to ensure no data clobbering.
+            root.state.params.required_params.example = "data here";
+            root.state.params.optional_params.other_example = "other data";
+          });
+
+          it("should add parameter when previously empty", () => {
+            testUtils.Simulate.change(requiredParam, {
+              target: {
+                className: requiredParam.props.className,
+                id: requiredParam.props.id,
+                value: "some content"
+              }
+            });
+
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "some content"])
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+          });
+
+          it("should update parameter when previously set", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.required_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(requiredParam, {
+              target: {
+                className: requiredParam.props.className,
+                id: requiredParam.props.id,
+                value: "new content!"
+              }
+            });
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "new content!"])
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+          });
+
+          it("should remove parameter when unset", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.required_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.required_params,
+              _.object(["example", param_name], ["data here", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(requiredParam, {
+              target: {
+                className: requiredParam.props.className,
+                id: requiredParam.props.id,
+                value: ""
+              }
+            });
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+          });
+        });
+
+        describe("with optional parameters", () => {
+          var param_name: string;
+
+          beforeEach(() => {
+            param_name = ParameterEntry.parameterFromInputId(
+              optionalParam.props.id);
+
+            // Add an existing parameters to ensure no data clobbering.
+            root.state.params.required_params.example = "data here";
+            root.state.params.optional_params.other_example = "other data";
+          });
+
+          it("should add parameter when previously empty", () => {
+            testUtils.Simulate.change(optionalParam, {
+              target: {
+                className: optionalParam.props.className,
+                id: optionalParam.props.id,
+                value: "some content"
+              }
+            });
+
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name],
+                ["other data", "some content"])
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+          });
+
+          it("should update parameter when previously set", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.optional_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name],
+                ["other data", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(optionalParam, {
+              target: {
+                className: optionalParam.props.className,
+                id: optionalParam.props.id,
+                value: "new content!"
+              }
+            });
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name],
+                ["other data", "new content!"])
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+          });
+
+          it("should remove parameter when unset", () => {
+            // Add some initial data and verify it's there.
+            root.state.params.optional_params[param_name] = "old data";
+            assert.deepEqual(
+              root.state.params.optional_params,
+              _.object(
+                ["other_example", param_name], ["other data", "old data"])
+            );
+
+            // We now change the data and verify it was updated.
+            testUtils.Simulate.change(optionalParam, {
+              target: {
+                className: optionalParam.props.className,
+                id: optionalParam.props.id,
+                value: ""
+              }
+            });
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+          });
+        });
       });
     });
 
-    it("should make the correct GET request after changing resource", (cb) => {
-      var other_resource = Resources.Events;
-      var other_action = other_resource.actions[0];
+    describe("on submit", () => {
+      var raw_response_promise: Promise<any>;
+      var json_response: string;
+      var getStub: SinonStub;
 
-      // Stub get request to return json.
-      var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client.dispatcher, "get")
-        .withArgs(other_action.path).returns(json_promise);
-
-      // We change the resource, which in-turn will change the route.
-      testUtils.Simulate.change(selectResource, {
-        target: {
-          value: ResourcesHelpers.resourceNameFromResource(other_resource)
-        }
+      beforeEach(() => {
+        var raw_response = {data: "{ a: 2 }"};
+        json_response = JSON.stringify(raw_response, undefined, 2);
+        getStub = sand.stub(client.dispatcher, "get", () => {
+          return raw_response_promise = Promise.resolve(raw_response);
+        });
       });
 
-      // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(React.findDOMNode(routeEntry));
-      json_promise.then(function () {
-        sinon.assert.calledWith(getStub, other_action.path);
+      it("should display the current route URL", (cb) => {
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        assert.equal(
-          React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
-            root, "json-response-block")).textContent,
-          "\"{ a: 2 }\"");
+        raw_response_promise.then(function () {
+          assert.include(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info")).textContent,
+            initial_action.path
+          );
 
-        cb();
-      }).catch(function (err) {
-        cb(err);
-      });
-    });
-
-    it("should make the correct GET request after changing route", (cb) => {
-      var other_action = initial_resource.actions[1];
-
-      // Stub get request to return json.
-      var json_promise = Promise.resolve({data: "{ a: 2 }"});
-      var getStub = sand.stub(client.dispatcher, "get")
-        .withArgs(other_action.path).returns(json_promise);
-
-      testUtils.Simulate.change(selectRoute, {
-        target: { value: other_action.name }
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
       });
 
-      // Clicking the link should send request with the correct route.
-      testUtils.Simulate.submit(React.findDOMNode(routeEntry));
-      json_promise.then(function () {
-        sinon.assert.calledWith(getStub, other_action.path);
+      it("should display the current route URL with parameters", (cb) => {
+        root.state.params = {
+          expand_fields: ["test"],
+          include_fields: ["other", "this"],
+          required_params: {},
+          optional_params: {}
+        };
 
-        assert.equal(
-          React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
-            root, "json-response-block")).textContent,
-          "\"{ a: 2 }\"");
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        cb();
-      }).catch(function (err) {
-        cb(err);
+        raw_response_promise.then(function () {
+          assert.include(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info")).textContent,
+            initial_action.path + "?opt_expand=test&opt_fields=other,this"
+          );
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should display the current route method", (cb) => {
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        raw_response_promise.then(function () {
+          assert.include(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-info")).textContent,
+            initial_action.method
+          );
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make a GET request", (cb) => {
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(getStub, initial_action.path);
+
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make a GET request with parameters", (cb) => {
+        root.state.params = {
+          expand_fields: ["test"],
+          include_fields: ["other", "this"],
+          required_params: {},
+          optional_params: {}
+        };
+
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(
+            getStub,
+            initial_action.path,
+            { opt_expand: "test", opt_fields: "other,this" }
+          );
+
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make the correct request after changing resource", (cb) => {
+        var other_resource = Resources.Events;
+        var other_action = other_resource.actions[0];
+
+        // We change the resource, which in-turn will change the route.
+        testUtils.Simulate.change(selectResource, {
+          target: {
+            value: ResourcesHelpers.resourceNameFromResource(other_resource)
+          }
+        });
+
+        // Clicking the link should send request with the correct route.
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(getStub, other_action.path);
+
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
+      });
+
+      it("should make the correct request after changing route", (cb) => {
+        var other_action = initial_resource.actions[1];
+
+        testUtils.Simulate.change(selectRoute, {
+          target: {value: other_action.name}
+        });
+
+        // Clicking the link should send request with the correct route.
+        testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        raw_response_promise.then(function () {
+          sinon.assert.calledWith(getStub, other_action.path);
+
+          assert.equal(
+            React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
+              root, "json-response-block")).textContent,
+            json_response);
+
+          cb();
+        }).catch(function (err) {
+          cb(err);
+        });
       });
     });
   });

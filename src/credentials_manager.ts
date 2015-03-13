@@ -43,10 +43,6 @@ export function getFromLocalStorage(): Asana.auth.Credentials {
     return JSON.parse(
       localStorage.getItem(constants.LOCALSTORAGE_KEY)
     );
-  } else {
-    // If we don't have access to local storage, then we can't do anything.
-    console.warn("No access to local storage.");
-    return null;
   }
 }
 
@@ -70,8 +66,5 @@ export function storeFromClient(client: Asana.Client): void {
       constants.LOCALSTORAGE_KEY,
       JSON.stringify(credentials)
     );
-  } else {
-    // If we don't have access to local storage, then we can't do anything.
-    console.warn("No access to local storage.");
   }
 }
