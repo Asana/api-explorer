@@ -13,7 +13,8 @@ before_install:
 after_success:
   - git config --global user.email "git@asana.com"
   - git config --global user.name "Asana"
-  - gulp gh-pages
+  # only publish to gh-pages from the master branch.
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && gulp gh-pages
 env:
   global:
     # ASANA_GITHUB_TOKEN = ...
