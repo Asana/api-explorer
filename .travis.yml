@@ -17,4 +17,4 @@ after_success:
 env:
   global:
     # ASANA_GITHUB_TOKEN = ...
-    - secure: "krbw7SRVcFTRWGkg60V9qk3uJGGGCQgYGYbUC6KG3tQDT9/z9D8+vKvrhtfeMDisF1xgCN0vcUVRjm9qhjrjZhIK0Lcexp9QICOVrKbnlU72E532tg0pf5nJlzN6x3EMl10jBt9HWWA7gUK2rPZ6w84MjU5MfUijoxmbytFnMj8="
+    - secure: "DAwDB8TF1HEzqBzVHDR88kAOXOzcHx0AeFaazofh6OGDbxGuIbNWOgv8xXb4F1GScBX26KXwQPcskvP/qWJ49jW91iePcsTAIDtNLgg7UGj/L9eSeKyoHb93l7tah02zZzHjn4vCKjQfMeLAXdYbZf2VX5PM2cRdXlLx24WaqBY="
