@@ -1,23 +1,17 @@
 /// <reference path="../resources/interfaces.ts" />
-import build = require("./build");
-import react = require("react");
-import TypedReact = require("typed-react");
+import React = require("react");
 
 import ResourcesHelpers = require("../resources/helpers");
 
-var r = react.DOM;
-
-export interface Props {
-  resource: Resource;
-  onResourceChange: (event?: React.FormEvent) => void;
-}
+var r = React.DOM;
 
 /**
  * The resource entry area
  */
-export class Component extends TypedReact.Component<Props, {}> {
+class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
+  static create = React.createFactory(ResourceEntry);
 
-  private _renderSelectResource() {
+  private _renderSelectResource = () => {
     return r.select({
       className: "select-resource",
       onChange: this.props.onResourceChange,
@@ -28,22 +22,18 @@ export class Component extends TypedReact.Component<Props, {}> {
         }, resource);
       })
     });
-  }
+  };
 
-  private _renderResourceInfo() {
+  private _renderResourceInfo = () => {
     var resource = this.props.resource;
 
     return r.div({ },
       r.div({ },
         r.strong({ }, "Resource description: "),
         resource.comment
-      ),
-      r.div({ },
-        r.strong({ }, "Current resource properties: "),
-        resource.properties.map(property => property.name).join()
       )
     );
-  }
+  };
 
   render() {
     return r.div({ },
@@ -53,4 +43,11 @@ export class Component extends TypedReact.Component<Props, {}> {
   }
 }
 
-export var create = build(Component);
+module ResourceEntry {
+  export interface Props {
+    resource: Resource;
+    onResourceChange: (event?: React.FormEvent) => void;
+  }
+}
+
+export = ResourceEntry;

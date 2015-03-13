@@ -1,10 +1,6 @@
 /// <reference path="../../src/resources/interfaces.ts" />
-/* tslint:disable:no-unused-variable */
-import mock_dom = require("../mock_dom");
-/* tslint:enable:no-unused-variable */
-
 import chai = require("chai");
-import react = require("react/addons");
+import React = require("react/addons");
 import sinon = require("sinon");
 
 import ResourceEntry = require("../../src/components/resource_entry");
@@ -12,7 +8,7 @@ import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 
 var assert = chai.assert;
-var testUtils = react.addons.TestUtils;
+var testUtils = React.addons.TestUtils;
 
 describe("ResourceEntryComponent", () => {
   var sand: SinonSandbox;
@@ -21,7 +17,7 @@ describe("ResourceEntryComponent", () => {
 
   var onResourceChangeStub: SinonStub;
 
-  var root: ResourceEntry.Component;
+  var root: ResourceEntry;
   var selectResource: React.HTMLComponent;
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("ResourceEntryComponent", () => {
 
     onResourceChangeStub = sand.stub();
 
-    root = testUtils.renderIntoDocument<ResourceEntry.Component>(
+    root = testUtils.renderIntoDocument<ResourceEntry>(
       ResourceEntry.create({
         resource: initial_resource,
         onResourceChange: onResourceChangeStub
@@ -49,13 +45,13 @@ describe("ResourceEntryComponent", () => {
 
   it("should select the current resource", () => {
     assert.include(
-      (<HTMLInputElement>selectResource.getDOMNode()).value,
+      React.findDOMNode<HTMLInputElement>(selectResource).value,
       ResourcesHelpers.resourceNameFromResource(initial_resource)
     );
   });
 
   it("should contain dropdown with other resources", () => {
-    var children = selectResource.getDOMNode().childNodes;
+    var children = React.findDOMNode(selectResource).childNodes;
     var resource_names = ResourcesHelpers.names();
 
     assert.equal(children.length, resource_names.length);

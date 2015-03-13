@@ -1,11 +1,3 @@
-interface Parameter {
-  name: string;
-  type: string;
-  example_values?: string[];
-  comment: string;
-  required?: boolean;
-}
-
 interface Action {
   name: string;
   method: string;
@@ -14,9 +6,24 @@ interface Action {
   params?: Parameter[];
 }
 
+interface Parameter {
+  name: string;
+  type: string;
+  example_values?: string[];
+  comment: string;
+  required?: boolean;
+}
+interface Property {
+  name: string;
+  comment: string;
+  type: string;
+  example_values: string[];
+  values?: any[];
+}
+
 interface Resource {
   name: string;
   comment: string;
-  properties: any[];
+  properties: Property[];
   actions: Action[];
 }

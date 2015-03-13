@@ -5,7 +5,7 @@
   "description": "A node.js client for the Asana API Tester",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "tsd reinstall --overwrite --save",
+    "postinstall": "tsd reinstall; tsd rebundle",
     "test": "gulp test"
   },
   "repository": {
@@ -54,7 +54,7 @@
   "dependencies": {
     "asana": "^0.7.1",
     "bluebird": "^2.9.6",
-    "react": "^0.12.2",
-    "typed-react": "^3.2.0"
+    "lodash": "^3.3.1",
+    "react": "^0.13.0"
   }
 }

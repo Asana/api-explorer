@@ -46,7 +46,7 @@ export function actionFromResourcePath(resource: Resource, path: string): Action
 /**
  * Returns the action by its resource and name.
  */
-export function actionFromName(resource: Resource, action_name: string): Action {
+export function actionFromResourceAndName(resource: Resource, action_name: string): Action {
   return resource.actions.filter(
     action => { return action_name === action.name; }
   )[0];
