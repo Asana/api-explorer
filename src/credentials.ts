@@ -3,21 +3,41 @@ import Asana = require("asana");
 
 import constants = require("./constants");
 
-// Note: We may want to move this system to the Asana client. We can create
-// a general storage interface and use a localStorage implementation.
-// This would provide the ability for auto-renewal in the client
-
 // Allows us to mock out localStorage in tests.
 export var localStorage: Storage = window.localStorage;
 
+export enum AuthState {
+  Unauthorized,
+  Expired,
+  Authorized
+}
+
+/*
+ * The time to subtract before we actually consider credentials expired.
+ */
+var EXPIRY_BUFFER_MS = 5 * 60 * 1000;
+
 /**
- * Returns true if the client has (possibly-expired) credentials.
+ * Returns the authorization state based on credentials in the client.
  *
  * @param {Asana.Client} client
- * @returns {boolean}
+ * @returns {AuthState}
  */
-export function isPossiblyValidFromClient(client: Asana.Client) {
-  return getFromClient(client) !== null;
+export function authStateFromClient(client: Asana.Client): AuthState {
+  var credentials = getFromClient(client);
+
+  // If no credentials, then mark as unauthorized.
+  if (credentials === null) {
+    return AuthState.Unauthorized;
+  }
+
+  // If the credentials have expired, then mark as expired.
+  var expiry_timestamp = credentials.expiry_timestamp;
+  if (!expiry_timestamp || expiry_timestamp - Date.now() < EXPIRY_BUFFER_MS) {
+    return AuthState.Expired;
+  }
+
+  return AuthState.Authorized;
 }
 
 /**
