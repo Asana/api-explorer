@@ -15,6 +15,7 @@ declare module "asana" {
   export class Dispatcher {
     get(path: string, query: any, dispatchOptions: any): Promise<any>;
     authenticator: auth.Authenticator;
+    handleUnauthorized(): Promise<any>;
   }
 
   export module auth {

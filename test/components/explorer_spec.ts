@@ -8,7 +8,7 @@ import sinon = require("sinon");
 import _ = require("lodash");
 
 import constants = require("../../src/constants");
-import CredentialsManager = require("../../src/credentials_manager");
+import Credentials = require("../../src/credentials");
 import Explorer = require("../../src/components/explorer");
 import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
@@ -21,7 +21,7 @@ describe("ExplorerComponent", () => {
   var sand: SinonSandbox;
 
   var client: Asana.Client;
-  var isPossiblyValidFromClientStub: SinonStub;
+  var authStateFromClientStub: SinonStub;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
@@ -30,8 +30,7 @@ describe("ExplorerComponent", () => {
       clientId: constants.CLIENT_ID,
       redirectUri: constants.REDIRECT_URI
     });
-    isPossiblyValidFromClientStub = sand.stub(
-      CredentialsManager, "isPossiblyValidFromClient");
+    authStateFromClientStub = sand.stub(Credentials, "authStateFromClient");
   });
 
   afterEach(() => {
@@ -45,7 +44,7 @@ describe("ExplorerComponent", () => {
       })
     );
 
-    sinon.assert.called(isPossiblyValidFromClientStub);
+    sinon.assert.called(authStateFromClientStub);
   });
 
   describe("initial state", () => {
@@ -81,12 +80,12 @@ describe("ExplorerComponent", () => {
     });
   });
 
-  describe("when unauthorized", () => {
+  describe("when expired", () => {
     var root: Explorer;
     var children: NodeList;
 
     beforeEach(() => {
-      isPossiblyValidFromClientStub.returns(false);
+      authStateFromClientStub.returns(Credentials.AuthState.Expired);
 
       root = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
@@ -96,24 +95,21 @@ describe("ExplorerComponent", () => {
       children = React.findDOMNode(root).childNodes;
     });
 
-    it("should not contain the api explorer", () => {
-      assert.equal(testUtils.scryRenderedDOMComponentsWithClass(
-        root,
-        "api-explorer"
-      ).length, 0);
+    it("should disable the submit button", () => {
+      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
+        root, "submit-request");
+      assert.isTrue(submitRequest.props.disabled);
     });
 
     it("should contain link to authorize client", (cb) => {
       var link = testUtils.findRenderedDOMComponentWithClass(
-        root,
-        "authorize-link"
-      );
+        root, "authorize-link");
       assert.equal(link.tagName, "A");
 
       // Stub authorization to set the client to authorized.
       var promise: Promise<any>;
       var authorizeStub = sand.stub(client, "authorize", () => {
-          isPossiblyValidFromClientStub.returns(true);
+          authStateFromClientStub.returns(Credentials.AuthState.Authorized);
           return promise = Promise.resolve();
         }
       );
@@ -125,14 +121,67 @@ describe("ExplorerComponent", () => {
 
         // Page should now be re-rendered with the api-explorer.
         assert.equal(testUtils.scryRenderedDOMComponentsWithClass(
-          root,
-          "authorize-link"
-        ).length, 0);
+          root, "authorize-link").length,
+          0);
 
         assert.equal(testUtils.scryRenderedDOMComponentsWithClass(
-          root,
-          "api-explorer"
-        ).length, 1);
+          root, "api-explorer").length,
+          1);
+
+        cb();
+      }).catch(function (err) {
+        cb(err);
+      });
+    });
+  });
+
+  describe("when unauthorized", () => {
+    var root: Explorer;
+    var children: NodeList;
+
+    beforeEach(() => {
+      authStateFromClientStub.returns(Credentials.AuthState.Unauthorized);
+
+      root = testUtils.renderIntoDocument<Explorer>(
+        Explorer.create({
+          initialClient: client
+        })
+      );
+      children = React.findDOMNode(root).childNodes;
+    });
+
+    it("should disable the submit button", () => {
+      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
+        root, "submit-request");
+      assert.isTrue(submitRequest.props.disabled);
+    });
+
+    it("should contain link to authorize client", (cb) => {
+      var link = testUtils.findRenderedDOMComponentWithClass(
+        root, "authorize-link");
+      assert.equal(link.tagName, "A");
+
+      // Stub authorization to set the client to authorized.
+      var promise: Promise<any>;
+      var authorizeStub = sand.stub(client, "authorize", () => {
+          authStateFromClientStub.returns(Credentials.AuthState.Authorized);
+          return promise = Promise.resolve();
+        }
+      );
+
+      // Clicking the link send an authorization.
+      testUtils.Simulate.click(React.findDOMNode(link));
+      promise.then(function () {
+        sinon.assert.called(authorizeStub);
+
+        // Page should now be re-rendered with the api-explorer.
+        assert.equal(testUtils.scryRenderedDOMComponentsWithClass(
+          root, "authorize-link").length,
+          0);
+
+        assert.equal(testUtils.scryRenderedDOMComponentsWithClass(
+          root, "api-explorer").length,
+          1);
 
         cb();
       }).catch(function (err) {
@@ -151,7 +200,7 @@ describe("ExplorerComponent", () => {
     var initial_resource: Resource;
 
     beforeEach(() => {
-      isPossiblyValidFromClientStub.returns(true);
+      authStateFromClientStub.returns(Credentials.AuthState.Authorized);
 
       initial_resource = Resources.Attachments;
       initial_action = initial_resource.actions[0];
@@ -559,6 +608,9 @@ describe("ExplorerComponent", () => {
         getStub = sand.stub(client.dispatcher, "get", () => {
           return raw_response_promise = Promise.resolve(raw_response);
         });
+
+        // For these tests, we'll bypass the check for allowable submission.
+        sand.stub(root, "canSubmitRequest").returns(true);
       });
 
       it("should display the submitted route URL", (cb) => {
@@ -759,6 +811,14 @@ describe("ExplorerComponent", () => {
       assert.equal(root.state.resource, other_resource);
       assert.notEqual(root.state.action.method, "GET");
       assert.isTrue(submitRequest.props.disabled);
+    });
+
+    it("should throw when the user submits on disabled state", () => {
+      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
+        root, "submit-request");
+
+      assert.isTrue(submitRequest.props.disabled);
+      assert.throws(root.onSubmitRequest);
     });
   });
 });

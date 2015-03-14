@@ -1,7 +1,7 @@
 import chai = require("chai");
 import sinon = require("sinon");
 
-import CredentialsManager = require("../src/credentials_manager");
+import Credentials = require("../src/credentials");
 import constants = require("../src/constants");
 import helpers = require("./helpers");
 
@@ -9,7 +9,7 @@ var assert = chai.assert;
 
 var MINUTE_IN_MS = 1000 * 60;
 
-describe("CredentialsManager", () => {
+describe("Credentials", () => {
   var sand: SinonSandbox;
 
   beforeEach(() => {
@@ -24,34 +24,42 @@ describe("CredentialsManager", () => {
     sand.restore();
   });
 
-  describe("#isPossiblyValidFromClient", () => {
-    it("should fail with null credentials", () => {
+  describe("#authStateFromClient", () => {
+    it("should return AuthState.Unauthorized with null credentials", () => {
       var client = helpers.createOauthClient(null);
-      assert.isFalse(CredentialsManager.isPossiblyValidFromClient(client));
+      assert.equal(
+        Credentials.authStateFromClient(client),
+        Credentials.AuthState.Unauthorized);
     });
 
-    it("should pass with expired credentials", () => {
+    it("should return AuthState.Expired with expired credentials", () => {
       var client = helpers.createOauthClient(
         helpers.createCredentials(Date.now())
       );
       sand.clock.tick(500);
-      assert.isTrue(CredentialsManager.isPossiblyValidFromClient(client));
+      assert.equal(
+        Credentials.authStateFromClient(client),
+        Credentials.AuthState.Expired);
     });
 
-    it("should pass with soon-to-expire credentials", () => {
+    it("should return AuthState.Expired with soon-to-expire credentials", () => {
       var client = helpers.createOauthClient(
         helpers.createCredentials(Date.now() + 2 * MINUTE_IN_MS)
       );
 
-      assert.isTrue(CredentialsManager.isPossiblyValidFromClient(client));
+      assert.equal(
+        Credentials.authStateFromClient(client),
+        Credentials.AuthState.Expired);
     });
 
-    it("should succeed with long-to-expire credentials", () => {
+    it("should return AuthState.Authorized with long-to-expire credentials", () => {
       var client = helpers.createOauthClient(
         helpers.createCredentials(Date.now() + 20 * MINUTE_IN_MS)
       );
 
-      assert.isTrue(CredentialsManager.isPossiblyValidFromClient(client));
+      assert.equal(
+        Credentials.authStateFromClient(client),
+        Credentials.AuthState.Authorized);
     });
   });
 
@@ -62,14 +70,14 @@ describe("CredentialsManager", () => {
     beforeEach(() => {
       // We need to mock localStorage, which is a browser-only api.
       // So we create a fake storage, and then mock methods within it.
-      oldStorage = CredentialsManager.localStorage;
+      oldStorage = Credentials.localStorage;
       localStorage = helpers.createFakeStorage();
-      CredentialsManager.localStorage = localStorage;
+      Credentials.localStorage = localStorage;
     });
 
     afterEach(() => {
       // We want test isolation, so we restore the original localStorage.
-      CredentialsManager.localStorage = oldStorage;
+      Credentials.localStorage = oldStorage;
     });
 
     describe("#getFromLocalStorage", () => {
@@ -78,7 +86,7 @@ describe("CredentialsManager", () => {
         var parseStub = sand.spy(JSON, "parse");
 
         getItemStub.returns(null);
-        assert.equal(CredentialsManager.getFromLocalStorage(), null);
+        assert.equal(Credentials.getFromLocalStorage(), null);
 
         sinon.assert.called(getItemStub);
         sinon.assert.calledWith(parseStub, null);
@@ -89,7 +97,7 @@ describe("CredentialsManager", () => {
         var parseStub = sand.stub(JSON, "parse");
 
         getItemStub.returns("hi");
-        CredentialsManager.getFromLocalStorage();
+        Credentials.getFromLocalStorage();
 
         sinon.assert.called(getItemStub);
         sinon.assert.calledWith(parseStub, "hi");
@@ -101,7 +109,7 @@ describe("CredentialsManager", () => {
         var client = helpers.createOauthClient(null);
 
         assert.throws(
-          () => CredentialsManager.storeFromClient(client),
+          () => Credentials.storeFromClient(client),
           "no credentials in the client"
         );
       });
@@ -111,7 +119,7 @@ describe("CredentialsManager", () => {
         var client = helpers.createOauthClient(credentials);
         var setItemStub = sand.stub(localStorage, "setItem");
 
-        CredentialsManager.storeFromClient(client);
+        Credentials.storeFromClient(client);
 
         sinon.assert.calledWithExactly(
           setItemStub,
@@ -124,7 +132,7 @@ describe("CredentialsManager", () => {
         var credentials = helpers.createCredentials(Date.now());
         var client = helpers.createOauthClient(credentials);
 
-        CredentialsManager.storeFromClient(client);
+        Credentials.storeFromClient(client);
 
         assert.equal(
           credentials.expiry_timestamp,

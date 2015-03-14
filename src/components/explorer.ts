@@ -1,13 +1,14 @@
 /// <reference path="../asana.d.ts" />
 /// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
+import Promise = require("bluebird");
 import React = require("react/addons");
 import url = require("url");
 import util = require("util");
 import _ = require("lodash");
 
 import constants = require("../constants");
-import CredentialsManager = require("../credentials_manager");
+import Credentials = require("../credentials");
 import JsonResponse = require("./json_response");
 import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
@@ -32,7 +33,7 @@ function initializeClient(initialClient?: Asana.Client): Asana.Client {
       redirectUri: constants.REDIRECT_URI
     });
   client.useOauth({
-    credentials: CredentialsManager.getFromLocalStorage(),
+    credentials: Credentials.getFromLocalStorage(),
     flowType: Asana.auth.PopupFlow
   });
 
@@ -60,9 +61,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         resource, this.props.initial_route) ||
       resource.actions[0];
 
+    var client = initializeClient(this.props.initialClient);
+
     this.state = {
       action: action,
-      client: initializeClient(this.props.initialClient),
+      auth_state: Credentials.authStateFromClient(client),
+      client: client,
       params: Explorer.emptyParams(),
       resource: resource,
       response: <JsonResponse.ResponseData>{
@@ -71,14 +75,23 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         raw_response: undefined
       }
     };
+
+    // In order to prevent blocked popups, we override the unauthorized trigger.
+    client.dispatcher.handleUnauthorized = (): Promise<any> => {
+      this.state.auth_state = Credentials.AuthState.Expired;
+
+      // This isn't an authorization, so return accordingly.
+      return Promise.resolve(false);
+    };
   }
 
   /**
    * Authorize the client, if it has expired, and force a re-rendering.
    */
   authorize = (): void => {
-    this.state.client.authorize().then(function() {
-      CredentialsManager.storeFromClient(this.state.client);
+    this.state.client.authorize().then(function(client: Asana.Client) {
+      Credentials.storeFromClient(client);
+      this.state.auth_state = Credentials.authStateFromClient(client);
 
       this.forceUpdate();
     }.bind(this));
@@ -217,7 +230,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    * Returns true iff the user can submit a request.
    */
   canSubmitRequest = (): boolean => {
-    // Require GET request.
+    // Ensure the user is authenticated.
+    if (this.state.auth_state !== Credentials.AuthState.Authorized) {
+      return false;
+    }
+
+    // Currently, we only submit GET requests. This may be revisited later.
     if (this.state.action.method !== "GET") {
       return false;
     }
@@ -239,6 +257,11 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    */
   onSubmitRequest = (event: React.FormEvent): void => {
     event.preventDefault();
+
+    // Sanity check: we should never reach this state, but this is safer.
+    if (!this.canSubmitRequest()) {
+      throw new Error("We cannot submit this request.");
+    }
 
     var dispatcher = this.state.client.dispatcher;
     var route = this.requestUrl();
@@ -263,63 +286,78 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       });
     }.bind(this)).finally(function() {
       // Store possibly-updated credentials for later use.
-      CredentialsManager.storeFromClient(this.state.client);
+      Credentials.storeFromClient(this.state.client);
     }.bind(this));
   };
 
-  render() {
-    if (!CredentialsManager.isPossiblyValidFromClient(this.state.client)) {
-      return r.a({
+  private _maybeRenderAuthorizationLink() {
+    var message = "";
+    switch (this.state.auth_state) {
+      case Credentials.AuthState.Authorized:
+        return null;
+      case Credentials.AuthState.Unauthorized:
+        message = "Click to authorize!";
+        break;
+      case Credentials.AuthState.Expired:
+        message = "Your authorization token has expired. Click here to refresh it!";
+        break;
+    }
+
+    return r.div({ },
+      r.a({
         className: "authorize-link",
         href: "#",
         onClick: this.authorize
-      }, "Click to authorize!");
-    } else {
-      return r.div({
-        className: "api-explorer",
-        children: [
-          ResourceEntry.create({
-            resource: this.state.resource,
-            onResourceChange: this.onChangeResourceState
+      }, message)
+    );
+  }
+
+  render() {
+    return r.div({
+      className: "api-explorer",
+      children: [
+        this._maybeRenderAuthorizationLink(),
+        ResourceEntry.create({
+          resource: this.state.resource,
+          onResourceChange: this.onChangeResourceState
+        }),
+        RouteEntry.create({
+          action: this.state.action,
+          current_request_url: this.requestUrlWithFullParams(),
+          onActionChange: this.onChangeActionState,
+          onFormSubmit: this.onSubmitRequest,
+          resource: this.state.resource,
+          submit_disabled: !this.canSubmitRequest()
+        }),
+        r.div( { },
+          PropertyEntry.create({
+            class_suffix: "include",
+            text: "Include Fields: ",
+            properties: this.state.resource.properties,
+            useProperty: property =>
+              _.contains(this.state.params.include_fields, property),
+            isPropertyChecked: this.onChangePropertyChecked("include_fields")
           }),
-          RouteEntry.create({
-            action: this.state.action,
-            current_request_url: this.requestUrlWithFullParams(),
-            onActionChange: this.onChangeActionState,
-            onFormSubmit: this.onSubmitRequest,
-            resource: this.state.resource,
-            submit_disabled: !this.canSubmitRequest()
+          PropertyEntry.create({
+            class_suffix: "expand",
+            text: "Expand Fields: ",
+            properties: this.state.resource.properties,
+            useProperty: property =>
+              _.contains(this.state.params.expand_fields, property),
+            isPropertyChecked: this.onChangePropertyChecked("expand_fields")
           }),
-          r.div( { },
-            PropertyEntry.create({
-              class_suffix: "include",
-              text: "Include Fields: ",
-              properties: this.state.resource.properties,
-              useProperty: property =>
-                _.contains(this.state.params.include_fields, property),
-              isPropertyChecked: this.onChangePropertyChecked("include_fields")
-            }),
-            PropertyEntry.create({
-              class_suffix: "expand",
-              text: "Expand Fields: ",
-              properties: this.state.resource.properties,
-              useProperty: property =>
-                _.contains(this.state.params.expand_fields, property),
-              isPropertyChecked: this.onChangePropertyChecked("expand_fields")
-            }),
-            ParameterEntry.create({
-              text: "Attribute parameters: ",
-              parameters: this.state.action.params,
-              onParameterChange: this.onChangeParameterState
-            })
-          ),
-          r.hr(),
-          JsonResponse.create({
-            response: this.state.response
+          ParameterEntry.create({
+            text: "Attribute parameters: ",
+            parameters: this.state.action.params,
+            onParameterChange: this.onChangeParameterState
           })
-        ]
-      });
-    }
+        ),
+        r.hr(),
+        JsonResponse.create({
+          response: this.state.response
+        })
+      ]
+    });
   }
 }
 
@@ -348,6 +386,7 @@ module Explorer {
 
   export interface State {
     action?: Action;
+    auth_state?: Credentials.AuthState;
     client?: Asana.Client;
     params?: ParamData;
     resource?: Resource;
