@@ -10,12 +10,13 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Asana = require("asana");
+var Promise = require("bluebird");
 var React = require("react/addons");
 var url = require("url");
 var util = require("util");
 var _ = require("lodash");
 var constants = require("../constants");
-var CredentialsManager = require("../credentials_manager");
+var Credentials = require("../credentials");
 var JsonResponse = require("./json_response");
 var ParameterEntry = require("./parameter_entry");
 var PropertyEntry = require("./property_entry");
@@ -31,7 +32,7 @@ function initializeClient(initialClient) {
         redirectUri: constants.REDIRECT_URI
     });
     client.useOauth({
-        credentials: CredentialsManager.getFromLocalStorage(),
+        credentials: Credentials.getFromLocalStorage(),
         flowType: Asana.auth.PopupFlow
     });
     return client;
@@ -42,8 +43,9 @@ var Explorer = (function (_super) {
         var _this = this;
         _super.call(this, props, context);
         this.authorize = function () {
-            _this.state.client.authorize().then(function () {
-                CredentialsManager.storeFromClient(this.state.client);
+            _this.state.client.authorize().then(function (client) {
+                Credentials.storeFromClient(client);
+                this.state.auth_state = Credentials.authStateFromClient(client);
                 this.forceUpdate();
             }.bind(_this));
         };
@@ -118,6 +120,9 @@ var Explorer = (function (_super) {
             }));
         };
         this.canSubmitRequest = function () {
+            if (_this.state.auth_state !== 2 /* Authorized */) {
+                return false;
+            }
             if (_this.state.action.method !== "GET") {
                 return false;
             }
@@ -129,6 +134,9 @@ var Explorer = (function (_super) {
         };
         this.onSubmitRequest = function (event) {
             event.preventDefault();
+            if (!_this.canSubmitRequest()) {
+                throw new Error("We cannot submit this request.");
+            }
             var dispatcher = _this.state.client.dispatcher;
             var route = _this.requestUrl();
             var params = _this.requestParameters();
@@ -150,14 +158,16 @@ var Explorer = (function (_super) {
                     }
                 });
             }.bind(_this)).finally(function () {
-                CredentialsManager.storeFromClient(this.state.client);
+                Credentials.storeFromClient(this.state.client);
             }.bind(_this));
         };
         var resource = ResourcesHelpers.resourceFromResourceName(this.props.initial_resource_string) || Resources.Users;
         var action = ResourcesHelpers.actionFromResourcePath(resource, this.props.initial_route) || resource.actions[0];
+        var client = initializeClient(this.props.initialClient);
         this.state = {
             action: action,
-            client: initializeClient(this.props.initialClient),
+            auth_state: Credentials.authStateFromClient(client),
+            client: client,
             params: Explorer.emptyParams(),
             resource: resource,
             response: {
@@ -166,56 +176,70 @@ var Explorer = (function (_super) {
                 raw_response: undefined
             }
         };
+        client.dispatcher.handleUnauthorized = function () {
+            _this.state.auth_state = 1 /* Expired */;
+            return Promise.resolve(false);
+        };
     }
+    Explorer.prototype._maybeRenderAuthorizationLink = function () {
+        var message = "";
+        switch (this.state.auth_state) {
+            case 2 /* Authorized */:
+                return null;
+            case 0 /* Unauthorized */:
+                message = "Click to authorize!";
+                break;
+            case 1 /* Expired */:
+                message = "Your authorization token has expired. Click here to refresh it!";
+                break;
+        }
+        return r.div({}, r.a({
+            className: "authorize-link",
+            href: "#",
+            onClick: this.authorize
+        }, message));
+    };
     Explorer.prototype.render = function () {
         var _this = this;
-        if (!CredentialsManager.isPossiblyValidFromClient(this.state.client)) {
-            return r.a({
-                className: "authorize-link",
-                href: "#",
-                onClick: this.authorize
-            }, "Click to authorize!");
-        }
-        else {
-            return r.div({
-                className: "api-explorer",
-                children: [
-                    ResourceEntry.create({
-                        resource: this.state.resource,
-                        onResourceChange: this.onChangeResourceState
-                    }),
-                    RouteEntry.create({
-                        action: this.state.action,
-                        current_request_url: this.requestUrlWithFullParams(),
-                        onActionChange: this.onChangeActionState,
-                        onFormSubmit: this.onSubmitRequest,
-                        resource: this.state.resource,
-                        submit_disabled: !this.canSubmitRequest()
-                    }),
-                    r.div({}, PropertyEntry.create({
-                        class_suffix: "include",
-                        text: "Include Fields: ",
-                        properties: this.state.resource.properties,
-                        useProperty: function (property) { return _.contains(_this.state.params.include_fields, property); },
-                        isPropertyChecked: this.onChangePropertyChecked("include_fields")
-                    }), PropertyEntry.create({
-                        class_suffix: "expand",
-                        text: "Expand Fields: ",
-                        properties: this.state.resource.properties,
-                        useProperty: function (property) { return _.contains(_this.state.params.expand_fields, property); },
-                        isPropertyChecked: this.onChangePropertyChecked("expand_fields")
-                    }), ParameterEntry.create({
-                        text: "Attribute parameters: ",
-                        parameters: this.state.action.params,
-                        onParameterChange: this.onChangeParameterState
-                    })),
-                    r.hr(),
-                    JsonResponse.create({
-                        response: this.state.response
-                    })
-                ]
-            });
-        }
+        return r.div({
+            className: "api-explorer",
+            children: [
+                this._maybeRenderAuthorizationLink(),
+                ResourceEntry.create({
+                    resource: this.state.resource,
+                    onResourceChange: this.onChangeResourceState
+                }),
+                RouteEntry.create({
+                    action: this.state.action,
+                    current_request_url: this.requestUrlWithFullParams(),
+                    onActionChange: this.onChangeActionState,
+                    onFormSubmit: this.onSubmitRequest,
+                    resource: this.state.resource,
+                    submit_disabled: !this.canSubmitRequest()
+                }),
+                r.div({}, PropertyEntry.create({
+                    class_suffix: "include",
+                    text: "Include Fields: ",
+                    properties: this.state.resource.properties,
+                    useProperty: function (property) { return _.contains(_this.state.params.include_fields, property); },
+                    isPropertyChecked: this.onChangePropertyChecked("include_fields")
+                }), PropertyEntry.create({
+                    class_suffix: "expand",
+                    text: "Expand Fields: ",
+                    properties: this.state.resource.properties,
+                    useProperty: function (property) { return _.contains(_this.state.params.expand_fields, property); },
+                    isPropertyChecked: this.onChangePropertyChecked("expand_fields")
+                }), ParameterEntry.create({
+                    text: "Attribute parameters: ",
+                    parameters: this.state.action.params,
+                    onParameterChange: this.onChangeParameterState
+                })),
+                r.hr(),
+                JsonResponse.create({
+                    response: this.state.response
+                })
+            ]
+        });
     };
     Explorer.create = React.createFactory(Explorer);
     return Explorer;
@@ -234,7 +258,7 @@ var Explorer;
 })(Explorer || (Explorer = {}));
 module.exports = Explorer;
 
-},{"../constants":8,"../credentials_manager":9,"../resources/helpers":21,"../resources/resources":22,"./json_response":3,"./parameter_entry":4,"./property_entry":5,"./resource_entry":6,"./route_entry":7,"asana":23,"lodash":103,"react/addons":104,"url":100,"util":102}],3:[function(require,module,exports){
+},{"../constants":8,"../credentials":9,"../resources/helpers":21,"../resources/resources":22,"./json_response":3,"./parameter_entry":4,"./property_entry":5,"./resource_entry":6,"./route_entry":7,"asana":23,"bluebird":73,"lodash":103,"react/addons":104,"url":100,"util":102}],3:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -474,10 +498,25 @@ module.exports = constants;
 },{}],9:[function(require,module,exports){
 var constants = require("./constants");
 exports.localStorage = window.localStorage;
-function isPossiblyValidFromClient(client) {
-    return getFromClient(client) !== null;
+(function (AuthState) {
+    AuthState[AuthState["Unauthorized"] = 0] = "Unauthorized";
+    AuthState[AuthState["Expired"] = 1] = "Expired";
+    AuthState[AuthState["Authorized"] = 2] = "Authorized";
+})(exports.AuthState || (exports.AuthState = {}));
+var AuthState = exports.AuthState;
+var EXPIRY_BUFFER_MS = 5 * 60 * 1000;
+function authStateFromClient(client) {
+    var credentials = getFromClient(client);
+    if (credentials === null) {
+        return 0 /* Unauthorized */;
+    }
+    var expiry_timestamp = credentials.expiry_timestamp;
+    if (!expiry_timestamp || expiry_timestamp - Date.now() < EXPIRY_BUFFER_MS) {
+        return 1 /* Expired */;
+    }
+    return 2 /* Authorized */;
 }
-exports.isPossiblyValidFromClient = isPossiblyValidFromClient;
+exports.authStateFromClient = authStateFromClient;
 function getFromClient(client) {
     return client.dispatcher.authenticator.credentials;
 }
