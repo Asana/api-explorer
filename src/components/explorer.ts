@@ -14,6 +14,7 @@ import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
 import Resources = require("../resources/resources");
 import RouteEntry = require("./route_entry");
+import WorkspaceEntry = require("./workspace_entry");
 
 import ResourcesHelpers = require("../resources/helpers");
 
@@ -82,6 +83,11 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       // This isn't an authorization, so return accordingly.
       return Promise.resolve(false);
     };
+
+    // These tasks require authentication, which will update state on failure.
+    if (this.state.auth_state === Credentials.AuthState.Authorized) {
+      this.fetchAndStoreWorkspaces();
+    }
   }
 
   /**
@@ -93,8 +99,23 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       this.state.auth_state = Credentials.authStateFromClient(client);
 
       this.forceUpdate();
+
+      // After authorization, perform tasks that require authentication.
+      this.fetchAndStoreWorkspaces();
     }.bind(this));
   };
+
+  /**
+   * Fetches the user's workspaces via the API and stores response in state.
+   */
+  fetchAndStoreWorkspaces() {
+    this.state.client.workspaces.findAll().then(workspaces => {
+      this.setState({
+        workspace: workspaces.data[0],
+        workspaces: workspaces.data
+      });
+    });
+  }
 
   /**
    * Uses the state to return the properly-formatted request parameters.
@@ -145,6 +166,18 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     // Format the URL and use commas for readability.
     return url.format(parsed).replace(/%2C/g, ",");
+  };
+
+  /**
+   * Updates the workspace state following an onChange event.
+   */
+  onChangeWorkspaceState = (event: React.FormEvent): void => {
+    var workspace_id = (<HTMLSelectElement>event.target).value;
+    var workspace = _.findWhere(this.state.workspaces, { id: workspace_id });
+
+    this.setState({
+      workspace: workspace
+    });
   };
 
   /**
@@ -241,6 +274,11 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       return false;
     }
 
+    // Ensure we've successfully loaded the workspaces.
+    if (this.state.workspace === undefined) {
+      return false;
+    }
+
     // Ensure all required parameters are set.
     var num_required_params =
       _.filter(this.state.action.params, param => param.required).length;
@@ -318,6 +356,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       className: "api-explorer",
       children: [
         this._maybeRenderAuthorizationLink(),
+        WorkspaceEntry.create({
+          client: this.state.client,
+          onWorkspaceChange: this.onChangeWorkspaceState,
+          workspace: this.state.workspace,
+          workspaces: this.state.workspaces
+        }),
         ResourceEntry.create({
           resource: this.state.resource,
           onResourceChange: this.onChangeResourceState
@@ -392,6 +436,8 @@ module Explorer {
     params?: ParamData;
     resource?: Resource;
     response?: JsonResponse.ResponseData;
+    workspace?: Asana.resources.Workspace;
+    workspaces?: Asana.resources.Workspace[];
   }
 }
 

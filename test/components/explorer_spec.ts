@@ -22,6 +22,7 @@ describe("ExplorerComponent", () => {
 
   var client: Asana.Client;
   var authStateFromClientStub: SinonStub;
+  var findAllWorkspacesStub: SinonStub;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
@@ -31,6 +32,13 @@ describe("ExplorerComponent", () => {
       redirectUri: constants.REDIRECT_URI
     });
     authStateFromClientStub = sand.stub(Credentials, "authStateFromClient");
+    findAllWorkspacesStub = sand.stub(client.workspaces, "findAll")
+      .returns(Promise.resolve({
+        data: [
+          { id: "123", name: "Personal Projects" },
+          { id: "456", name: "Workspace Name" }
+        ]
+      }));
   });
 
   afterEach(() => {
@@ -593,6 +601,32 @@ describe("ExplorerComponent", () => {
               { example: "data here" }
             );
           });
+        });
+      });
+
+      describe("on workspace change", () => {
+        var selectWorkspace: React.HTMLComponent;
+
+        beforeEach(() => {
+          selectWorkspace = testUtils.findRenderedDOMComponentWithClass(
+            root,
+            "select-workspace"
+          );
+        });
+
+        it("should set the new workspace", () => {
+          var new_workspace = root.state.workspaces[1];
+
+          testUtils.Simulate.change(selectWorkspace, {
+            target: {
+              value: new_workspace.id
+            }
+          });
+
+          assert.deepEqual(
+            root.state.workspace,
+            new_workspace
+          );
         });
       });
     });

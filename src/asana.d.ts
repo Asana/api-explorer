@@ -10,6 +10,8 @@ declare module "asana" {
     useOauth(options?: any): Client;
     authorize(): Promise<Client>;
     dispatcher: Dispatcher;
+
+    workspaces: resources.Workspaces;
   }
 
   export class Dispatcher {
@@ -42,5 +44,16 @@ declare module "asana" {
   }
 
   export module resources {
+    interface Resources<T> {
+      data: T[];
+    }
+    interface Workspace {
+      id: string;
+      name: string;
+    }
+
+    class Workspaces {
+      findAll(): Promise<Resources<Workspace>>;
+    }
   }
 }
