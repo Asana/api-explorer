@@ -52,7 +52,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "asana": "^0.7.1",
+    "asana": "^0.7.6",
     "bluebird": "^2.9.6",
     "lodash": "^3.3.1",
     "react": "^0.13.1"
