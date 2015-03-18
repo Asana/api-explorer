@@ -94,7 +94,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    * Authorize the client, if it has expired, and force a re-rendering.
    */
   authorize = (): void => {
-    this.state.client.authorize().then(function(client: Asana.Client) {
+    this.state.client.authorize().then(client => {
       Credentials.storeFromClient(client);
       this.state.auth_state = Credentials.authStateFromClient(client);
 
@@ -102,7 +102,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
       // After authorization, perform tasks that require authentication.
       this.fetchAndStoreWorkspaces();
-    }.bind(this));
+    });
   };
 
   /**
@@ -306,7 +306,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var route = this.requestUrl();
     var params = this.requestParameters();
 
-    dispatcher.get(route, params, null).then(function(response: any) {
+    dispatcher.get(route, params, null).then((response: any) => {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
@@ -314,7 +314,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           route: this.requestUrlWithFullParams()
         }
       });
-    }.bind(this)).error(function(e: any) {
+    }).error((e: any) => {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
@@ -323,10 +323,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           route: this.requestUrlWithFullParams()
         }
       });
-    }.bind(this)).finally(function() {
+    }).finally(() => {
       // Store possibly-updated credentials for later use.
       Credentials.storeFromClient(this.state.client);
-    }.bind(this));
+    });
   };
 
   private _maybeRenderAuthorizationLink() {
