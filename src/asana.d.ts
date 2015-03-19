@@ -48,7 +48,7 @@ declare module "asana" {
       data: T[];
     }
     interface Workspace {
-      id: string;
+      id: number;
       name: string;
     }
 

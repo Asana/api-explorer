@@ -19,10 +19,10 @@ class WorkspaceEntry extends React.Component<WorkspaceEntry.Props, {}> {
         r.select({
           className: "select-workspace",
           onChange: this.props.onWorkspaceChange,
-          value: this.props.workspace.id,
+          value: this.props.workspace.id.toString(),
           children: this.props.workspaces.map(workspace => {
             return r.option({
-              value: workspace.id
+              value: workspace.id.toString()
             }, workspace.name);
           })
         })

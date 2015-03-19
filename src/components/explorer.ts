@@ -135,6 +135,13 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }
     params = _.extend(params, this.state.params.optional_params);
 
+    // If an optional param is for workspace, then inject the chosen workspace.
+    var has_optional_workspace_param = _.any(this.state.action.params,
+        param => !param.required && param.name === "workspace");
+    if (has_optional_workspace_param && this.state.workspace !== undefined) {
+      params = _.extend(params, { workspace: this.state.workspace.id });
+    }
+
     return params;
   };
 
@@ -146,8 +153,17 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    */
   requestUrl = (): string => {
     var param_value: number;
-    if (!_.isEmpty(this.state.params.required_params)) {
-      param_value = _.values(this.state.params.required_params)[0];
+
+    var required_param = _.find(this.state.action.params, "required");
+    if (required_param !== undefined) {
+      if (!_.isEmpty(this.state.params.required_params)) {
+        param_value = _.values(this.state.params.required_params)[0];
+      } else if (required_param.name === "workspace") {
+        // Since we lazy-load workspaces, make sure it has been loaded.
+        if (this.state.workspace !== undefined) {
+          param_value = this.state.workspace.id;
+        }
+      }
     }
 
     return ResourcesHelpers.pathForAction(this.state.action, param_value);
@@ -173,7 +189,9 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    */
   onChangeWorkspaceState = (event: React.FormEvent): void => {
     var workspace_id = (<HTMLSelectElement>event.target).value;
-    var workspace = _.findWhere(this.state.workspaces, { id: workspace_id });
+
+    var workspace = _.find(this.state.workspaces,
+        workspace => workspace.id.toString() === workspace_id);
 
     this.setState({
       workspace: workspace
@@ -280,10 +298,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }
 
     // Ensure all required parameters are set.
-    var num_required_params =
-      _.filter(this.state.action.params, param => param.required).length;
-    if (num_required_params !== _.size(this.state.params.required_params)) {
-      return false;
+    var required_params = _.filter(this.state.action.params, "required");
+    if (required_params.length !== _.size(this.state.params.required_params)) {
+      // We inject the workspace from the dropdown, so we can ignore that.
+      if (required_params[0].name !== "workspace") {
+        return false;
+      }
     }
 
     // At this point, we've passed all constraints.
