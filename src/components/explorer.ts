@@ -4,7 +4,6 @@ import Asana = require("asana");
 import Promise = require("bluebird");
 import React = require("react/addons");
 import url = require("url");
-import util = require("util");
 import _ = require("lodash");
 
 import constants = require("../constants");
@@ -120,15 +119,17 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
   /**
    * Uses the state to return the URL for the current request.
+   * Assumes we have at-most one required parameter to put in the URL.
+   *
    * @returns {string}
    */
   requestUrl = (): string => {
-    // Assumes we have at-most one required parameter to put in the URL.
-    var required_params = this.state.params.required_params;
+    var param_value: number;
+    if (!_.isEmpty(this.state.params.required_params)) {
+      param_value = _.values(this.state.params.required_params)[0];
+    }
 
-    return !_.isEmpty(required_params) ?
-      util.format(this.state.action.path, _.values(required_params)[0]) :
-      this.state.action.path;
+    return ResourcesHelpers.pathForAction(this.state.action, param_value);
   };
 
   /**

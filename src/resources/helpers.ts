@@ -1,4 +1,6 @@
 // <reference path="./interfaces.ts" />
+import util = require("util");
+import _ = require("lodash");
 
 import Resources = require("./resources");
 
@@ -50,4 +52,36 @@ export function actionFromResourceAndName(resource: Resource, action_name: strin
   return resource.actions.filter(
     action => { return action_name === action.name; }
   )[0];
+}
+
+/**
+ * Given an action, return the path after replacing a required param value.
+ * If no param value is given, and one is needed, then use a placeholder value.
+ *
+ * Assumes we have at-most one required parameter to put in the URL.
+ *
+ * @param action
+ * @param param_value?
+ * @returns {string}
+ */
+export function pathForAction(action: Action, param_value?: number): string {
+  // If there's a placeholder, then replace it with its required param.
+  if (action.path.match(/%/g) !== null) {
+    var required_param = _.find(action.params, "required");
+    if (required_param === undefined) {
+      throw new Error("Placeholder in path but there's no required param.");
+    }
+
+    // If a param_value is given, use it. Otherwise, use a placeholder.
+    if (param_value !== undefined) {
+      return util.format(action.path, param_value);
+    } else {
+      // Use the parameter name as a placeholder in the URL.
+      return util.format(
+        action.path.replace("%d", "%s"), ":" + required_param.name);
+    }
+  }
+
+  // Otherwise, we just return the path.
+  return action.path;
 }
