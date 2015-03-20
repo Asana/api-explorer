@@ -2,6 +2,7 @@
 import chai = require("chai");
 import React = require("react/addons");
 import sinon = require("sinon");
+import _ = require("lodash");
 
 import Resources = require("../../src/resources/resources");
 import RouteEntry = require("../../src/components/route_entry");
@@ -88,8 +89,14 @@ describe("RouteEntryComponent", () => {
       assert.equal(children.length, initial_resource.actions.length);
       initial_resource.actions.forEach((action, idx) => {
         var child_item = (<HTMLOptionElement>children.item(idx));
+
+        // Replace any placeholders with their required param name.
+        var required_param = _.find(action.params, "required");
+        var action_path = required_param !== undefined ?
+          action.path.replace("%d", ":" + required_param.name) : action.path;
+
         assert.equal(child_item.value, action.name);
-        assert.equal(child_item.text, action.path);
+        assert.equal(child_item.text, action_path);
       });
     });
 

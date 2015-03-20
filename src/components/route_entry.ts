@@ -1,6 +1,8 @@
 /// <reference path="../resources/interfaces.ts" />
 import React = require("react");
 
+import ResourcesHelpers = require("../resources/helpers");
+
 var r = React.DOM;
 
 /**
@@ -18,7 +20,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
           action => {
           return r.option({
             value: action.name
-          }, action.path);
+          }, ResourcesHelpers.pathForAction(action));
         })
     });
   };

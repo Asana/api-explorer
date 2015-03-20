@@ -614,13 +614,19 @@ describe("ExplorerComponent", () => {
       });
 
       it("should display the submitted route URL", (cb) => {
+        var required_param = _.find(initial_action.params, "required");
+
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        // The path with no parameters should use a placeholder.
+        var action_path =
+          initial_action.path.replace("%d", ":" + required_param.name);
 
         raw_response_promise.then(function () {
           assert.include(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-info")).textContent,
-            initial_action.path
+            action_path
           );
 
           cb();
@@ -630,20 +636,27 @@ describe("ExplorerComponent", () => {
       });
 
       it("should display the submitted route URL with parameters", (cb) => {
+        var required_param = _.find(initial_action.params, "required");
+
         root.state.params = {
           expand_fields: ["test"],
           include_fields: ["other", "this"],
-          required_params: {},
-          optional_params: {}
+          required_params: _.object([required_param.name], ["123"]),
+          optional_params: {abc: 456}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
+
+        // The path should include all the params initialized above.
+        var action_path =
+          initial_action.path.replace(/%d/, "123") +
+          "?opt_expand=test&opt_fields=other,this&abc=456";
 
         raw_response_promise.then(function () {
           assert.include(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-info")).textContent,
-            initial_action.path + "?opt_expand=test&opt_fields=other,this"
+            action_path
           );
 
           cb();
@@ -672,7 +685,8 @@ describe("ExplorerComponent", () => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
-          sinon.assert.calledWith(getStub, initial_action.path);
+          sinon.assert.calledWith(getStub,
+            ResourcesHelpers.pathForAction(initial_action));
 
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
@@ -698,7 +712,7 @@ describe("ExplorerComponent", () => {
         raw_response_promise.then(function () {
           sinon.assert.calledWith(
             getStub,
-            initial_action.path,
+            ResourcesHelpers.pathForAction(initial_action),
             { opt_expand: "test", opt_fields: "other,this" }
           );
 
@@ -752,7 +766,8 @@ describe("ExplorerComponent", () => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
-          sinon.assert.calledWith(getStub, other_action.path);
+          sinon.assert.calledWith(
+            getStub, ResourcesHelpers.pathForAction(other_action));
 
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
