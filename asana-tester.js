@@ -13,7 +13,6 @@ var Asana = require("asana");
 var Promise = require("bluebird");
 var React = require("react/addons");
 var url = require("url");
-var util = require("util");
 var _ = require("lodash");
 var constants = require("../constants");
 var Credentials = require("../credentials");
@@ -65,8 +64,11 @@ var Explorer = (function (_super) {
             return params;
         };
         this.requestUrl = function () {
-            var required_params = _this.state.params.required_params;
-            return !_.isEmpty(required_params) ? util.format(_this.state.action.path, _.values(required_params)[0]) : _this.state.action.path;
+            var param_value;
+            if (!_.isEmpty(_this.state.params.required_params)) {
+                param_value = _.values(_this.state.params.required_params)[0];
+            }
+            return ResourcesHelpers.pathForAction(_this.state.action, param_value);
         };
         this.requestUrlWithFullParams = function () {
             var base_url = _this.requestUrl();
@@ -258,7 +260,7 @@ var Explorer;
 })(Explorer || (Explorer = {}));
 module.exports = Explorer;
 
-},{"../constants":8,"../credentials":9,"../resources/helpers":21,"../resources/resources":22,"./json_response":3,"./parameter_entry":4,"./property_entry":5,"./resource_entry":6,"./route_entry":7,"asana":23,"bluebird":73,"lodash":103,"react/addons":104,"url":100,"util":102}],3:[function(require,module,exports){
+},{"../constants":8,"../credentials":9,"../resources/helpers":21,"../resources/resources":22,"./json_response":3,"./parameter_entry":4,"./property_entry":5,"./resource_entry":6,"./route_entry":7,"asana":23,"bluebird":73,"lodash":103,"react/addons":104,"url":100}],3:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -440,6 +442,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var React = require("react");
+var ResourcesHelpers = require("../resources/helpers");
 var r = React.DOM;
 var RouteEntry = (function (_super) {
     __extends(RouteEntry, _super);
@@ -454,7 +457,7 @@ var RouteEntry = (function (_super) {
                 children: _this.props.resource.actions.map(function (action) {
                     return r.option({
                         value: action.name
-                    }, action.path);
+                    }, ResourcesHelpers.pathForAction(action));
                 })
             });
         };
@@ -481,7 +484,7 @@ var RouteEntry = (function (_super) {
 })(React.Component);
 module.exports = RouteEntry;
 
-},{"react":276}],8:[function(require,module,exports){
+},{"../resources/helpers":21,"react":276}],8:[function(require,module,exports){
 var ghPagesConstants = {
     LOCALSTORAGE_KEY: "api_tester_credentials",
     CLIENT_ID: "29147353239426",
@@ -2002,6 +2005,8 @@ var resource = {
 module.exports = resource;
 
 },{}],21:[function(require,module,exports){
+var util = require("util");
+var _ = require("lodash");
 var Resources = require("./resources");
 function names() {
     return Object.keys(Resources);
@@ -2029,8 +2034,24 @@ function actionFromResourceAndName(resource, action_name) {
     })[0];
 }
 exports.actionFromResourceAndName = actionFromResourceAndName;
+function pathForAction(action, param_value) {
+    if (action.path.match(/%/g) !== null) {
+        var required_param = _.find(action.params, "required");
+        if (required_param === undefined) {
+            throw new Error("Placeholder in path but there's no required param.");
+        }
+        if (param_value !== undefined) {
+            return util.format(action.path, param_value);
+        }
+        else {
+            return util.format(action.path.replace("%d", "%s"), ":" + required_param.name);
+        }
+    }
+    return action.path;
+}
+exports.pathForAction = pathForAction;
 
-},{"./resources":22}],22:[function(require,module,exports){
+},{"./resources":22,"lodash":103,"util":102}],22:[function(require,module,exports){
 exports.Attachments = require("./gen/attachments");
 exports.Events = require("./gen/events");
 exports.Projects = require("./gen/projects");
