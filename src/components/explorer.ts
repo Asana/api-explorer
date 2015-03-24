@@ -14,7 +14,6 @@ import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
 import Resources = require("../resources/resources");
 import RouteEntry = require("./route_entry");
-import WorkspaceEntry = require("./workspace_entry");
 
 import ResourcesHelpers = require("../resources/helpers");
 
@@ -98,10 +97,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       Credentials.storeFromClient(client);
       this.state.auth_state = Credentials.authStateFromClient(client);
 
-      this.forceUpdate();
-
       // After authorization, perform tasks that require authentication.
       this.fetchAndStoreWorkspaces();
+
+      this.forceUpdate();
     });
   };
 
@@ -185,20 +184,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   };
 
   /**
-   * Updates the workspace state following an onChange event.
-   */
-  onChangeWorkspaceState = (event: React.FormEvent): void => {
-    var workspace_id = (<HTMLSelectElement>event.target).value;
-
-    var workspace = _.find(this.state.workspaces,
-        workspace => workspace.id.toString() === workspace_id);
-
-    this.setState({
-      workspace: workspace
-    });
-  };
-
-  /**
    * Updates the resource state following an onChange event.
    */
   onChangeResourceState = (event: React.FormEvent): void => {
@@ -266,16 +251,25 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var param_type = _.contains(target.className, "required-param")
       ? "required_params" : "optional_params";
 
-    // Update or remove the parameter accordingly.
-    this.setState(update(this.state, <any>{
-      params: _.object([param_type], [{
-        $set: target.value === "" ?
-          _.omit((<any>this.state.params)[param_type], parameter) :
-          _.extend(
-            (<any>this.state.params)[param_type],
-            _.object([parameter], [target.value]))
-      }])
-    }));
+    if (parameter === "workspace") {
+      var workspace = _.find(this.state.workspaces,
+          workspace => workspace.id.toString() === target.value);
+
+      this.setState({
+        workspace: workspace
+      });
+    } else {
+      // Update or remove the parameter accordingly.
+      this.setState(update(this.state, <any>{
+        params: _.object([param_type], [{
+          $set: target.value === "" ?
+            _.omit((<any>this.state.params)[param_type], parameter) :
+            _.extend(
+              (<any>this.state.params)[param_type],
+              _.object([parameter], [target.value]))
+        }])
+      }));
+    }
   };
 
   /**
@@ -376,12 +370,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       className: "api-explorer",
       children: [
         this._maybeRenderAuthorizationLink(),
-        WorkspaceEntry.create({
-          client: this.state.client,
-          onWorkspaceChange: this.onChangeWorkspaceState,
-          workspace: this.state.workspace,
-          workspaces: this.state.workspaces
-        }),
         ResourceEntry.create({
           resource: this.state.resource,
           onResourceChange: this.onChangeResourceState
@@ -414,7 +402,9 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           ParameterEntry.create({
             text: "Attribute parameters: ",
             parameters: this.state.action.params,
-            onParameterChange: this.onChangeParameterState
+            onParameterChange: this.onChangeParameterState,
+            workspace: this.state.workspace,
+            workspaces: this.state.workspaces
           })
         ),
         r.hr(),

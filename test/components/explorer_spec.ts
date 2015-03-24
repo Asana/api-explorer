@@ -22,6 +22,7 @@ describe("ExplorerComponent", () => {
 
   var client: Asana.Client;
   var authStateFromClientStub: SinonStub;
+  var findAllWorkspacesPromise: Promise<any>;
   var findAllWorkspacesStub: SinonStub;
 
   beforeEach(() => {
@@ -32,13 +33,15 @@ describe("ExplorerComponent", () => {
       redirectUri: constants.REDIRECT_URI
     });
     authStateFromClientStub = sand.stub(Credentials, "authStateFromClient");
+
+    findAllWorkspacesPromise = Promise.resolve({
+      data: [
+        { id: "123", name: "Personal Projects" },
+        { id: "456", name: "Workspace Name" }
+      ]
+    });
     findAllWorkspacesStub = sand.stub(client.workspaces, "findAll")
-      .returns(Promise.resolve({
-        data: [
-          { id: "123", name: "Personal Projects" },
-          { id: "456", name: "Workspace Name" }
-        ]
-      }));
+      .returns(findAllWorkspacesPromise);
   });
 
   afterEach(() => {
@@ -137,9 +140,32 @@ describe("ExplorerComponent", () => {
           1);
 
         cb();
-      }).catch(function (err) {
-        cb(err);
+      }).catch(cb);
+    });
+
+    it("should fetch workspaces only after authorization", (cb) => {
+      sinon.assert.notCalled(findAllWorkspacesStub);
+      assert.isUndefined(root.state.workspaces);
+      assert.isUndefined(root.state.workspace);
+
+      // Stub authorization to set the client to authorized.
+      var promise: Promise<any>;
+      sand.stub(client, "authorize", () => {
+        authStateFromClientStub.returns(Credentials.AuthState.Authorized);
+        return promise = Promise.resolve();
       });
+      root.authorize();
+
+      // After authorization resolves, the state should have updated.
+      promise.then(() => {
+        sinon.assert.called(findAllWorkspacesStub);
+        findAllWorkspacesPromise.then(() => {
+          assert.lengthOf(root.state.workspaces, 2);
+          assert.equal(root.state.workspace, root.state.workspaces[0]);
+
+          cb();
+        }).catch(cb);
+      }).catch(cb);
     });
   });
 
@@ -192,9 +218,32 @@ describe("ExplorerComponent", () => {
           1);
 
         cb();
-      }).catch(function (err) {
-        cb(err);
+      }).catch(cb);
+    });
+
+    it("should fetch workspaces only after authorization", (cb) => {
+      sinon.assert.notCalled(findAllWorkspacesStub);
+      assert.isUndefined(root.state.workspaces);
+      assert.isUndefined(root.state.workspace);
+
+      // Stub authorization to set the client to authorized.
+      var promise: Promise<any>;
+      sand.stub(client, "authorize", () => {
+        authStateFromClientStub.returns(Credentials.AuthState.Authorized);
+        return promise = Promise.resolve();
       });
+      root.authorize();
+
+      // After authorization resolves, the state should have updated.
+      promise.then(() => {
+        sinon.assert.called(findAllWorkspacesStub);
+        findAllWorkspacesPromise.then(() => {
+          assert.lengthOf(root.state.workspaces, 2);
+          assert.equal(root.state.workspace, root.state.workspaces[0]);
+
+          cb();
+        }).catch(cb);
+      }).catch(cb);
     });
   });
 
@@ -240,6 +289,17 @@ describe("ExplorerComponent", () => {
         root,
         "authorize-link"
       ).length, 0);
+    });
+
+    it("should fetch workspaces for the user", (cb) => {
+      sinon.assert.called(findAllWorkspacesStub);
+
+      // After findAllWorkspaces resolves, the state should have updated.
+      findAllWorkspacesPromise.then(() => {
+        assert.lengthOf(root.state.workspaces, 2);
+        assert.equal(root.state.workspace, root.state.workspaces[0]);
+        cb();
+      }).catch(cb);
     });
 
     describe("state updates", () => {
@@ -604,29 +664,58 @@ describe("ExplorerComponent", () => {
         });
       });
 
-      describe("on workspace change", () => {
-        var selectWorkspace: React.HTMLComponent;
+      describe("on workspace parameter input", () => {
+        var workspaceParam: React.HTMLComponent;
 
         beforeEach(() => {
-          selectWorkspace = testUtils.findRenderedDOMComponentWithClass(
-            root,
-            "select-workspace"
-          );
+          testUtils.Simulate.change(selectResource, {
+            target: {value: "Workspaces"}
+          });
+
+          // Fetch the workspace param.
+          var params = testUtils.scryRenderedDOMComponentsWithClass(
+            root, "parameter-input");
+          workspaceParam = _.find(params, param =>
+            _.contains(param.props.id, "parameter_input_workspace"));
+
+          // Add an existing parameters to ensure no data clobbering.
+          root.state.params.required_params.example = "data here";
+          root.state.params.optional_params.other_example = "other data";
         });
 
-        it("should set the new workspace", () => {
-          var new_workspace = root.state.workspaces[1];
+        it("should update workspace when select from dropdown", () => {
+          var old_params = _.cloneDeep(root.state.params);
 
-          testUtils.Simulate.change(selectWorkspace, {
+          // Verify initial workspace is chosen.
+          assert.equal(root.state.workspace, root.state.workspaces[0]);
+
+          // We now change the data and verify it was updated.
+          testUtils.Simulate.change(workspaceParam, {
             target: {
-              value: new_workspace.id
+              className: workspaceParam.props.className,
+              id: workspaceParam.props.id,
+              value: root.state.workspaces[1].id
+            }
+          });
+          assert.equal(root.state.workspace, root.state.workspaces[1]);
+
+          // Ensure other params have not changed.
+          assert.deepEqual(root.state.params, old_params);
+        });
+
+        it("should not change state when select same workspace", () => {
+          var old_params = _.cloneDeep(root.state.params);
+
+          // We now change the data to the same workspace.
+          testUtils.Simulate.change(workspaceParam, {
+            target: {
+              className: workspaceParam.props.className,
+              id: workspaceParam.props.id,
+              value: root.state.workspace.id
             }
           });
 
-          assert.deepEqual(
-            root.state.workspace,
-            new_workspace
-          );
+          assert.deepEqual(root.state.params, old_params);
         });
       });
     });
@@ -664,9 +753,7 @@ describe("ExplorerComponent", () => {
           );
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
       it("should display the submitted route URL with parameters", (cb) => {
@@ -694,9 +781,7 @@ describe("ExplorerComponent", () => {
           );
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
       it("should display the current route method", (cb) => {
@@ -710,9 +795,7 @@ describe("ExplorerComponent", () => {
           );
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
       it("should make a GET request", (cb) => {
@@ -728,9 +811,7 @@ describe("ExplorerComponent", () => {
             json_response);
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
       it("should make a GET request with parameters", (cb) => {
@@ -756,9 +837,7 @@ describe("ExplorerComponent", () => {
             json_response);
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
       it("should make the correct request after changing resource", (cb) => {
@@ -784,9 +863,7 @@ describe("ExplorerComponent", () => {
             json_response);
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
       it("should make the correct request after changing route", (cb) => {
@@ -809,9 +886,7 @@ describe("ExplorerComponent", () => {
             json_response);
 
           cb();
-        }).catch(function (err) {
-          cb(err);
-        });
+        }).catch(cb);
       });
 
     });

@@ -31,7 +31,9 @@ describe("ParameterEntryComponent", () => {
       ParameterEntry.create({
         text: "this is a test",
         parameters: parameters,
-        onParameterChange: onParameterChangeStub
+        onParameterChange: onParameterChangeStub,
+        workspace: undefined,
+        workspaces: undefined
       })
     );
     inputs = testUtils.scryRenderedDOMComponentsWithClass(
