@@ -10,7 +10,6 @@ import _ = require("lodash");
 import constants = require("../../src/constants");
 import Credentials = require("../../src/credentials");
 import Explorer = require("../../src/components/explorer");
-import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 
@@ -462,7 +461,7 @@ describe("ExplorerComponent", () => {
         var optionalParam: React.HTMLComponent;
 
         beforeEach(() => {
-          // Use a resource/action that has both a required and optional input.
+          // Use an action that has one required and one optional input.
           testUtils.Simulate.change(selectResource, {
             target: {value: "Events"}
           });
@@ -480,8 +479,8 @@ describe("ExplorerComponent", () => {
           var param_name: string;
 
           beforeEach(() => {
-            param_name = ParameterEntry.parameterFromInputId(
-              requiredParam.props.id);
+            var parameter = _.find(root.state.action.params, "required");
+            param_name = parameter.name;
 
             // Add an existing parameters to ensure no data clobbering.
             root.state.params.required_params.example = "data here";
@@ -492,7 +491,6 @@ describe("ExplorerComponent", () => {
             testUtils.Simulate.change(requiredParam, {
               target: {
                 className: requiredParam.props.className,
-                id: requiredParam.props.id,
                 value: "some content"
               }
             });
@@ -521,7 +519,6 @@ describe("ExplorerComponent", () => {
             testUtils.Simulate.change(requiredParam, {
               target: {
                 className: requiredParam.props.className,
-                id: requiredParam.props.id,
                 value: "new content!"
               }
             });
@@ -549,7 +546,6 @@ describe("ExplorerComponent", () => {
             testUtils.Simulate.change(requiredParam, {
               target: {
                 className: requiredParam.props.className,
-                id: requiredParam.props.id,
                 value: ""
               }
             });
@@ -570,8 +566,9 @@ describe("ExplorerComponent", () => {
           var param_name: string;
 
           beforeEach(() => {
-            param_name = ParameterEntry.parameterFromInputId(
-              optionalParam.props.id);
+            var parameter = _.find(
+              root.state.action.params, param => !param.required);
+            param_name = parameter.name;
 
             // Add an existing parameters to ensure no data clobbering.
             root.state.params.required_params.example = "data here";
@@ -582,7 +579,6 @@ describe("ExplorerComponent", () => {
             testUtils.Simulate.change(optionalParam, {
               target: {
                 className: optionalParam.props.className,
-                id: optionalParam.props.id,
                 value: "some content"
               }
             });
@@ -615,7 +611,6 @@ describe("ExplorerComponent", () => {
             testUtils.Simulate.change(optionalParam, {
               target: {
                 className: optionalParam.props.className,
-                id: optionalParam.props.id,
                 value: "new content!"
               }
             });
@@ -646,7 +641,6 @@ describe("ExplorerComponent", () => {
             testUtils.Simulate.change(optionalParam, {
               target: {
                 className: optionalParam.props.className,
-                id: optionalParam.props.id,
                 value: ""
               }
             });
@@ -693,7 +687,6 @@ describe("ExplorerComponent", () => {
           testUtils.Simulate.change(workspaceParam, {
             target: {
               className: workspaceParam.props.className,
-              id: workspaceParam.props.id,
               value: root.state.workspaces[1].id
             }
           });
@@ -710,7 +703,6 @@ describe("ExplorerComponent", () => {
           testUtils.Simulate.change(workspaceParam, {
             target: {
               className: workspaceParam.props.className,
-              id: workspaceParam.props.id,
               value: root.state.workspace.id
             }
           });
@@ -912,7 +904,6 @@ describe("ExplorerComponent", () => {
         testUtils.Simulate.change(requiredParam, {
           target: {
             className: requiredParam.props.className,
-            id: requiredParam.props.id,
             value: "hi there"
           }
         });

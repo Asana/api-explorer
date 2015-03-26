@@ -2,7 +2,6 @@
 /// <reference path="../resources/interfaces.ts" />
 import Asana = require("asana");
 import React = require("react/addons");
-import _ = require("lodash");
 
 // TODO: Remove deprecated classSet.
 var cx = React.addons.classSet;
@@ -27,7 +26,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
         r.select({
           id: id,
           className: classes,
-          onChange: this.props.onParameterChange,
+          onChange: this.props.onParameterChange(parameter),
           value: this.props.workspace.id.toString(),
           children: this.props.workspaces.map(workspace => {
             return r.option({
@@ -43,7 +42,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
           type: "text",
           id: id,
           className: classes,
-          onChange: this.props.onParameterChange
+          onChange: this.props.onParameterChange(parameter)
         }, parameter.name)
       );
     }
@@ -65,21 +64,11 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
 }
 
 module ParameterEntry {
-  /**
-   * Given the id from an input rendered from _renderParameterInput,
-   * extract the parameter name and return it.
-   *
-   * @param idName
-   * @returns {string}
-   */
-  export function parameterFromInputId(idName: string): string {
-    return _.last(idName.split("_"));
-  }
-
   export interface Props {
     text: string;
     parameters: Parameter[];
-    onParameterChange: (event?: React.FormEvent) => void;
+    onParameterChange:
+      (parameter: Parameter) => (event?: React.FormEvent) => void;
     workspace: Asana.resources.Workspace;
     workspaces: Asana.resources.Workspace[];
   }

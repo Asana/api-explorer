@@ -242,34 +242,36 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   };
 
   /**
-   * Updates the parameter state following an onChange event.
+   * Returns a function to handle the onChange event for a given parameter.
+   * @param parameter
+   * @returns {function(React.FormEvent): void}
    */
-  onChangeParameterState = (event: React.FormEvent): void => {
-    var target = <HTMLInputElement>event.target;
+  onChangeParameterState = (parameter: Parameter) => {
+    return (event: React.FormEvent) => {
+      var target = <HTMLInputElement>event.target;
+      var param_type = parameter.required ?
+        "required_params" : "optional_params";
 
-    var parameter = ParameterEntry.parameterFromInputId(target.id);
-    var param_type = _.contains(target.className, "required-param")
-      ? "required_params" : "optional_params";
+      if (parameter.name === "workspace") {
+        var workspace = _.find(this.state.workspaces,
+            workspace => workspace.id.toString() === target.value);
 
-    if (parameter === "workspace") {
-      var workspace = _.find(this.state.workspaces,
-          workspace => workspace.id.toString() === target.value);
-
-      this.setState({
-        workspace: workspace
-      });
-    } else {
-      // Update or remove the parameter accordingly.
-      this.setState(update(this.state, <any>{
-        params: _.object([param_type], [{
-          $set: target.value === "" ?
-            _.omit((<any>this.state.params)[param_type], parameter) :
-            _.extend(
-              (<any>this.state.params)[param_type],
-              _.object([parameter], [target.value]))
-        }])
-      }));
-    }
+        this.setState({
+          workspace: workspace
+        });
+      } else {
+        // Update or remove the parameter accordingly.
+        this.setState(update(this.state, <any>{
+          params: _.object([param_type], [{
+            $set: target.value === "" ?
+              _.omit((<any>this.state.params)[param_type], parameter.name) :
+              _.extend(
+                (<any>this.state.params)[param_type],
+                _.object([parameter.name], [target.value]))
+          }])
+        }));
+      }
+    };
   };
 
   /**
