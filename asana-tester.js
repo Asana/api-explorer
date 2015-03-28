@@ -44,9 +44,10 @@ var Explorer = (function (_super) {
         this.authorize = function () {
             _this.state.client.authorize().then(function (client) {
                 Credentials.storeFromClient(client);
-                this.state.auth_state = Credentials.authStateFromClient(client);
-                this.forceUpdate();
-            }.bind(_this));
+                _this.state.auth_state = Credentials.authStateFromClient(client);
+                _this.fetchAndStoreWorkspaces();
+                _this.forceUpdate();
+            });
         };
         this.requestParameters = function () {
             var params = {};
@@ -61,12 +62,24 @@ var Explorer = (function (_super) {
                 });
             }
             params = _.extend(params, _this.state.params.optional_params);
+            var has_optional_workspace_param = _.any(_this.state.action.params, function (param) { return !param.required && param.name === "workspace"; });
+            if (has_optional_workspace_param && _this.state.workspace !== undefined) {
+                params = _.extend(params, { workspace: _this.state.workspace.id });
+            }
             return params;
         };
         this.requestUrl = function () {
             var param_value;
-            if (!_.isEmpty(_this.state.params.required_params)) {
-                param_value = _.values(_this.state.params.required_params)[0];
+            var required_param = _.find(_this.state.action.params, "required");
+            if (required_param !== undefined) {
+                if (!_.isEmpty(_this.state.params.required_params)) {
+                    param_value = _.values(_this.state.params.required_params)[0];
+                }
+                else if (required_param.name === "workspace") {
+                    if (_this.state.workspace !== undefined) {
+                        param_value = _this.state.workspace.id;
+                    }
+                }
             }
             return ResourcesHelpers.pathForAction(_this.state.action, param_value);
         };
@@ -111,15 +124,24 @@ var Explorer = (function (_super) {
                 });
             };
         };
-        this.onChangeParameterState = function (event) {
-            var target = event.target;
-            var parameter = ParameterEntry.parameterFromInputId(target.id);
-            var param_type = _.contains(target.className, "required-param") ? "required_params" : "optional_params";
-            _this.setState(update(_this.state, {
-                params: _.object([param_type], [{
-                    $set: target.value === "" ? _.omit(_this.state.params[param_type], parameter) : _.extend(_this.state.params[param_type], _.object([parameter], [target.value]))
-                }])
-            }));
+        this.onChangeParameterState = function (parameter) {
+            return function (event) {
+                var target = event.target;
+                var param_type = parameter.required ? "required_params" : "optional_params";
+                if (parameter.name === "workspace") {
+                    var workspace = _.find(_this.state.workspaces, function (workspace) { return workspace.id.toString() === target.value; });
+                    _this.setState({
+                        workspace: workspace
+                    });
+                }
+                else {
+                    _this.setState(update(_this.state, {
+                        params: _.object([param_type], [{
+                            $set: target.value === "" ? _.omit(_this.state.params[param_type], parameter.name) : _.extend(_this.state.params[param_type], _.object([parameter.name], [target.value]))
+                        }])
+                    }));
+                }
+            };
         };
         this.canSubmitRequest = function () {
             if (_this.state.auth_state !== 2 /* Authorized */) {
@@ -128,9 +150,14 @@ var Explorer = (function (_super) {
             if (_this.state.action.method !== "GET") {
                 return false;
             }
-            var num_required_params = _.filter(_this.state.action.params, function (param) { return param.required; }).length;
-            if (num_required_params !== _.size(_this.state.params.required_params)) {
+            if (_this.state.workspace === undefined) {
                 return false;
+            }
+            var required_params = _.filter(_this.state.action.params, "required");
+            if (required_params.length !== _.size(_this.state.params.required_params)) {
+                if (required_params[0].name !== "workspace") {
+                    return false;
+                }
             }
             return true;
         };
@@ -143,25 +170,25 @@ var Explorer = (function (_super) {
             var route = _this.requestUrl();
             var params = _this.requestParameters();
             dispatcher.get(route, params, null).then(function (response) {
-                this.setState({
+                _this.setState({
                     response: {
-                        action: this.state.action,
+                        action: _this.state.action,
                         raw_response: response,
-                        route: this.requestUrlWithFullParams()
+                        route: _this.requestUrlWithFullParams()
                     }
                 });
-            }.bind(_this)).error(function (e) {
-                this.setState({
+            }).error(function (e) {
+                _this.setState({
                     response: {
-                        action: this.state.action,
+                        action: _this.state.action,
                         error: e,
                         raw_response: e.value,
-                        route: this.requestUrlWithFullParams()
+                        route: _this.requestUrlWithFullParams()
                     }
                 });
-            }.bind(_this)).finally(function () {
-                Credentials.storeFromClient(this.state.client);
-            }.bind(_this));
+            }).finally(function () {
+                Credentials.storeFromClient(_this.state.client);
+            });
         };
         var resource = ResourcesHelpers.resourceFromResourceName(this.props.initial_resource_string) || Resources.Users;
         var action = ResourcesHelpers.actionFromResourcePath(resource, this.props.initial_route) || resource.actions[0];
@@ -182,7 +209,19 @@ var Explorer = (function (_super) {
             _this.state.auth_state = 1 /* Expired */;
             return Promise.resolve(false);
         };
+        if (this.state.auth_state === 2 /* Authorized */) {
+            this.fetchAndStoreWorkspaces();
+        }
     }
+    Explorer.prototype.fetchAndStoreWorkspaces = function () {
+        var _this = this;
+        this.state.client.workspaces.findAll().then(function (workspaces) {
+            _this.setState({
+                workspace: workspaces.data[0],
+                workspaces: workspaces.data
+            });
+        });
+    };
     Explorer.prototype._maybeRenderAuthorizationLink = function () {
         var message = "";
         switch (this.state.auth_state) {
@@ -234,7 +273,9 @@ var Explorer = (function (_super) {
                 }), ParameterEntry.create({
                     text: "Attribute parameters: ",
                     parameters: this.state.action.params,
-                    onParameterChange: this.onChangeParameterState
+                    onParameterChange: this.onChangeParameterState,
+                    workspace: this.state.workspace,
+                    workspaces: this.state.workspaces
                 })),
                 r.hr(),
                 JsonResponse.create({
@@ -310,7 +351,6 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var React = require("react/addons");
-var _ = require("lodash");
 var cx = React.addons.classSet;
 var r = React.DOM;
 var ParameterEntry = (function (_super) {
@@ -319,15 +359,33 @@ var ParameterEntry = (function (_super) {
         var _this = this;
         _super.apply(this, arguments);
         this._renderParameterInput = function (parameter) {
-            return r.span({ key: parameter.name }, r.input({
-                type: "text",
-                id: "parameter_input_" + parameter.name,
-                className: cx({
-                    "parameter-input": true,
-                    "required-param": parameter.required
-                }),
-                onChange: _this.props.onParameterChange
-            }, parameter.name));
+            var classes = cx({
+                "parameter-input": true,
+                "required-param": parameter.required
+            });
+            var id = "parameter_input_" + parameter.name;
+            if (parameter.name === "workspace" && _this.props.workspaces !== undefined) {
+                return r.span({ key: parameter.name }, r.select({
+                    id: id,
+                    className: classes,
+                    onChange: _this.props.onParameterChange(parameter),
+                    value: _this.props.workspace.id.toString(),
+                    children: _this.props.workspaces.map(function (workspace) {
+                        return r.option({
+                            value: workspace.id.toString()
+                        }, workspace.name);
+                    })
+                }));
+            }
+            else {
+                return r.span({ key: parameter.name }, r.input({
+                    placeholder: parameter.name,
+                    type: "text",
+                    id: id,
+                    className: classes,
+                    onChange: _this.props.onParameterChange(parameter)
+                }, parameter.name));
+            }
         };
     }
     ParameterEntry.prototype.render = function () {
@@ -344,16 +402,9 @@ var ParameterEntry = (function (_super) {
     ParameterEntry.create = React.createFactory(ParameterEntry);
     return ParameterEntry;
 })(React.Component);
-var ParameterEntry;
-(function (ParameterEntry) {
-    function parameterFromInputId(idName) {
-        return _.last(idName.split("_"));
-    }
-    ParameterEntry.parameterFromInputId = parameterFromInputId;
-})(ParameterEntry || (ParameterEntry = {}));
 module.exports = ParameterEntry;
 
-},{"lodash":103,"react/addons":104}],5:[function(require,module,exports){
+},{"react/addons":104}],5:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
