@@ -82,19 +82,39 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       // This isn't an authorization, so return accordingly.
       return Promise.resolve(false);
     };
+
+    // These tasks require authentication, which will update state on failure.
+    if (this.state.auth_state === Credentials.AuthState.Authorized) {
+      this.fetchAndStoreWorkspaces();
+    }
   }
 
   /**
    * Authorize the client, if it has expired, and force a re-rendering.
    */
   authorize = (): void => {
-    this.state.client.authorize().then(function(client: Asana.Client) {
+    this.state.client.authorize().then(client => {
       Credentials.storeFromClient(client);
       this.state.auth_state = Credentials.authStateFromClient(client);
 
+      // After authorization, perform tasks that require authentication.
+      this.fetchAndStoreWorkspaces();
+
       this.forceUpdate();
-    }.bind(this));
+    });
   };
+
+  /**
+   * Fetches the user's workspaces via the API and stores response in state.
+   */
+  fetchAndStoreWorkspaces() {
+    this.state.client.workspaces.findAll().then(workspaces => {
+      this.setState({
+        workspace: workspaces.data[0],
+        workspaces: workspaces.data
+      });
+    });
+  }
 
   /**
    * Uses the state to return the properly-formatted request parameters.
@@ -114,6 +134,13 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }
     params = _.extend(params, this.state.params.optional_params);
 
+    // If an optional param is for workspace, then inject the chosen workspace.
+    var has_optional_workspace_param = _.any(this.state.action.params,
+        param => !param.required && param.name === "workspace");
+    if (has_optional_workspace_param && this.state.workspace !== undefined) {
+      params = _.extend(params, { workspace: this.state.workspace.id });
+    }
+
     return params;
   };
 
@@ -125,8 +152,17 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    */
   requestUrl = (): string => {
     var param_value: number;
-    if (!_.isEmpty(this.state.params.required_params)) {
-      param_value = _.values(this.state.params.required_params)[0];
+
+    var required_param = _.find(this.state.action.params, "required");
+    if (required_param !== undefined) {
+      if (!_.isEmpty(this.state.params.required_params)) {
+        param_value = _.values(this.state.params.required_params)[0];
+      } else if (required_param.name === "workspace") {
+        // Since we lazy-load workspaces, make sure it has been loaded.
+        if (this.state.workspace !== undefined) {
+          param_value = this.state.workspace.id;
+        }
+      }
     }
 
     return ResourcesHelpers.pathForAction(this.state.action, param_value);
@@ -206,25 +242,36 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   };
 
   /**
-   * Updates the parameter state following an onChange event.
+   * Returns a function to handle the onChange event for a given parameter.
+   * @param parameter
+   * @returns {function(React.FormEvent): void}
    */
-  onChangeParameterState = (event: React.FormEvent): void => {
-    var target = <HTMLInputElement>event.target;
+  onChangeParameterState = (parameter: Parameter) => {
+    return (event: React.FormEvent) => {
+      var target = <HTMLInputElement>event.target;
+      var param_type = parameter.required ?
+        "required_params" : "optional_params";
 
-    var parameter = ParameterEntry.parameterFromInputId(target.id);
-    var param_type = _.contains(target.className, "required-param")
-      ? "required_params" : "optional_params";
+      if (parameter.name === "workspace") {
+        var workspace = _.find(this.state.workspaces,
+            workspace => workspace.id.toString() === target.value);
 
-    // Update or remove the parameter accordingly.
-    this.setState(update(this.state, <any>{
-      params: _.object([param_type], [{
-        $set: target.value === "" ?
-          _.omit((<any>this.state.params)[param_type], parameter) :
-          _.extend(
-            (<any>this.state.params)[param_type],
-            _.object([parameter], [target.value]))
-      }])
-    }));
+        this.setState({
+          workspace: workspace
+        });
+      } else {
+        // Update or remove the parameter accordingly.
+        this.setState(update(this.state, <any>{
+          params: _.object([param_type], [{
+            $set: target.value === "" ?
+              _.omit((<any>this.state.params)[param_type], parameter.name) :
+              _.extend(
+                (<any>this.state.params)[param_type],
+                _.object([parameter.name], [target.value]))
+          }])
+        }));
+      }
+    };
   };
 
   /**
@@ -241,11 +288,18 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       return false;
     }
 
-    // Ensure all required parameters are set.
-    var num_required_params =
-      _.filter(this.state.action.params, param => param.required).length;
-    if (num_required_params !== _.size(this.state.params.required_params)) {
+    // Ensure we've successfully loaded the workspaces.
+    if (this.state.workspace === undefined) {
       return false;
+    }
+
+    // Ensure all required parameters are set.
+    var required_params = _.filter(this.state.action.params, "required");
+    if (required_params.length !== _.size(this.state.params.required_params)) {
+      // We inject the workspace from the dropdown, so we can ignore that.
+      if (required_params[0].name !== "workspace") {
+        return false;
+      }
     }
 
     // At this point, we've passed all constraints.
@@ -268,7 +322,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var route = this.requestUrl();
     var params = this.requestParameters();
 
-    dispatcher.get(route, params, null).then(function(response: any) {
+    dispatcher.get(route, params, null).then((response: any) => {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
@@ -276,7 +330,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           route: this.requestUrlWithFullParams()
         }
       });
-    }.bind(this)).error(function(e: any) {
+    }).error((e: any) => {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
@@ -285,10 +339,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           route: this.requestUrlWithFullParams()
         }
       });
-    }.bind(this)).finally(function() {
+    }).finally(() => {
       // Store possibly-updated credentials for later use.
       Credentials.storeFromClient(this.state.client);
-    }.bind(this));
+    });
   };
 
   private _maybeRenderAuthorizationLink() {
@@ -350,7 +404,9 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           ParameterEntry.create({
             text: "Attribute parameters: ",
             parameters: this.state.action.params,
-            onParameterChange: this.onChangeParameterState
+            onParameterChange: this.onChangeParameterState,
+            workspace: this.state.workspace,
+            workspaces: this.state.workspaces
           })
         ),
         r.hr(),
@@ -392,6 +448,8 @@ module Explorer {
     params?: ParamData;
     resource?: Resource;
     response?: JsonResponse.ResponseData;
+    workspace?: Asana.resources.Workspace;
+    workspaces?: Asana.resources.Workspace[];
   }
 }
 

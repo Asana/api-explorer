@@ -31,7 +31,9 @@ describe("ParameterEntryComponent", () => {
       ParameterEntry.create({
         text: "this is a test",
         parameters: parameters,
-        onParameterChange: onParameterChangeStub
+        onParameterChange: onParameterChangeStub,
+        workspace: undefined,
+        workspaces: undefined
       })
     );
     inputs = testUtils.scryRenderedDOMComponentsWithClass(
@@ -56,25 +58,15 @@ describe("ParameterEntryComponent", () => {
     });
   });
 
-  it("should contain the parameter name in each input id", () => {
-    var parameter_names = _.pluck(parameters, "name");
-
-    assert.equal(inputs.length, parameters.length);
-    inputs.forEach(input => {
-      var input_id = (React.findDOMNode<HTMLInputElement>(input)).id;
-      assert.include(
-        parameter_names,
-        ParameterEntry.parameterFromInputId(input_id)
-      );
-    });
-  });
-
   it("should trigger onChange parameter when text is entered", () => {
     inputs.forEach(input => {
       testUtils.Simulate.change(input, {
         value: "hello"
       });
     });
-    sinon.assert.callCount(onParameterChangeStub, parameters.length);
+
+    parameters.forEach(parameter => {
+      sinon.assert.calledWith(onParameterChangeStub, parameter);
+    });
   });
 });
