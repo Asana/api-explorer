@@ -133,6 +133,9 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       });
     }
     params = _.extend(params, this.state.params.optional_params);
+    if (this.state.params.extra_params !== null) {
+      params = _.extend(params, this.state.params.extra_params);
+    }
 
     // If an optional param is for workspace, then inject the chosen workspace.
     var has_optional_workspace_param = _.any(this.state.action.params,
@@ -249,10 +252,30 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   onChangeParameterState = (parameter: Parameter) => {
     return (event: React.FormEvent) => {
       var target = <HTMLInputElement>event.target;
-      var param_type = parameter.required ?
-        "required_params" : "optional_params";
 
-      if (parameter.name === "workspace") {
+      // Extra params entry is denoted by a null parameter.
+      if (parameter === null) {
+        try {
+          var extra_params =
+            target.value === "" ? { } : JSON.parse(target.value);
+
+          // Extra parameters must be a non-array object. If not, fall through to catch.
+          if (!_.isObject(extra_params) || _.isArray(extra_params)) {
+            throw new Error("Invalid type of JSON.");
+          }
+        } catch (error) {
+          // Use null to denote invalid JSON.
+          extra_params = null;
+        } finally {
+          this.setState(update(this.state, <any>{
+            params: {
+              extra_params: {
+                $set: extra_params
+              }
+            }
+          }));
+        }
+      } else if (parameter.name === "workspace") {
         var workspace = _.find(this.state.workspaces,
             workspace => workspace.id.toString() === target.value);
 
@@ -260,6 +283,9 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           workspace: workspace
         });
       } else {
+        var param_type = parameter.required ?
+          "required_params" : "optional_params";
+
         // Update or remove the parameter accordingly.
         this.setState(update(this.state, <any>{
           params: _.object([param_type], [{
@@ -275,22 +301,23 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   };
 
   /**
-   * Returns true iff the user can submit a request.
+   * Determines the user state status for a submit request. Based on this,
+   * we determine whether the user can submit a request.
    */
-  canSubmitRequest = (): boolean => {
+  userStateStatus = (): Explorer.UserStateStatus => {
     // Ensure the user is authenticated.
     if (this.state.auth_state !== Credentials.AuthState.Authorized) {
-      return false;
+      return Explorer.UserStateStatus.ErrorNotAuthorized;
     }
 
     // Currently, we only submit GET requests. This may be revisited later.
     if (this.state.action.method !== "GET") {
-      return false;
+      return Explorer.UserStateStatus.ErrorUnsupportedMethodType;
     }
 
     // Ensure we've successfully loaded the workspaces.
-    if (this.state.workspace === undefined) {
-      return false;
+    if (this.state.workspaces === undefined) {
+      return Explorer.UserStateStatus.ErrorAwaitingWorkspaces;
     }
 
     // Ensure all required parameters are set.
@@ -298,12 +325,22 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     if (required_params.length !== _.size(this.state.params.required_params)) {
       // We inject the workspace from the dropdown, so we can ignore that.
       if (required_params[0].name !== "workspace") {
-        return false;
+        return Explorer.UserStateStatus.ErrorUnsetRequiredParams;
       }
     }
 
+    // Ensure extra params field is valid JSON.
+    // extra_params is null iff the user input is invalid.
+    if (this.state.params.extra_params === null) {
+      return Explorer.UserStateStatus.ErrorInvalidExtraParams;
+    }
+
     // At this point, we've passed all constraints.
-    return true;
+    return Explorer.UserStateStatus.Okay;
+  };
+
+  private _canSubmitRequest = (): boolean => {
+    return this.userStateStatus() === Explorer.UserStateStatus.Okay;
   };
 
   /**
@@ -314,7 +351,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     event.preventDefault();
 
     // Sanity check: we should never reach this state, but this is safer.
-    if (!this.canSubmitRequest()) {
+    if (!this._canSubmitRequest()) {
       throw new Error("We cannot submit this request.");
     }
 
@@ -367,6 +404,34 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     );
   }
 
+  private _maybeRenderErrorMessage() {
+    var message = "";
+    switch (this.userStateStatus()) {
+      case Explorer.UserStateStatus.Okay:
+        return null;
+      case Explorer.UserStateStatus.ErrorNotAuthorized:
+        message = "You are not authorized to make a request.";
+        break;
+      case Explorer.UserStateStatus.ErrorUnsupportedMethodType:
+        message = "Only GET requests are supported in the API Explorer.";
+        break;
+      case Explorer.UserStateStatus.ErrorAwaitingWorkspaces:
+        message = "Workspaces are currently loading.";
+        break;
+      case Explorer.UserStateStatus.ErrorUnsetRequiredParams:
+        message = "You must set all required parameters.";
+        break;
+      case Explorer.UserStateStatus.ErrorInvalidExtraParams:
+        message = "You must input extra parameters as valid JSON.";
+        message += "For example: { \"limit\": 5 }";
+        break;
+    }
+
+    return r.div({
+      className: "error-msg"
+    }, message);
+  }
+
   render() {
     return r.div({
       className: "api-explorer",
@@ -382,7 +447,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           onActionChange: this.onChangeActionState,
           onFormSubmit: this.onSubmitRequest,
           resource: this.state.resource,
-          submit_disabled: !this.canSubmitRequest()
+          submit_disabled: !this._canSubmitRequest()
         }),
         r.div( { },
           PropertyEntry.create({
@@ -409,6 +474,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             workspaces: this.state.workspaces
           })
         ),
+        this._maybeRenderErrorMessage(),
         r.hr(),
         JsonResponse.create({
           response: this.state.response
@@ -424,7 +490,8 @@ module Explorer {
       expand_fields: [],
       include_fields: [],
       required_params: {},
-      optional_params: {}
+      optional_params: {},
+      extra_params: {}
     };
   }
 
@@ -433,12 +500,25 @@ module Explorer {
     include_fields: string[];
     required_params: any;
     optional_params: any;
+    extra_params: any;
   }
 
   export interface Props {
     initialClient?: Asana.Client;
     initial_resource_string?: string;
     initial_route?: string;
+  }
+
+  /**
+   * Possible states that the user can be in, given the current state/params.
+   */
+  export enum UserStateStatus {
+    Okay,
+    ErrorNotAuthorized,
+    ErrorUnsupportedMethodType,
+    ErrorAwaitingWorkspaces,
+    ErrorUnsetRequiredParams,
+    ErrorInvalidExtraParams
   }
 
   export interface State {

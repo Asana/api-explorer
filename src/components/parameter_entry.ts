@@ -48,6 +48,18 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
     }
   };
 
+  private _renderExtraParameterInput = () => {
+    return r.span({ key: "extra" },
+      r.input({
+        placeholder: "Extra parameters",
+        type: "text",
+        id: "extra_parameter_input",
+        className: "parameter-input extra-param",
+        onChange: this.props.onParameterChange(null)
+      }, "Extra parameters")
+    );
+  };
+
   render() {
     return r.div({
         className: "parameter-entry",
@@ -56,7 +68,9 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
           r.span({
             className: "parameter-inputs"
           }, this.props.parameters === undefined ? "" :
-            this.props.parameters.map(this._renderParameterInput))
+            this.props.parameters.map(this._renderParameterInput)),
+          r.br(),
+          this._renderExtraParameterInput()
         ]
       }
     );
