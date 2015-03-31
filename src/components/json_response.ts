@@ -31,7 +31,8 @@ class JsonResponse extends React.Component<JsonResponse.Props, {}> {
       r.pre({
         className: cx({
             "json-response-block": true,
-            "json-error": this.props.response.error !== undefined
+            "json-error": this.props.response.error !== undefined,
+            "json-loading": this.props.response.is_loading
           }),
         children: [
           r.code({
@@ -51,6 +52,7 @@ module JsonResponse {
   export interface ResponseData {
     action: Action;
     error?: any;
+    is_loading?: boolean;
     raw_response: any;
     route: string;
   }

@@ -357,14 +357,25 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     var dispatcher = this.state.client.dispatcher;
     var route = this.requestUrl();
+    var route_full = this.requestUrlWithFullParams();
     var params = this.requestParameters();
 
+    // Set intermediate state to signify loading.
+    this.setState({
+      response: <JsonResponse.ResponseData>{
+        action: this.state.action,
+        is_loading: true,
+        route: route_full
+      }
+    });
+
+    // Dispatch request and update after response is received.
     dispatcher.get(route, params, null).then((response: any) => {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           raw_response: response,
-          route: this.requestUrlWithFullParams()
+          route: route_full
         }
       });
     }).error((e: any) => {
@@ -373,7 +384,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           action: this.state.action,
           error: e,
           raw_response: e.value,
-          route: this.requestUrlWithFullParams()
+          route: route_full
         }
       });
     }).finally(() => {
