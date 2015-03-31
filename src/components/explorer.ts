@@ -196,7 +196,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     // If the resource has changed, also reset relevant parts of state.
     var action = !has_changed ? this.state.action : resource.actions[0];
-    var params = !has_changed ? this.state.params : Explorer.emptyParams();
+    var params = !has_changed ? this.state.params : this._resetParams();
 
     this.setState({
       action: action,
@@ -214,7 +214,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var has_changed = action !== this.state.action;
 
     // If the action has changed, also reset relevant parts of state.
-    var params = !has_changed ? this.state.params : Explorer.emptyParams();
+    var params = !has_changed ? this.state.params : this._resetParams();
 
     this.setState({
       action: action,
@@ -381,6 +381,15 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       Credentials.storeFromClient(this.state.client);
     });
   };
+
+  private _resetParams(): Explorer.ParamData {
+    var params = Explorer.emptyParams();
+
+    // Don't reset extra parameters, since those aren't route dependent.
+    params.extra_params = this.state.params.extra_params;
+
+    return params;
+  }
 
   private _maybeRenderAuthorizationLink() {
     var message = "";
