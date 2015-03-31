@@ -432,24 +432,24 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }, message);
   }
 
-  render() {
-    return r.div({
-      className: "api-explorer",
+  private _renderRequestEntryForm() {
+    return r.form({
+      className: "request-entry-form",
+      onSubmit: this.onSubmitRequest,
       children: [
-        this._maybeRenderAuthorizationLink(),
-        ResourceEntry.create({
-          resource: this.state.resource,
-          onResourceChange: this.onChangeResourceState
-        }),
-        RouteEntry.create({
-          action: this.state.action,
-          current_request_url: this.requestUrlWithFullParams(),
-          onActionChange: this.onChangeActionState,
-          onFormSubmit: this.onSubmitRequest,
-          resource: this.state.resource,
-          submit_disabled: !this._canSubmitRequest()
-        }),
-        r.div( { },
+        r.div({ },
+          ResourceEntry.create({
+            resource: this.state.resource,
+            onResourceChange: this.onChangeResourceState
+          }),
+          RouteEntry.create({
+            action: this.state.action,
+            current_request_url: this.requestUrlWithFullParams(),
+            onActionChange: this.onChangeActionState,
+            resource: this.state.resource
+          })
+        ),
+        r.div({ },
           PropertyEntry.create({
             class_suffix: "include",
             text: "Include Fields: ",
@@ -474,7 +474,24 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             workspaces: this.state.workspaces
           })
         ),
-        this._maybeRenderErrorMessage(),
+        r.div({ },
+          this._maybeRenderErrorMessage(),
+          r.button({
+            className: "submit-request",
+            disabled: !this._canSubmitRequest(),
+            type: "submit"
+          }, "Submit!")
+        )
+      ]
+    });
+  }
+
+  render() {
+    return r.div({
+      className: "api-explorer",
+      children: [
+        this._maybeRenderAuthorizationLink(),
+        this._renderRequestEntryForm(),
         r.hr(),
         JsonResponse.create({
           response: this.state.response
