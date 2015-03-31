@@ -53,7 +53,7 @@ module JsonResponse {
     action: Action;
     error?: any;
     is_loading?: boolean;
-    raw_response: any;
+    raw_response?: any;
     route: string;
   }
 
