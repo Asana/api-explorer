@@ -49,13 +49,23 @@ describe("ParameterEntryComponent", () => {
   it("should contain an input for each parameter", () => {
     var parameter_names = _.pluck(parameters, "name");
 
-    assert.equal(inputs.length, parameters.length);
-    inputs.forEach(input => {
+    // Filter out the extra-param for this test.
+    var parameter_inputs = _.filter(
+      inputs, input => !_.contains(input.props.className, "extra-param"));
+
+    parameter_inputs.forEach(input => {
       assert.include(
         parameter_names,
         input.props.children
       );
     });
+  });
+
+  it("should contain an input for extra params", () => {
+    var extra_param_input = _.find(
+      inputs, input => _.contains(input.props.className, "extra-param"));
+
+    assert.equal(extra_param_input.props.children, "Extra parameters");
   });
 
   it("should trigger onChange parameter when text is entered", () => {

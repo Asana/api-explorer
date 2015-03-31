@@ -459,6 +459,7 @@ describe("ExplorerComponent", () => {
       describe("on parameter input", () => {
         var requiredParam: React.HTMLComponent;
         var optionalParam: React.HTMLComponent;
+        var extraParam: React.HTMLComponent;
 
         beforeEach(() => {
           // Use an action that has one required and one optional input.
@@ -472,7 +473,10 @@ describe("ExplorerComponent", () => {
           requiredParam = _.find(params, param =>
               _.contains(param.props.className, "required-param"));
           optionalParam = _.find(params, param =>
+            !_.contains(param.props.className, "extra-param") &&
             !_.contains(param.props.className, "required-param"));
+          extraParam = _.find(params, param =>
+            _.contains(param.props.className, "extra-param"));
         });
 
         describe("with required parameters", () => {
@@ -656,6 +660,59 @@ describe("ExplorerComponent", () => {
             );
           });
         });
+
+        describe("with extra params", () => {
+          beforeEach(() => {
+            // Add an existing parameters to ensure no data clobbering.
+            root.state.params.required_params.example = "data here";
+            root.state.params.optional_params.other_example = "other data";
+          });
+
+          it("should set extra parameters after inputting valid JSON", () => {
+            testUtils.Simulate.change(extraParam, {
+              target: {
+                className: extraParam.props.className,
+                value: "{ \"a\": 123, \"b\": \"abc\" }"
+              }
+            });
+
+            assert.deepEqual(
+              root.state.params.extra_params,
+              { a: 123, b: "abc" }
+            );
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+          });
+
+          it("should unset extra parameters after inputting invalid JSON", () => {
+            testUtils.Simulate.change(extraParam, {
+              target: {
+                className: extraParam.props.className,
+                value: "invalid_json"
+              }
+            });
+
+            assert.isNull(root.state.params.extra_params);
+
+            // Other parameters should be unchanged.
+            assert.deepEqual(
+              root.state.params.required_params,
+              { example: "data here" }
+            );
+            assert.deepEqual(
+              root.state.params.optional_params,
+              { other_example: "other data" }
+            );
+          });
+        });
       });
 
       describe("on workspace parameter input", () => {
@@ -725,7 +782,8 @@ describe("ExplorerComponent", () => {
         });
 
         // For these tests, we'll bypass the check for allowable submission.
-        sand.stub(root, "canSubmitRequest").returns(true);
+        sand.stub(root, "userStateStatus")
+          .returns(Explorer.UserStateStatus.Okay);
       });
 
       it("should display the submitted route URL", (cb) => {
@@ -755,7 +813,8 @@ describe("ExplorerComponent", () => {
           expand_fields: ["test"],
           include_fields: ["other", "this"],
           required_params: _.object([required_param.name], ["123"]),
-          optional_params: {abc: 456}
+          optional_params: {abc: 456},
+          extra_params: {}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
@@ -811,7 +870,8 @@ describe("ExplorerComponent", () => {
           expand_fields: ["test"],
           include_fields: ["other", "this"],
           required_params: {},
-          optional_params: {}
+          optional_params: {},
+          extra_params: {}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
@@ -895,6 +955,10 @@ describe("ExplorerComponent", () => {
         assert.equal(root.state.action.method, "GET");
         assert.propertyVal(root.state.action.params[0], "required", true);
         assert.isTrue(submitRequest.props.disabled);
+
+        assert.equal(
+          root.userStateStatus(),
+          Explorer.UserStateStatus.ErrorUnsetRequiredParams);
       });
 
       it("should be enabled with set required param with get request", () => {
@@ -908,32 +972,86 @@ describe("ExplorerComponent", () => {
           }
         });
         assert.isFalse(submitRequest.props.disabled);
-      });
-    });
 
-    it("should be disabled with non-get request", () => {
-      var other_resource = Resources.Tasks;
-
-      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
-        root, "submit-request");
-
-      testUtils.Simulate.change(selectResource, {
-        target: {
-          value: ResourcesHelpers.resourceNameFromResource(other_resource)
-        }
+        assert.equal(
+          root.userStateStatus(),
+          Explorer.UserStateStatus.Okay);
       });
 
-      assert.equal(root.state.resource, other_resource);
-      assert.notEqual(root.state.action.method, "GET");
-      assert.isTrue(submitRequest.props.disabled);
-    });
+      it("should be disabled with non-get request", () => {
+        var other_resource = Resources.Tasks;
 
-    it("should throw when the user submits on disabled state", () => {
-      var submitRequest = testUtils.findRenderedDOMComponentWithClass(
-        root, "submit-request");
+        testUtils.Simulate.change(selectResource, {
+          target: {
+            value: ResourcesHelpers.resourceNameFromResource(other_resource)
+          }
+        });
 
-      assert.isTrue(submitRequest.props.disabled);
-      assert.throws(root.onSubmitRequest);
+        assert.equal(root.state.resource, other_resource);
+        assert.notEqual(root.state.action.method, "GET");
+        assert.isTrue(submitRequest.props.disabled);
+
+        assert.equal(
+          root.userStateStatus(),
+          Explorer.UserStateStatus.ErrorUnsupportedMethodType);
+      });
+
+      it("should be disabled with invalid extra params", () => {
+        // First make in a valid state.
+        testUtils.Simulate.change(selectResource, {
+          target: { value: "Users" }
+        });
+        assert.isFalse(submitRequest.props.disabled);
+
+        // Now set the extra param to an invalid state.
+        var extraParam = testUtils.findRenderedDOMComponentWithClass(
+          root, "extra-param");
+
+        testUtils.Simulate.change(extraParam, {
+          target: {
+            className: extraParam.props.className,
+            value: "invalid json"
+          }
+        });
+
+        assert.isTrue(submitRequest.props.disabled);
+        assert.equal(
+          root.userStateStatus(),
+          Explorer.UserStateStatus.ErrorInvalidExtraParams);
+      });
+
+      it("should be enabled with extra params using valid JSON", () => {
+        // First make in a valid state.
+        testUtils.Simulate.change(selectResource, {
+          target: { value: "Users" }
+        });
+        assert.isFalse(submitRequest.props.disabled);
+
+        // Now set the extra param to a valid state.
+        var extraParam = testUtils.findRenderedDOMComponentWithClass(
+          root, "extra-param");
+
+        testUtils.Simulate.change(extraParam, {
+          target: {
+            className: extraParam.props.className,
+            value: "{ \"this\": \"is valid json\" }"
+          }
+        });
+
+        assert.isFalse(submitRequest.props.disabled);
+        assert.equal(
+          root.userStateStatus(),
+          Explorer.UserStateStatus.Okay);
+      });
+
+      it("should throw when the user submits on disabled state", () => {
+        assert.notEqual(
+          root.userStateStatus(),
+          Explorer.UserStateStatus.Okay);
+
+        assert.isTrue(submitRequest.props.disabled);
+        assert.throws(root.onSubmitRequest);
+      });
     });
   });
 });
