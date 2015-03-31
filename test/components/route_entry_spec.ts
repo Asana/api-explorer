@@ -96,7 +96,7 @@ describe("RouteEntryComponent", () => {
           action.path.replace("%d", ":" + required_param.name) : action.path;
 
         assert.equal(child_item.value, action.name);
-        assert.equal(child_item.text, action_path);
+        assert.equal(child_item.text, action.method + " " + action_path);
       });
     });
 

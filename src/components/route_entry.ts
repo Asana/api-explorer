@@ -20,7 +20,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
           action => {
           return r.option({
             value: action.name
-          }, ResourcesHelpers.pathForAction(action));
+          }, action.method + " " + ResourcesHelpers.pathForAction(action));
         })
     });
   };
