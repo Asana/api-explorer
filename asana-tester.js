@@ -62,6 +62,9 @@ var Explorer = (function (_super) {
                 });
             }
             params = _.extend(params, _this.state.params.optional_params);
+            if (_this.state.params.extra_params !== null) {
+                params = _.extend(params, _this.state.params.extra_params);
+            }
             var has_optional_workspace_param = _.any(_this.state.action.params, function (param) { return !param.required && param.name === "workspace"; });
             if (has_optional_workspace_param && _this.state.workspace !== undefined) {
                 params = _.extend(params, { workspace: _this.state.workspace.id });
@@ -127,14 +130,34 @@ var Explorer = (function (_super) {
         this.onChangeParameterState = function (parameter) {
             return function (event) {
                 var target = event.target;
-                var param_type = parameter.required ? "required_params" : "optional_params";
-                if (parameter.name === "workspace") {
+                if (parameter === null) {
+                    try {
+                        var extra_params = target.value === "" ? {} : JSON.parse(target.value);
+                        if (!_.isObject(extra_params) || _.isArray(extra_params)) {
+                            throw new Error("Invalid type of JSON.");
+                        }
+                    }
+                    catch (error) {
+                        extra_params = null;
+                    }
+                    finally {
+                        _this.setState(update(_this.state, {
+                            params: {
+                                extra_params: {
+                                    $set: extra_params
+                                }
+                            }
+                        }));
+                    }
+                }
+                else if (parameter.name === "workspace") {
                     var workspace = _.find(_this.state.workspaces, function (workspace) { return workspace.id.toString() === target.value; });
                     _this.setState({
                         workspace: workspace
                     });
                 }
                 else {
+                    var param_type = parameter.required ? "required_params" : "optional_params";
                     _this.setState(update(_this.state, {
                         params: _.object([param_type], [{
                             $set: target.value === "" ? _.omit(_this.state.params[param_type], parameter.name) : _.extend(_this.state.params[param_type], _.object([parameter.name], [target.value]))
@@ -143,27 +166,33 @@ var Explorer = (function (_super) {
                 }
             };
         };
-        this.canSubmitRequest = function () {
+        this.userStateStatus = function () {
             if (_this.state.auth_state !== 2 /* Authorized */) {
-                return false;
+                return 1 /* ErrorNotAuthorized */;
             }
             if (_this.state.action.method !== "GET") {
-                return false;
+                return 2 /* ErrorUnsupportedMethodType */;
             }
-            if (_this.state.workspace === undefined) {
-                return false;
+            if (_this.state.workspaces === undefined) {
+                return 3 /* ErrorAwaitingWorkspaces */;
             }
             var required_params = _.filter(_this.state.action.params, "required");
             if (required_params.length !== _.size(_this.state.params.required_params)) {
                 if (required_params[0].name !== "workspace") {
-                    return false;
+                    return 4 /* ErrorUnsetRequiredParams */;
                 }
             }
-            return true;
+            if (_this.state.params.extra_params === null) {
+                return 5 /* ErrorInvalidExtraParams */;
+            }
+            return 0 /* Okay */;
+        };
+        this._canSubmitRequest = function () {
+            return _this.userStateStatus() === 0 /* Okay */;
         };
         this.onSubmitRequest = function (event) {
             event.preventDefault();
-            if (!_this.canSubmitRequest()) {
+            if (!_this._canSubmitRequest()) {
                 throw new Error("We cannot submit this request.");
             }
             var dispatcher = _this.state.client.dispatcher;
@@ -240,6 +269,32 @@ var Explorer = (function (_super) {
             onClick: this.authorize
         }, message));
     };
+    Explorer.prototype._maybeRenderErrorMessage = function () {
+        var message = "";
+        switch (this.userStateStatus()) {
+            case 0 /* Okay */:
+                return null;
+            case 1 /* ErrorNotAuthorized */:
+                message = "You are not authorized to make a request.";
+                break;
+            case 2 /* ErrorUnsupportedMethodType */:
+                message = "Only GET requests are supported in the API Explorer.";
+                break;
+            case 3 /* ErrorAwaitingWorkspaces */:
+                message = "Workspaces are currently loading.";
+                break;
+            case 4 /* ErrorUnsetRequiredParams */:
+                message = "You must set all required parameters.";
+                break;
+            case 5 /* ErrorInvalidExtraParams */:
+                message = "You must input extra parameters as valid JSON.";
+                message += "For example: { \"limit\": 5 }";
+                break;
+        }
+        return r.div({
+            className: "error-msg"
+        }, message);
+    };
     Explorer.prototype.render = function () {
         var _this = this;
         return r.div({
@@ -256,7 +311,7 @@ var Explorer = (function (_super) {
                     onActionChange: this.onChangeActionState,
                     onFormSubmit: this.onSubmitRequest,
                     resource: this.state.resource,
-                    submit_disabled: !this.canSubmitRequest()
+                    submit_disabled: !this._canSubmitRequest()
                 }),
                 r.div({}, PropertyEntry.create({
                     class_suffix: "include",
@@ -277,6 +332,7 @@ var Explorer = (function (_super) {
                     workspace: this.state.workspace,
                     workspaces: this.state.workspaces
                 })),
+                this._maybeRenderErrorMessage(),
                 r.hr(),
                 JsonResponse.create({
                     response: this.state.response
@@ -294,10 +350,20 @@ var Explorer;
             expand_fields: [],
             include_fields: [],
             required_params: {},
-            optional_params: {}
+            optional_params: {},
+            extra_params: {}
         };
     }
     Explorer.emptyParams = emptyParams;
+    (function (UserStateStatus) {
+        UserStateStatus[UserStateStatus["Okay"] = 0] = "Okay";
+        UserStateStatus[UserStateStatus["ErrorNotAuthorized"] = 1] = "ErrorNotAuthorized";
+        UserStateStatus[UserStateStatus["ErrorUnsupportedMethodType"] = 2] = "ErrorUnsupportedMethodType";
+        UserStateStatus[UserStateStatus["ErrorAwaitingWorkspaces"] = 3] = "ErrorAwaitingWorkspaces";
+        UserStateStatus[UserStateStatus["ErrorUnsetRequiredParams"] = 4] = "ErrorUnsetRequiredParams";
+        UserStateStatus[UserStateStatus["ErrorInvalidExtraParams"] = 5] = "ErrorInvalidExtraParams";
+    })(Explorer.UserStateStatus || (Explorer.UserStateStatus = {}));
+    var UserStateStatus = Explorer.UserStateStatus;
 })(Explorer || (Explorer = {}));
 module.exports = Explorer;
 
@@ -387,6 +453,15 @@ var ParameterEntry = (function (_super) {
                 }, parameter.name));
             }
         };
+        this._renderExtraParameterInput = function () {
+            return r.span({ key: "extra" }, r.input({
+                placeholder: "Extra parameters",
+                type: "text",
+                id: "extra_parameter_input",
+                className: "parameter-input extra-param",
+                onChange: _this.props.onParameterChange(null)
+            }, "Extra parameters"));
+        };
     }
     ParameterEntry.prototype.render = function () {
         return r.div({
@@ -395,7 +470,9 @@ var ParameterEntry = (function (_super) {
                 this.props.text,
                 r.span({
                     className: "parameter-inputs"
-                }, this.props.parameters === undefined ? "" : this.props.parameters.map(this._renderParameterInput))
+                }, this.props.parameters === undefined ? "" : this.props.parameters.map(this._renderParameterInput)),
+                r.br(),
+                this._renderExtraParameterInput()
             ]
         });
     };
