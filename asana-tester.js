@@ -96,7 +96,7 @@ var Explorer = (function (_super) {
             var resource = ResourcesHelpers.resourceFromResourceName(event.target.value);
             var has_changed = resource !== _this.state.resource;
             var action = !has_changed ? _this.state.action : resource.actions[0];
-            var params = !has_changed ? _this.state.params : Explorer.emptyParams();
+            var params = !has_changed ? _this.state.params : _this._resetParams();
             _this.setState({
                 action: action,
                 params: params,
@@ -106,7 +106,7 @@ var Explorer = (function (_super) {
         this.onChangeActionState = function (event) {
             var action = ResourcesHelpers.actionFromResourceAndName(_this.state.resource, event.target.value);
             var has_changed = action !== _this.state.action;
-            var params = !has_changed ? _this.state.params : Explorer.emptyParams();
+            var params = !has_changed ? _this.state.params : _this._resetParams();
             _this.setState({
                 action: action,
                 params: params
@@ -197,13 +197,21 @@ var Explorer = (function (_super) {
             }
             var dispatcher = _this.state.client.dispatcher;
             var route = _this.requestUrl();
+            var route_full = _this.requestUrlWithFullParams();
             var params = _this.requestParameters();
+            _this.setState({
+                response: {
+                    action: _this.state.action,
+                    is_loading: true,
+                    route: route_full
+                }
+            });
             dispatcher.get(route, params, null).then(function (response) {
                 _this.setState({
                     response: {
                         action: _this.state.action,
                         raw_response: response,
-                        route: _this.requestUrlWithFullParams()
+                        route: route_full
                     }
                 });
             }).error(function (e) {
@@ -212,7 +220,7 @@ var Explorer = (function (_super) {
                         action: _this.state.action,
                         error: e,
                         raw_response: e.value,
-                        route: _this.requestUrlWithFullParams()
+                        route: route_full
                     }
                 });
             }).finally(function () {
@@ -250,6 +258,11 @@ var Explorer = (function (_super) {
                 workspaces: workspaces.data
             });
         });
+    };
+    Explorer.prototype._resetParams = function () {
+        var params = Explorer.emptyParams();
+        params.extra_params = this.state.params.extra_params;
+        return params;
     };
     Explorer.prototype._maybeRenderAuthorizationLink = function () {
         var message = "";
@@ -295,24 +308,21 @@ var Explorer = (function (_super) {
             className: "error-msg"
         }, message);
     };
-    Explorer.prototype.render = function () {
+    Explorer.prototype._renderRequestEntryForm = function () {
         var _this = this;
-        return r.div({
-            className: "api-explorer",
+        return r.form({
+            className: "request-entry-form",
+            onSubmit: this.onSubmitRequest,
             children: [
-                this._maybeRenderAuthorizationLink(),
-                ResourceEntry.create({
+                r.div({}, ResourceEntry.create({
                     resource: this.state.resource,
                     onResourceChange: this.onChangeResourceState
-                }),
-                RouteEntry.create({
+                }), RouteEntry.create({
                     action: this.state.action,
                     current_request_url: this.requestUrlWithFullParams(),
                     onActionChange: this.onChangeActionState,
-                    onFormSubmit: this.onSubmitRequest,
-                    resource: this.state.resource,
-                    submit_disabled: !this._canSubmitRequest()
-                }),
+                    resource: this.state.resource
+                })),
                 r.div({}, PropertyEntry.create({
                     class_suffix: "include",
                     text: "Include Fields: ",
@@ -332,7 +342,20 @@ var Explorer = (function (_super) {
                     workspace: this.state.workspace,
                     workspaces: this.state.workspaces
                 })),
-                this._maybeRenderErrorMessage(),
+                r.div({}, this._maybeRenderErrorMessage(), r.button({
+                    className: "submit-request",
+                    disabled: !this._canSubmitRequest(),
+                    type: "submit"
+                }, "Submit!"))
+            ]
+        });
+    };
+    Explorer.prototype.render = function () {
+        return r.div({
+            className: "api-explorer",
+            children: [
+                this._maybeRenderAuthorizationLink(),
+                this._renderRequestEntryForm(),
                 r.hr(),
                 JsonResponse.create({
                     response: this.state.response
@@ -395,7 +418,8 @@ var JsonResponse = (function (_super) {
         return r.div({}, this._renderResponseHeaderInfo(), r.pre({
             className: cx({
                 "json-response-block": true,
-                "json-error": this.props.response.error !== undefined
+                "json-error": this.props.response.error !== undefined,
+                "json-loading": this.props.response.is_loading
             }),
             children: [
                 r.code({
@@ -585,7 +609,7 @@ var RouteEntry = (function (_super) {
                 children: _this.props.resource.actions.map(function (action) {
                     return r.option({
                         value: action.name
-                    }, ResourcesHelpers.pathForAction(action));
+                    }, action.method + " " + ResourcesHelpers.pathForAction(action));
                 })
             });
         };
@@ -594,15 +618,10 @@ var RouteEntry = (function (_super) {
         };
     }
     RouteEntry.prototype.render = function () {
-        return r.form({
+        return r.div({
             className: "route-entry",
-            onSubmit: this.props.onFormSubmit,
             children: [
                 this._renderSelectRoute(),
-                r.button({
-                    className: "submit-request",
-                    disabled: this.props.submit_disabled
-                }, "Submit!"),
                 this._renderRouteInfo()
             ]
         });
