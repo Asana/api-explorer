@@ -196,7 +196,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     // If the resource has changed, also reset relevant parts of state.
     var action = !has_changed ? this.state.action : resource.actions[0];
-    var params = !has_changed ? this.state.params : Explorer.emptyParams();
+    var params = !has_changed ? this.state.params : this._resetParams();
 
     this.setState({
       action: action,
@@ -214,7 +214,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var has_changed = action !== this.state.action;
 
     // If the action has changed, also reset relevant parts of state.
-    var params = !has_changed ? this.state.params : Explorer.emptyParams();
+    var params = !has_changed ? this.state.params : this._resetParams();
 
     this.setState({
       action: action,
@@ -357,14 +357,25 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     var dispatcher = this.state.client.dispatcher;
     var route = this.requestUrl();
+    var route_full = this.requestUrlWithFullParams();
     var params = this.requestParameters();
 
+    // Set intermediate state to signify loading.
+    this.setState({
+      response: <JsonResponse.ResponseData>{
+        action: this.state.action,
+        is_loading: true,
+        route: route_full
+      }
+    });
+
+    // Dispatch request and update after response is received.
     dispatcher.get(route, params, null).then((response: any) => {
       this.setState({
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           raw_response: response,
-          route: this.requestUrlWithFullParams()
+          route: route_full
         }
       });
     }).error((e: any) => {
@@ -373,7 +384,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           action: this.state.action,
           error: e,
           raw_response: e.value,
-          route: this.requestUrlWithFullParams()
+          route: route_full
         }
       });
     }).finally(() => {
@@ -381,6 +392,15 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       Credentials.storeFromClient(this.state.client);
     });
   };
+
+  private _resetParams(): Explorer.ParamData {
+    var params = Explorer.emptyParams();
+
+    // Don't reset extra parameters, since those aren't route dependent.
+    params.extra_params = this.state.params.extra_params;
+
+    return params;
+  }
 
   private _maybeRenderAuthorizationLink() {
     var message = "";
@@ -432,24 +452,24 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }, message);
   }
 
-  render() {
-    return r.div({
-      className: "api-explorer",
+  private _renderRequestEntryForm() {
+    return r.form({
+      className: "request-entry-form",
+      onSubmit: this.onSubmitRequest,
       children: [
-        this._maybeRenderAuthorizationLink(),
-        ResourceEntry.create({
-          resource: this.state.resource,
-          onResourceChange: this.onChangeResourceState
-        }),
-        RouteEntry.create({
-          action: this.state.action,
-          current_request_url: this.requestUrlWithFullParams(),
-          onActionChange: this.onChangeActionState,
-          onFormSubmit: this.onSubmitRequest,
-          resource: this.state.resource,
-          submit_disabled: !this._canSubmitRequest()
-        }),
-        r.div( { },
+        r.div({ },
+          ResourceEntry.create({
+            resource: this.state.resource,
+            onResourceChange: this.onChangeResourceState
+          }),
+          RouteEntry.create({
+            action: this.state.action,
+            current_request_url: this.requestUrlWithFullParams(),
+            onActionChange: this.onChangeActionState,
+            resource: this.state.resource
+          })
+        ),
+        r.div({ },
           PropertyEntry.create({
             class_suffix: "include",
             text: "Include Fields: ",
@@ -474,7 +494,24 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             workspaces: this.state.workspaces
           })
         ),
-        this._maybeRenderErrorMessage(),
+        r.div({ },
+          this._maybeRenderErrorMessage(),
+          r.button({
+            className: "submit-request",
+            disabled: !this._canSubmitRequest(),
+            type: "submit"
+          }, "Submit!")
+        )
+      ]
+    });
+  }
+
+  render() {
+    return r.div({
+      className: "api-explorer",
+      children: [
+        this._maybeRenderAuthorizationLink(),
+        this._renderRequestEntryForm(),
         r.hr(),
         JsonResponse.create({
           response: this.state.response

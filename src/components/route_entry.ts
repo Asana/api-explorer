@@ -20,7 +20,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
           action => {
           return r.option({
             value: action.name
-          }, ResourcesHelpers.pathForAction(action));
+          }, action.method + " " + ResourcesHelpers.pathForAction(action));
         })
     });
   };
@@ -39,15 +39,10 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
   };
 
   render() {
-    return r.form({
+    return r.div({
       className: "route-entry",
-      onSubmit: this.props.onFormSubmit,
       children: [
         this._renderSelectRoute(),
-        r.button({
-          className: "submit-request",
-          disabled: this.props.submit_disabled
-        }, "Submit!"),
         this._renderRouteInfo()
       ]
     });
@@ -59,9 +54,7 @@ module RouteEntry {
     action: Action;
     current_request_url: string;
     onActionChange: (event?: React.FormEvent) => void;
-    onFormSubmit: (event?: React.FormEvent) => void;
     resource: Resource;
-    submit_disabled: boolean;
   }
 }
 
