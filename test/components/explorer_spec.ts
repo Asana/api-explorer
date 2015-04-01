@@ -662,13 +662,50 @@ describe("ExplorerComponent", () => {
         });
 
         describe("with extra params", () => {
-          beforeEach(() => {
-            // Add an existing parameters to ensure no data clobbering.
-            root.state.params.required_params.example = "data here";
-            root.state.params.optional_params.other_example = "other data";
+          it("should include only fully-entered parameter fields", () => {
+            assert.deepEqual(root.state.params.extra_params, {});
+
+            var parameter_list = [
+              { key: "hi", value: "yeah" },
+              { key: "", value: "empty" },
+              { key: "real", value: "data" },
+              { key: "empty", value: "" }
+            ];
+
+            // Syncing the parameters should add each accordingly.
+            root.syncExtraParameters(parameter_list);
+            assert.deepEqual(
+              root.state.params.extra_params,
+              { hi: "yeah", real: "data" }
+            );
           });
 
-          // TODO: Add tests for extra params.
+          it("should remove parameter fields that no longer exist", () => {
+            var original_parameter_list = [
+              { key: "hi", value: "bye" },
+              { key: "yeah", value: "data" }
+            ];
+            root.syncExtraParameters(original_parameter_list);
+            assert.deepEqual(
+              root.state.params.extra_params,
+              { hi: "bye", yeah: "data" }
+            );
+
+            // Syncing an altered parameter list should update accordingly.
+            var new_parameter_list = [
+              { key: "yeah", value: "new_data" }
+            ];
+            root.syncExtraParameters(new_parameter_list);
+            assert.deepEqual(
+              root.state.params.extra_params,
+              { yeah: "new_data" }
+            );
+          });
+
+          it("should be empty with no parameters", () => {
+            root.syncExtraParameters([]);
+            assert.deepEqual(root.state.params.extra_params, {});
+          });
         });
       });
 
@@ -771,7 +808,7 @@ describe("ExplorerComponent", () => {
           include_fields: ["other", "this"],
           required_params: _.object([required_param.name], ["123"]),
           optional_params: {abc: 456},
-          extra_params: {}
+          extra_params: {test: "hi"}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
@@ -779,7 +816,7 @@ describe("ExplorerComponent", () => {
         // The path should include all the params initialized above.
         var action_path =
           initial_action.path.replace(/%d/, "123") +
-          "?opt_expand=test&opt_fields=other,this&abc=456";
+          "?opt_expand=test&opt_fields=other,this&abc=456&test=hi";
 
         raw_response_promise.then(function () {
           assert.include(
@@ -806,12 +843,15 @@ describe("ExplorerComponent", () => {
         }).catch(cb);
       });
 
-      it("should make a GET request", (cb) => {
+      it("should make a GET request with no parameters", (cb) => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         raw_response_promise.then(function () {
-          sinon.assert.calledWith(getStub,
-            ResourcesHelpers.pathForAction(initial_action));
+          sinon.assert.calledWith(
+            getStub,
+            ResourcesHelpers.pathForAction(initial_action),
+            {}
+          );
 
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
@@ -823,12 +863,14 @@ describe("ExplorerComponent", () => {
       });
 
       it("should make a GET request with parameters", (cb) => {
+        var required_param = _.find(initial_action.params, "required");
+
         root.state.params = {
           expand_fields: ["test"],
           include_fields: ["other", "this"],
-          required_params: {},
-          optional_params: {},
-          extra_params: {}
+          required_params: _.object([required_param.name], ["123"]),
+          optional_params: {abc: 456},
+          extra_params: {test: "hi"}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
@@ -836,8 +878,13 @@ describe("ExplorerComponent", () => {
         raw_response_promise.then(function () {
           sinon.assert.calledWith(
             getStub,
-            ResourcesHelpers.pathForAction(initial_action),
-            { opt_expand: "test", opt_fields: "other,this" }
+            initial_action.path.replace(/%d/, "123"),
+            {
+              opt_expand: "test",
+              opt_fields: "other,this",
+              abc: 456,
+              test: "hi"
+            }
           );
 
           assert.equal(
