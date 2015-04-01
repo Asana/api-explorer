@@ -79,6 +79,7 @@ var resource = <Resource>{
       "method": "GET",
       "path": "/workspaces/%d/users",
       "collection": true,
+      "collection_cannot_paginate": true,
       "params": [
         {
           "name": "workspace",
@@ -97,6 +98,16 @@ var resource = <Resource>{
       "method": "GET",
       "path": "/users",
       "collection": true,
+      "params": [
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace or organization to filter users on."
+        }
+      ],
       "comment": "Returns the user records for all users in the specified workspace or\norganization.\n"
     }
   ]
