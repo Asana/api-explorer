@@ -668,50 +668,7 @@ describe("ExplorerComponent", () => {
             root.state.params.optional_params.other_example = "other data";
           });
 
-          it("should set extra parameters after inputting valid JSON", () => {
-            testUtils.Simulate.change(extraParam, {
-              target: {
-                className: extraParam.props.className,
-                value: "{ \"a\": 123, \"b\": \"abc\" }"
-              }
-            });
-
-            assert.deepEqual(
-              root.state.params.extra_params,
-              { a: 123, b: "abc" }
-            );
-
-            // Other parameters should be unchanged.
-            assert.deepEqual(
-              root.state.params.required_params,
-              { example: "data here" }
-            );
-            assert.deepEqual(
-              root.state.params.optional_params,
-              { other_example: "other data" }
-            );
-          });
-
-          it("should unset extra parameters after inputting invalid JSON", () => {
-            testUtils.Simulate.change(extraParam, {
-              target: {
-                className: extraParam.props.className,
-                value: "invalid_json"
-              }
-            });
-
-            assert.isNull(root.state.params.extra_params);
-
-            // Other parameters should be unchanged.
-            assert.deepEqual(
-              root.state.params.required_params,
-              { example: "data here" }
-            );
-            assert.deepEqual(
-              root.state.params.optional_params,
-              { other_example: "other data" }
-            );
-          });
+          // TODO: Add tests for extra params.
         });
       });
 
@@ -994,54 +951,6 @@ describe("ExplorerComponent", () => {
         assert.equal(
           root.userStateStatus(),
           Explorer.UserStateStatus.ErrorUnsupportedMethodType);
-      });
-
-      it("should be disabled with invalid extra params", () => {
-        // First make in a valid state.
-        testUtils.Simulate.change(selectResource, {
-          target: { value: "Users" }
-        });
-        assert.isFalse(submitRequest.props.disabled);
-
-        // Now set the extra param to an invalid state.
-        var extraParam = testUtils.findRenderedDOMComponentWithClass(
-          root, "extra-param");
-
-        testUtils.Simulate.change(extraParam, {
-          target: {
-            className: extraParam.props.className,
-            value: "invalid json"
-          }
-        });
-
-        assert.isTrue(submitRequest.props.disabled);
-        assert.equal(
-          root.userStateStatus(),
-          Explorer.UserStateStatus.ErrorInvalidExtraParams);
-      });
-
-      it("should be enabled with extra params using valid JSON", () => {
-        // First make in a valid state.
-        testUtils.Simulate.change(selectResource, {
-          target: { value: "Users" }
-        });
-        assert.isFalse(submitRequest.props.disabled);
-
-        // Now set the extra param to a valid state.
-        var extraParam = testUtils.findRenderedDOMComponentWithClass(
-          root, "extra-param");
-
-        testUtils.Simulate.change(extraParam, {
-          target: {
-            className: extraParam.props.className,
-            value: "{ \"this\": \"is valid json\" }"
-          }
-        });
-
-        assert.isFalse(submitRequest.props.disabled);
-        assert.equal(
-          root.userStateStatus(),
-          Explorer.UserStateStatus.Okay);
       });
 
       it("should throw when the user submits on disabled state", () => {
