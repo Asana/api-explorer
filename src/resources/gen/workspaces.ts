@@ -128,6 +128,7 @@ var resource = <Resource>{
         }
       ],
       "collection": true,
+      "collection_cannot_paginate": true,
       "comment": "Retrieves objects in the workspace based on an auto-completion/typeahead\nsearch algorithm. This feature is meant to provide results quickly, so do\nnot rely on this API to provide extremely accurate search results. The\nresult set is limited to a single page of results with a maximum size,\nso you won't be able to fetch large numbers of results.\n"
     }
   ]

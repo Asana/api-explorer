@@ -53,12 +53,12 @@ var resource = <Resource>{
       "collection": true,
       "params": [
         {
-          "name": "team",
+          "name": "organization",
           "type": "Id",
           "example_values": [
-            "14916"
+            "1331"
           ],
-          "comment": "Globally unique identifier for the team.\n",
+          "comment": "Globally unique identifier for the workspace or organization.\n",
           "required": true
         }
       ],

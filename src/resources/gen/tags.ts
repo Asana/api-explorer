@@ -61,16 +61,16 @@ var resource = <Resource>{
       "path": "/tags/%d",
       "params": [
         {
-          "name": "task",
+          "name": "tag",
           "type": "Id",
           "example_values": [
-            "124816"
+            "11235"
           ],
-          "comment": "The task to get.",
+          "comment": "The tag to get.",
           "required": true
         }
       ],
-      "comment": "Returns the complete task record for a single task.\n"
+      "comment": "Returns the complete tag record for a single tag.\n"
     },
     {
       "name": "update",

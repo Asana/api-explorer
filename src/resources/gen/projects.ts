@@ -86,16 +86,16 @@ var resource = <Resource>{
       "path": "/projects/%d",
       "params": [
         {
-          "name": "task",
+          "name": "project",
           "type": "Id",
           "example_values": [
-            "124816"
+            "13579"
           ],
-          "comment": "The task to get.",
+          "comment": "The project to get.",
           "required": true
         }
       ],
-      "comment": "Returns the complete task record for a single task.\n"
+      "comment": "Returns the complete project record for a single project.\n"
     },
     {
       "name": "update",
