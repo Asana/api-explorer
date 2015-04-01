@@ -61,13 +61,6 @@ describe("ParameterEntryComponent", () => {
     });
   });
 
-  it("should contain an input for extra params", () => {
-    var extra_param_input = _.find(
-      inputs, input => _.contains(input.props.className, "extra-param"));
-
-    assert.equal(extra_param_input.props.children, "Extra parameters");
-  });
-
   it("should trigger onChange parameter when text is entered", () => {
     inputs.forEach(input => {
       testUtils.Simulate.change(input, {

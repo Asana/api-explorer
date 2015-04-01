@@ -8,6 +8,7 @@ import _ = require("lodash");
 
 import constants = require("../constants");
 import Credentials = require("../credentials");
+import ExtraParameterEntry = require("./extra_parameter_entry");
 import JsonResponse = require("./json_response");
 import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
@@ -133,9 +134,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       });
     }
     params = _.extend(params, this.state.params.optional_params);
-    if (this.state.params.extra_params !== null) {
-      params = _.extend(params, this.state.params.extra_params);
-    }
+    params = _.extend(params, this.state.params.extra_params);
 
     // If an optional param is for workspace, then inject the chosen workspace.
     var has_optional_workspace_param = _.any(this.state.action.params,
@@ -253,29 +252,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     return (event: React.FormEvent) => {
       var target = <HTMLInputElement>event.target;
 
-      // Extra params entry is denoted by a null parameter.
-      if (parameter === null) {
-        try {
-          var extra_params =
-            target.value === "" ? { } : JSON.parse(target.value);
-
-          // Extra parameters must be a non-array object. If not, fall through to catch.
-          if (!_.isObject(extra_params) || _.isArray(extra_params)) {
-            throw new Error("Invalid type of JSON.");
-          }
-        } catch (error) {
-          // Use null to denote invalid JSON.
-          extra_params = null;
-        } finally {
-          this.setState(update(this.state, <any>{
-            params: {
-              extra_params: {
-                $set: extra_params
-              }
-            }
-          }));
-        }
-      } else if (parameter.name === "workspace") {
+      if (parameter.name === "workspace") {
         var workspace = _.find(this.state.workspaces,
             workspace => workspace.id.toString() === target.value);
 
@@ -298,6 +275,31 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         }));
       }
     };
+  };
+
+  /**
+   * Given a list of extra parameters, put them in the state.
+   */
+  syncExtraParameters = (parameters: ExtraParameterEntry.ExtraParameter[]) => {
+    // Reduce from list of extra params to key-value object to store in state.
+    var extra_params = _.reduce(
+      parameters,
+      (result: any, parameter: ExtraParameterEntry.ExtraParameter) => {
+        if (parameter.key !== "" && parameter.value !== "") {
+          result[parameter.key] = parameter.value;
+        }
+        return result;
+      },
+      { }
+    );
+
+    this.setState(update(this.state, <any>{
+      params: {
+        extra_params: {
+          $set: extra_params
+        }
+      }
+    }));
   };
 
   /**
@@ -327,12 +329,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       if (required_params[0].name !== "workspace") {
         return Explorer.UserStateStatus.ErrorUnsetRequiredParams;
       }
-    }
-
-    // Ensure extra params field is valid JSON.
-    // extra_params is null iff the user input is invalid.
-    if (this.state.params.extra_params === null) {
-      return Explorer.UserStateStatus.ErrorInvalidExtraParams;
     }
 
     // At this point, we've passed all constraints.
@@ -441,10 +437,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       case Explorer.UserStateStatus.ErrorUnsetRequiredParams:
         message = "You must set all required parameters.";
         break;
-      case Explorer.UserStateStatus.ErrorInvalidExtraParams:
-        message = "You must input extra parameters as valid JSON.";
-        message += "For example: { \"limit\": 5 }";
-        break;
     }
 
     return r.div({
@@ -492,6 +484,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             onParameterChange: this.onChangeParameterState,
             workspace: this.state.workspace,
             workspaces: this.state.workspaces
+          }),
+          ExtraParameterEntry.create({
+            text: "Extra parameters: ",
+            syncExtraParameters: this.syncExtraParameters
           })
         ),
         r.div({ },
@@ -554,8 +550,7 @@ module Explorer {
     ErrorNotAuthorized,
     ErrorUnsupportedMethodType,
     ErrorAwaitingWorkspaces,
-    ErrorUnsetRequiredParams,
-    ErrorInvalidExtraParams
+    ErrorUnsetRequiredParams
   }
 
   export interface State {
