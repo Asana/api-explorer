@@ -1013,16 +1013,16 @@ var resource = {
             "path": "/projects/%d",
             "params": [
                 {
-                    "name": "task",
+                    "name": "project",
                     "type": "Id",
                     "example_values": [
-                        "124816"
+                        "13579"
                     ],
-                    "comment": "The task to get.",
+                    "comment": "The project to get.",
                     "required": true
                 }
             ],
-            "comment": "Returns the complete task record for a single task.\n"
+            "comment": "Returns the complete project record for a single project.\n"
         },
         {
             "name": "update",
@@ -1281,16 +1281,16 @@ var resource = {
             "path": "/tags/%d",
             "params": [
                 {
-                    "name": "task",
+                    "name": "tag",
                     "type": "Id",
                     "example_values": [
-                        "124816"
+                        "11235"
                     ],
-                    "comment": "The task to get.",
+                    "comment": "The tag to get.",
                     "required": true
                 }
             ],
-            "comment": "Returns the complete task record for a single task.\n"
+            "comment": "Returns the complete tag record for a single tag.\n"
         },
         {
             "name": "update",
@@ -1968,12 +1968,12 @@ var resource = {
             "collection": true,
             "params": [
                 {
-                    "name": "team",
+                    "name": "organization",
                     "type": "Id",
                     "example_values": [
-                        "14916"
+                        "1331"
                     ],
-                    "comment": "Globally unique identifier for the team.\n",
+                    "comment": "Globally unique identifier for the workspace or organization.\n",
                     "required": true
                 }
             ],
@@ -2075,6 +2075,7 @@ var resource = {
             "method": "GET",
             "path": "/workspaces/%d/users",
             "collection": true,
+            "collection_cannot_paginate": true,
             "params": [
                 {
                     "name": "workspace",
@@ -2093,6 +2094,16 @@ var resource = {
             "method": "GET",
             "path": "/users",
             "collection": true,
+            "params": [
+                {
+                    "name": "workspace",
+                    "type": "Id",
+                    "example_values": [
+                        "1331"
+                    ],
+                    "comment": "The workspace or organization to filter users on."
+                }
+            ],
             "comment": "Returns the user records for all users in the specified workspace or\norganization.\n"
         }
     ]
@@ -2222,6 +2233,7 @@ var resource = {
                 }
             ],
             "collection": true,
+            "collection_cannot_paginate": true,
             "comment": "Retrieves objects in the workspace based on an auto-completion/typeahead\nsearch algorithm. This feature is meant to provide results quickly, so do\nnot rely on this API to provide extremely accurate search results. The\nresult set is limited to a single page of results with a maximum size,\nso you won't be able to fetch large numbers of results.\n"
         }
     ]
