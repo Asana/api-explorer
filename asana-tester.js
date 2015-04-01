@@ -282,7 +282,7 @@ var Explorer = (function (_super) {
                 message = "You are not authorized to make a request.";
                 break;
             case 2 /* ErrorUnsupportedMethodType */:
-                message = "Only GET requests are supported in the API Explorer.";
+                message = "Only GET requests can be submitted in the API Explorer.";
                 break;
             case 3 /* ErrorAwaitingWorkspaces */:
                 message = "Workspaces are currently loading.";
@@ -310,7 +310,7 @@ var Explorer = (function (_super) {
                     onActionChange: this.onChangeActionState,
                     resource: this.state.resource
                 })),
-                r.div({}, PropertyEntry.create({
+                r.div({}, this.state.action.method !== "GET" ? "" : r.span({}, PropertyEntry.create({
                     class_suffix: "include",
                     text: "Include Fields: ",
                     properties: this.state.resource.properties,
@@ -322,7 +322,7 @@ var Explorer = (function (_super) {
                     properties: this.state.resource.properties,
                     useProperty: function (property) { return _.contains(_this.state.params.expand_fields, property); },
                     isPropertyChecked: this.onChangePropertyChecked("expand_fields")
-                }), ParameterEntry.create({
+                })), ParameterEntry.create({
                     text: "Attribute parameters: ",
                     parameters: this.state.action.params,
                     onParameterChange: this.onChangeParameterState,
