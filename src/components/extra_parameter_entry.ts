@@ -5,8 +5,6 @@ import _ = require("lodash");
 var r = React.DOM;
 var update = React.addons.update;
 
-// TODO: Update tests.
-
 /**
  * The extra parameter input area
  */
@@ -48,49 +46,53 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
   private _renderExtraParameterInput = (extra_param: ExtraParameterEntry.ExtraParameter, idx: number) => {
     var id_prefix = "extra_param_" + idx;
 
-    return r.div({ key: id_prefix },
-      r.input({
-        placeholder: "Key",
-        type: "text",
-        id: id_prefix + "_key",
-        className: "parameter-input extra-param",
-        value: this.state.extra_params[idx].key,
-        onChange: (event: React.FormEvent) => {
-          this._setStateAndPropagate(update(this.state, <any>{
-            extra_params: _.object(
-              [idx.toString()],
-              [{ key: { $set: (<any>event.target).value } }]
-            )
-          }));
-        }
-      }),
-      ":",
-      r.input({
-        placeholder: "Value",
-        type: "text",
-        id: id_prefix + "_value",
-        className: "parameter-input extra-param",
-        value: this.state.extra_params[idx].value,
-        onChange: (event: React.FormEvent) => {
-          this._setStateAndPropagate(update(this.state, <any>{
-            extra_params: _.object(
-              [idx.toString()],
-              [{ value: { $set: (<any>event.target).value } }]
-            )
-          }));
-        }
-      }),
-      r.span({
-        className: "delete-extra-param",
-        onClick: () => {
-          this._setStateAndPropagate(update(this.state, <any> {
-            extra_params: {
-              $splice: [[ idx, 1 ]]
-            }
-          }));
-        }
-      }, "X")
-    );
+    return r.div({
+      key: id_prefix,
+      className: "extra-param",
+      children: [
+        r.input({
+          placeholder: "Key",
+          type: "text",
+          id: id_prefix + "_key",
+          className: "parameter-input extra-param-key",
+          value: this.state.extra_params[idx].key,
+          onChange: (event: React.FormEvent) => {
+            this._setStateAndPropagate(update(this.state, <any>{
+              extra_params: _.object(
+                [idx.toString()],
+                [{ key: { $set: (<any>event.target).value } }]
+              )
+            }));
+          }
+        }),
+        ":",
+        r.input({
+          placeholder: "Value",
+          type: "text",
+          id: id_prefix + "_value",
+          className: "parameter-input extra-param-value",
+          value: this.state.extra_params[idx].value,
+          onChange: (event: React.FormEvent) => {
+            this._setStateAndPropagate(update(this.state, <any>{
+              extra_params: _.object(
+                [idx.toString()],
+                [{ value: { $set: (<any>event.target).value } }]
+              )
+            }));
+          }
+        }),
+        r.span({
+          className: "delete-extra-param",
+          onClick: () => {
+            this._setStateAndPropagate(update(this.state, <any> {
+              extra_params: {
+                $splice: [[ idx, 1 ]]
+              }
+            }));
+          }
+        }, "X")
+      ]
+    });
   };
 
   render() {
