@@ -761,6 +761,86 @@ describe("ExplorerComponent", () => {
           assert.deepEqual(root.state.params, old_params);
         });
       });
+
+      describe("on pagination parameter input", () => {
+        var inputLimitParam: React.HTMLComponent;
+        var inputOffsetParam: React.HTMLComponent;
+
+        beforeEach(() => {
+          // Use a route that has pagination enabled.
+          testUtils.Simulate.change(selectResource, {
+            target: {value: "Users"}
+          });
+          testUtils.Simulate.change(selectRoute, {
+            target: {value: "findAll"}
+          });
+
+          inputLimitParam = testUtils.findRenderedDOMComponentWithClass(
+            root, "paginate-entry-limit");
+          inputOffsetParam = testUtils.findRenderedDOMComponentWithClass(
+            root, "paginate-entry-offset");
+        });
+
+        function _setDataForPaginationParam(
+          param: React.HTMLComponent, value: string, opt_validity?: boolean) {
+          testUtils.Simulate.change(param, {
+            target: {
+              value: value,
+              checkValidity: () =>
+              opt_validity !== undefined ? opt_validity : true
+            }
+          });
+        }
+
+        it("should change state after updating limit/offset values", () => {
+          _setDataForPaginationParam(inputOffsetParam, "abc abc");
+          assert.deepEqual(
+            root.state.params.paginate_params,
+            { limit: constants.INITIAL_PAGINATION_LIMIT, offset: "abc abc" }
+          );
+
+          _setDataForPaginationParam(inputLimitParam, "123");
+          assert.deepEqual(
+            root.state.params.paginate_params,
+            { limit: "123", offset: "abc abc" }
+          );
+        });
+
+        it("should remove parameter when clearing limit/offset input", () => {
+          _setDataForPaginationParam(inputLimitParam, "");
+          assert.deepEqual(root.state.params.paginate_params, {});
+
+          _setDataForPaginationParam(inputOffsetParam, "hi there");
+          assert.deepEqual(
+            root.state.params.paginate_params, { offset: "hi there" });
+
+          _setDataForPaginationParam(inputLimitParam, "123");
+          assert.deepEqual(
+            root.state.params.paginate_params,
+            { limit: "123", offset: "hi there" }
+          );
+
+          _setDataForPaginationParam(inputOffsetParam, "");
+          assert.deepEqual(
+            root.state.params.paginate_params, { limit: "123" });
+
+          _setDataForPaginationParam(inputLimitParam, "");
+          assert.deepEqual(root.state.params.paginate_params, {});
+        });
+
+        it("should not change state if validity check fails", () => {
+          var old_paginate_params = _.cloneDeep(
+            root.state.params.paginate_params);
+
+          _setDataForPaginationParam(inputLimitParam, "hi there", false);
+          assert.deepEqual(
+            root.state.params.paginate_params, old_paginate_params);
+
+          _setDataForPaginationParam(inputOffsetParam, "hi there", false);
+          assert.deepEqual(
+            root.state.params.paginate_params, old_paginate_params);
+        });
+      });
     });
 
     describe("on submit", () => {
@@ -808,7 +888,8 @@ describe("ExplorerComponent", () => {
           include_fields: ["other", "this"],
           required_params: _.object([required_param.name], ["123"]),
           optional_params: {abc: 456},
-          extra_params: {test: "hi"}
+          extra_params: {test: "hi"},
+          paginate_params: {}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
@@ -870,7 +951,8 @@ describe("ExplorerComponent", () => {
           include_fields: ["other", "this"],
           required_params: _.object([required_param.name], ["123"]),
           optional_params: {abc: 456},
-          extra_params: {test: "hi"}
+          extra_params: {test: "hi"},
+          paginate_params: {}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
