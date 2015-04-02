@@ -37,6 +37,9 @@ function initializeClient(initialClient) {
     });
     return client;
 }
+function _isWorkspaceParameter(parameter) {
+    return parameter.name === "workspace" || parameter.name === "organization";
+}
 var Explorer = (function (_super) {
     __extends(Explorer, _super);
     function Explorer(props, context) {
@@ -64,7 +67,15 @@ var Explorer = (function (_super) {
             }
             params = _.extend(params, _this.state.params.optional_params);
             params = _.extend(params, _this.state.params.extra_params);
-            var has_optional_workspace_param = _.any(_this.state.action.params, function (param) { return !param.required && param.name === "workspace"; });
+            var required_params = _.filter(_this.state.action.params, "required");
+            if (required_params.length > 1) {
+                _.forEach(_this.state.params.required_params, function (value, key) {
+                    if (required_params[0].name !== key) {
+                        params[key] = value;
+                    }
+                });
+            }
+            var has_optional_workspace_param = _.any(_this.state.action.params, function (param) { return !param.required && _isWorkspaceParameter(param); });
             if (has_optional_workspace_param && _this.state.workspace !== undefined) {
                 params = _.extend(params, { workspace: _this.state.workspace.id });
             }
@@ -74,10 +85,8 @@ var Explorer = (function (_super) {
             var param_value;
             var required_param = _.find(_this.state.action.params, "required");
             if (required_param !== undefined) {
-                if (!_.isEmpty(_this.state.params.required_params)) {
-                    param_value = _.values(_this.state.params.required_params)[0];
-                }
-                else if (required_param.name === "workspace") {
+                param_value = _this.state.params.required_params[required_param.name];
+                if (param_value === undefined && _isWorkspaceParameter(required_param)) {
                     if (_this.state.workspace !== undefined) {
                         param_value = _this.state.workspace.id;
                     }
@@ -129,7 +138,7 @@ var Explorer = (function (_super) {
         this.onChangeParameterState = function (parameter) {
             return function (event) {
                 var target = event.target;
-                if (parameter.name === "workspace") {
+                if (_isWorkspaceParameter(parameter)) {
                     var workspace = _.find(_this.state.workspaces, function (workspace) { return workspace.id.toString() === target.value; });
                     _this.setState({
                         workspace: workspace
@@ -172,7 +181,8 @@ var Explorer = (function (_super) {
             }
             var required_params = _.filter(_this.state.action.params, "required");
             if (required_params.length !== _.size(_this.state.params.required_params)) {
-                if (required_params[0].name !== "workspace") {
+                var num_missing = required_params.length - _.size(_this.state.params.required_params);
+                if (!_.any(required_params, _isWorkspaceParameter) || num_missing !== 1) {
                     return 4 /* ErrorUnsetRequiredParams */;
                 }
             }
@@ -536,13 +546,19 @@ var ParameterEntry = (function (_super) {
     function ParameterEntry() {
         var _this = this;
         _super.apply(this, arguments);
+        this._useWorkspaceDropdown = function (parameter) {
+            if (_this.props.workspaces === undefined) {
+                return false;
+            }
+            return parameter.name === "workspace" || parameter.name === "organization";
+        };
         this._renderParameterInput = function (parameter) {
             var classes = cx({
                 "parameter-input": true,
                 "required-param": parameter.required
             });
             var id = "parameter_input_" + parameter.name;
-            if (parameter.name === "workspace" && _this.props.workspaces !== undefined) {
+            if (_this._useWorkspaceDropdown(parameter)) {
                 return r.span({ key: parameter.name }, r.select({
                     id: id,
                     className: classes,
