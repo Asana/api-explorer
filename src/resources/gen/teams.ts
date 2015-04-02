@@ -67,8 +67,9 @@ var resource = <Resource>{
     {
       "name": "users",
       "method": "GET",
-      "path": "/team/%d/users",
+      "path": "/teams/%d/users",
       "collection": true,
+      "collection_cannot_paginate": true,
       "params": [
         {
           "name": "team",
