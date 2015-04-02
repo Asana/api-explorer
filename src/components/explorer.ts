@@ -40,6 +40,10 @@ function initializeClient(initialClient?: Asana.Client): Asana.Client {
   return client;
 }
 
+function _isWorkspaceParameter(parameter: Parameter): boolean {
+  return parameter.name === "workspace" || parameter.name === "organization";
+}
+
 /**
  * The main API Explorer component.
  */
@@ -138,7 +142,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     // If an optional param is for workspace, then inject the chosen workspace.
     var has_optional_workspace_param = _.any(this.state.action.params,
-        param => !param.required && param.name === "workspace");
+        param => !param.required && _isWorkspaceParameter(param));
     if (has_optional_workspace_param && this.state.workspace !== undefined) {
       params = _.extend(params, { workspace: this.state.workspace.id });
     }
@@ -159,7 +163,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     if (required_param !== undefined) {
       if (!_.isEmpty(this.state.params.required_params)) {
         param_value = _.values(this.state.params.required_params)[0];
-      } else if (required_param.name === "workspace") {
+      } else if (_isWorkspaceParameter(required_param)) {
         // Since we lazy-load workspaces, make sure it has been loaded.
         if (this.state.workspace !== undefined) {
           param_value = this.state.workspace.id;
@@ -252,7 +256,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     return (event: React.FormEvent) => {
       var target = <HTMLInputElement>event.target;
 
-      if (parameter.name === "workspace") {
+      if (_isWorkspaceParameter(parameter)) {
         var workspace = _.find(this.state.workspaces,
             workspace => workspace.id.toString() === target.value);
 
@@ -326,7 +330,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var required_params = _.filter(this.state.action.params, "required");
     if (required_params.length !== _.size(this.state.params.required_params)) {
       // We inject the workspace from the dropdown, so we can ignore that.
-      if (required_params[0].name !== "workspace") {
+      if (!_isWorkspaceParameter(required_params[0])) {
         return Explorer.UserStateStatus.ErrorUnsetRequiredParams;
       }
     }

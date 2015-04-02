@@ -13,6 +13,15 @@ var r = React.DOM;
 class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
   static create = React.createFactory(ParameterEntry);
 
+  private _useWorkspaceDropdown = (parameter: Parameter) => {
+    // Ensure workspaces have loaded successfully.
+    if (this.props.workspaces === undefined) {
+      return false;
+    }
+
+     return parameter.name === "workspace" || parameter.name === "organization";
+  };
+
   private _renderParameterInput = (parameter: Parameter) => {
     var classes = cx({
       "parameter-input": true,
@@ -21,7 +30,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
     var id = "parameter_input_" + parameter.name;
 
     // We pre-fetch workspaces, so show a dropdown instead.
-    if (parameter.name === "workspace" && this.props.workspaces !== undefined) {
+    if (this._useWorkspaceDropdown(parameter)) {
       return r.span({ key: parameter.name },
         r.select({
           id: id,
