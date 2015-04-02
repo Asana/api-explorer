@@ -125,7 +125,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    * Uses the state to return the properly-formatted request parameters.
    */
   requestParameters = () => {
-    var params = { };
+    var params: any = { };
 
     if (this.state.params.expand_fields.length > 0) {
       params = _.extend(params, {
@@ -140,6 +140,19 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     params = _.extend(params, this.state.params.optional_params);
     params = _.extend(params, this.state.params.extra_params);
 
+    // The first required parameter is injected into the URL.
+    // Other required parameters are included here, so we extract them out.
+    var required_params = _.filter(this.state.action.params, "required");
+    if (required_params.length > 1) {
+      _.forEach(
+        this.state.params.required_params,
+        (value: string, key: string) => {
+          if (required_params[0].name !== key) {
+            params[key] = value;
+          }
+        });
+    }
+
     // If an optional param is for workspace, then inject the chosen workspace.
     var has_optional_workspace_param = _.any(this.state.action.params,
         param => !param.required && _isWorkspaceParameter(param));
@@ -152,7 +165,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
   /**
    * Uses the state to return the URL for the current request.
-   * Assumes we have at-most one required parameter to put in the URL.
+   * Puts the first required parameter (if any) in the URL.
    *
    * @returns {string}
    */
@@ -161,9 +174,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
     var required_param = _.find(this.state.action.params, "required");
     if (required_param !== undefined) {
-      if (!_.isEmpty(this.state.params.required_params)) {
-        param_value = _.values(this.state.params.required_params)[0];
-      } else if (_isWorkspaceParameter(required_param)) {
+      param_value = this.state.params.required_params[required_param.name];
+
+      // If we don't have the param_value, and check if it's a workspace.
+      if (param_value === undefined && _isWorkspaceParameter(required_param)) {
         // Since we lazy-load workspaces, make sure it has been loaded.
         if (this.state.workspace !== undefined) {
           param_value = this.state.workspace.id;
@@ -329,8 +343,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     // Ensure all required parameters are set.
     var required_params = _.filter(this.state.action.params, "required");
     if (required_params.length !== _.size(this.state.params.required_params)) {
-      // We inject the workspace from the dropdown, so we can ignore that.
-      if (!_isWorkspaceParameter(required_params[0])) {
+      // If the only missing required param is workspace, we're okay.
+      var num_missing =
+        required_params.length - _.size(this.state.params.required_params);
+      if (!_.any(required_params, _isWorkspaceParameter) || num_missing !== 1) {
         return Explorer.UserStateStatus.ErrorUnsetRequiredParams;
       }
     }
