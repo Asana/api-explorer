@@ -96,7 +96,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   }
 
   _canPaginate = (): boolean => {
-    // TODO: Can't paginate on users over personal projects domain.
+    // TODO: Also can't paginate on users over personal projects domain.
 
     return this.state.action.collection &&
       !this.state.action.collection_cannot_paginate;
@@ -147,7 +147,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }
     params = _.extend(params, this.state.params.optional_params);
 
-    // TODO: update tests for paginate_params.
     if (this._canPaginate()) {
       params = _.extend(params, this.state.params.paginate_params);
     }

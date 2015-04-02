@@ -2,8 +2,6 @@ import React = require("react");
 
 var r = React.DOM;
 
-// TODO: Add tests.
-
 /**
  * Allows users to change their pagination settings.
  */
@@ -15,9 +13,7 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
     var limit_value = !this.props.paginate_params.limit ?
       "" : this.props.paginate_params.limit.toString();
     var offset_value = !this.props.paginate_params.offset ?
-      "" : this.props.paginate_params.offset.toString();
-
-    console.log(this.props.paginate_params);
+      "" : this.props.paginate_params.offset;
 
     return r.span({},
       r.input({
