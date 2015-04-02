@@ -4,6 +4,8 @@ interface Action {
   path: string;
   comment: string;
   params?: Parameter[];
+  collection?: boolean;
+  collection_cannot_paginate?: boolean;
 }
 
 interface Parameter {

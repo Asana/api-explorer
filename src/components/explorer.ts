@@ -10,6 +10,7 @@ import constants = require("../constants");
 import Credentials = require("../credentials");
 import ExtraParameterEntry = require("./extra_parameter_entry");
 import JsonResponse = require("./json_response");
+import PaginateEntry = require("./paginate_entry");
 import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
@@ -94,6 +95,13 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }
   }
 
+  _canPaginate = (): boolean => {
+    // TODO: Can't paginate on users over personal projects domain.
+
+    return this.state.action.collection &&
+      !this.state.action.collection_cannot_paginate;
+  };
+
   /**
    * Authorize the client, if it has expired, and force a re-rendering.
    */
@@ -138,7 +146,11 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       });
     }
     params = _.extend(params, this.state.params.optional_params);
-    params = _.extend(params, this.state.params.extra_params);
+
+    // TODO: update tests for paginate_params.
+    if (this._canPaginate()) {
+      params = _.extend(params, this.state.params.paginate_params);
+    }
 
     // The first required parameter is injected into the URL.
     // Other required parameters are included here, so we extract them out.
@@ -159,6 +171,9 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     if (has_optional_workspace_param && this.state.workspace !== undefined) {
       params = _.extend(params, { workspace: this.state.workspace.id });
     }
+
+    // The user should be able to override any above, so add extra params last.
+    params = _.extend(params, this.state.params.extra_params);
 
     return params;
   };
@@ -258,6 +273,38 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       this.setState({
         params: params
       });
+    };
+  };
+
+  /**
+   * Updates the paginate state following an onChange event.
+   */
+  onChangePaginateState = (limit_or_offset: string) => {
+    return (event: React.FormEvent) => {
+      var target = <HTMLInputElement>event.target;
+
+      // If this won't validate (e.g. negative limit value), don't set state.
+      if (!target.checkValidity()) {
+        return false;
+      }
+
+      // If the user removes the value, we want to disable that parameter.
+      if (target.value === "") {
+        this.setState(update(this.state, <any> {
+          params: {
+            paginate_params: {
+              $set: _.omit(this.state.params.paginate_params, limit_or_offset)
+            }
+          }
+        }));
+      } else {
+        this.setState(update(this.state, <any>{
+          params: {
+            paginate_params:
+              _.object([limit_or_offset], [{ $set: target.value }])
+          }
+        }));
+      }
     };
   };
 
@@ -502,6 +549,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
                 isPropertyChecked: this.onChangePropertyChecked("expand_fields")
               })
             ),
+          PaginateEntry.create({
+            can_paginate: this._canPaginate(),
+            onPaginateChange: this.onChangePaginateState,
+            paginate_params: this.state.params.paginate_params,
+            text: "Paginate parameters: "
+          }),
           ParameterEntry.create({
             text: "Attribute parameters: ",
             parameters: this.state.action.params,
@@ -548,7 +601,10 @@ module Explorer {
       include_fields: [],
       required_params: {},
       optional_params: {},
-      extra_params: {}
+      extra_params: {},
+      paginate_params: {
+        limit: constants.INITIAL_PAGINATION_LIMIT
+      }
     };
   }
 
@@ -558,6 +614,10 @@ module Explorer {
     required_params: any;
     optional_params: any;
     extra_params: any;
+    paginate_params: {
+      limit?: number;
+      offset?: string;
+    };
   }
 
   export interface Props {
