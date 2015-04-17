@@ -18,6 +18,7 @@ declare module "asana" {
     get(path: string, query: any, dispatchOptions: any): Promise<any>;
     authenticator: auth.Authenticator;
     handleUnauthorized(): Promise<any>;
+    url(path: string): string;
   }
 
   export module auth {

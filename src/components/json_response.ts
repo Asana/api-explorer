@@ -16,8 +16,17 @@ class JsonResponse extends React.Component<JsonResponse.Props, {}> {
 
     return action === undefined ? null :
       r.div({
-        className: "json-response-info"
-      }, action.method + " " + this.props.response.route);
+        className: "json-response-info",
+        children: [
+          action.method + " " + this.props.response.route,
+          action.method !== "GET" ? "" :
+            r.a({
+              className: "raw-route-link",
+              href: this.props.response.route_url,
+              target: "_blank"
+            }, "(open raw response)")
+        ]
+      });
   };
 
   render() {
@@ -55,6 +64,7 @@ module JsonResponse {
     is_loading?: boolean;
     raw_response?: any;
     route: string;
+    route_url: string;
   }
 
   export interface Props {
