@@ -77,6 +77,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       response: <JsonResponse.ResponseData>{
         action: undefined,
         route: undefined,
+        route_url: undefined,
         raw_response: undefined
       }
     };
@@ -420,6 +421,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var dispatcher = this.state.client.dispatcher;
     var route = this.requestUrl();
     var route_full = this.requestUrlWithFullParams();
+    var route_full_url = dispatcher.url(route_full);
     var params = this.requestParameters();
 
     // Set intermediate state to signify loading.
@@ -427,7 +429,8 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       response: <JsonResponse.ResponseData>{
         action: this.state.action,
         is_loading: true,
-        route: route_full
+        route: route_full,
+        route_url: route_full_url
       }
     });
 
@@ -437,7 +440,8 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         response: <JsonResponse.ResponseData>{
           action: this.state.action,
           raw_response: response,
-          route: route_full
+          route: route_full,
+          route_url: route_full_url
         }
       });
     }).error((e: any) => {
@@ -446,7 +450,8 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           action: this.state.action,
           error: e,
           raw_response: e.value,
-          route: route_full
+          route: route_full,
+          route_url: route_full_url
         }
       });
     }).finally(() => {

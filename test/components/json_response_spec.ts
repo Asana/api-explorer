@@ -25,7 +25,8 @@ describe("JsonResponseComponent", () => {
       response: <JsonResponse.ResponseData>{
         action: undefined,
         raw_response: undefined,
-        route: undefined
+        route: undefined,
+        route_url: undefined
       }
     };
 
@@ -66,7 +67,8 @@ describe("JsonResponseComponent", () => {
           action: action,
           error: "something",
           raw_response: raw_response,
-          route: action.path
+          route: action.path,
+          route_url: "https://app.asana.com/api/1.0/" + action.path
         }
       });
 
@@ -106,7 +108,8 @@ describe("JsonResponseComponent", () => {
         action: action,
         params: { },
         raw_response: raw_response,
-        route: action.path
+        route: action.path,
+        route_url: "https://app.asana.com/api/1.0/" + action.path
       }
     });
 
