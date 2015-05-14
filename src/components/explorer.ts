@@ -64,7 +64,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var action =
       ResourcesHelpers.actionFromResourcePath(
         resource, this.props.initial_route) ||
-      resource.actions[0];
+      ResourcesHelpers.defaultActionFromResource(resource);
 
     var client = initializeClient(this.props.initialClient);
 
@@ -227,7 +227,8 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     var has_changed = resource !== this.state.resource;
 
     // If the resource has changed, also reset relevant parts of state.
-    var action = !has_changed ? this.state.action : resource.actions[0];
+    var action = !has_changed ?
+      this.state.action : ResourcesHelpers.defaultActionFromResource(resource);
     var params = !has_changed ? this.state.params : this._resetParams();
 
     this.setState({
