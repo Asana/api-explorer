@@ -55,6 +55,20 @@ export function actionFromResourceAndName(resource: Resource, action_name: strin
 }
 
 /**
+ * Returns the action to use as a default for a given resource.
+ *
+ * We prefer GET actions, so if one exists on the resource use that.
+ * Otherwise, we use the first action in the list.
+ */
+export function defaultActionFromResource(resource: Resource): Action {
+  var get_actions = resource.actions.filter(
+    action => { return action.method === "GET"; }
+  );
+
+  return get_actions.length > 0 ? get_actions[0] : resource.actions[0];
+}
+
+/**
  * Given an action, return the path after replacing a required param value.
  * If no param value is given, and one is needed, then use a placeholder value.
  *
