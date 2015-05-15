@@ -473,7 +473,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   private _maybeRenderAuthorizationLink() {
     var message = "";
     var messageClass = "";
-    
+
     switch (this.state.auth_state) {
       case Credentials.AuthState.Authorized:
         return null;

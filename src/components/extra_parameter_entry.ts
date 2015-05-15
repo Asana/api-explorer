@@ -32,7 +32,6 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
       href: "#",
       onClick: (e) => {
         e.preventDefault();
-        
         this.setState(update(this.state, <any>{
           extra_params: {
             $push: [<ExtraParameterEntry.ExtraParameter>{
