@@ -16,6 +16,9 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
       "" : this.props.paginate_params.offset;
 
     return r.span({},
+      r.label({ },
+        "Limit"
+      ),
       r.input({
         type: "number",
         className: "paginate-entry-limit",
@@ -23,14 +26,17 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
         onChange: this.props.onPaginateChange("limit"),
         placeholder: "Limit",
         value: limit_value
-      }, "Limit"),
+      }),
+      r.label({ },
+        "Offset"
+      ),
       r.input({
         type: "text",
         className: "paginate-entry-offset",
         onChange: this.props.onPaginateChange("offset"),
         placeholder: "Offset",
         value: offset_value
-      }, "Offset")
+      })
     );
   };
 
@@ -41,7 +47,7 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
           this.props.text,
           this.props.can_paginate ?
             this._renderPaginateInputs() :
-            "Pagination is not available on this route."
+            r.small({ }, "Pagination is not available on this route.")
         ]
       }
     );
