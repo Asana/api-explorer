@@ -29,8 +29,8 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
 
     return r.div({ },
       r.div({ },
-        r.strong({ }, "Resource description: "),
-        resource.comment
+        r.h3({ }, "Resource description"),
+        r.p({ }, resource.comment)
       )
     );
   };
