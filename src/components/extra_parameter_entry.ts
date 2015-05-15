@@ -30,7 +30,9 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
     return r.a({
       className: "add-extra-param",
       href: "#",
-      onClick: () => {
+      onClick: (e) => {
+        e.preventDefault();
+        
         this.setState(update(this.state, <any>{
           extra_params: {
             $push: [<ExtraParameterEntry.ExtraParameter>{
@@ -46,7 +48,7 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
   private _renderExtraParameterInput = (extra_param: ExtraParameterEntry.ExtraParameter, idx: number) => {
     var id_prefix = "extra_param_" + idx;
 
-    return r.div({
+    return r.p({
       key: id_prefix,
       className: "extra-param",
       children: [
@@ -90,7 +92,7 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
               }
             }));
           }
-        }, "X")
+        }, "×")
       ]
     });
   };
