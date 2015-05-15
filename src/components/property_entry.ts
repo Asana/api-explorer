@@ -18,12 +18,12 @@ class PropertyEntry extends React.Component<PropertyEntry.Props, {}> {
         checked: this.props.useProperty(property.name),
         onChange: this.props.isPropertyChecked,
         value: property.name
-      }, property.name)
+      }, " " + property.name)
     );
   };
 
   render() {
-    return r.div({
+    return r.p({
         className: "property-entry-" + this.props.class_suffix,
         children: [
           this.props.text,
