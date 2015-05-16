@@ -32,6 +32,9 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
     // We pre-fetch workspaces, so show a dropdown instead.
     if (this._useWorkspaceDropdown(parameter)) {
       return r.span({ key: parameter.name },
+        r.label({ },
+          "Workspace"
+        ),
         r.select({
           id: id,
           className: classes,
