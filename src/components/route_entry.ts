@@ -12,17 +12,19 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
   static create = React.createFactory(RouteEntry);
 
   private _renderSelectRoute = () => {
-    return r.select({
-      className: "select-route",
-      onChange: this.props.onActionChange,
-      value: this.props.action.name,
-      children: this.props.resource.actions.map(
-          action => {
-          return r.option({
-            value: action.name
-          }, action.method + " " + ResourcesHelpers.pathForAction(action));
-        })
-    });
+    return r.p({ },
+      r.select({
+        className: "select-route",
+        onChange: this.props.onActionChange,
+        value: this.props.action.name,
+        children: this.props.resource.actions.map(
+            action => {
+            return r.option({
+              value: action.name
+            }, action.method + " " + ResourcesHelpers.pathForAction(action));
+          })
+      })
+    );
   };
 
   private _renderRouteInfo = () => {

@@ -12,16 +12,18 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
   static create = React.createFactory(ResourceEntry);
 
   private _renderSelectResource = () => {
-    return r.select({
-      className: "select-resource",
-      onChange: this.props.onResourceChange,
-      value: ResourcesHelpers.resourceNameFromResource(this.props.resource),
-      children: ResourcesHelpers.names().map(resource => {
-        return r.option({
-          value: resource
-        }, resource);
+    return r.p({ },
+        r.select({
+        className: "select-resource",
+        onChange: this.props.onResourceChange,
+        value: ResourcesHelpers.resourceNameFromResource(this.props.resource),
+        children: ResourcesHelpers.names().map(resource => {
+          return r.option({
+            value: resource
+          }, resource);
+        })
       })
-    });
+    );
   };
 
   private _renderResourceInfo = () => {
