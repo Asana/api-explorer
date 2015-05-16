@@ -32,6 +32,9 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
     // We pre-fetch workspaces, so show a dropdown instead.
     if (this._useWorkspaceDropdown(parameter)) {
       return r.span({ key: parameter.name },
+        r.label({ },
+          "Workspace"
+        ),
         r.select({
           id: id,
           className: classes,
@@ -46,13 +49,16 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
       );
     } else {
       return r.span({ key: parameter.name },
+        r.label({ },
+          parameter.name
+        ),
         r.input({
           placeholder: parameter.name,
           type: "text",
           id: id,
           className: classes,
           onChange: this.props.onParameterChange(parameter)
-        }, parameter.name)
+        })
       );
     }
   };
@@ -62,7 +68,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
         className: "parameter-entry",
         children: [
           this.props.text,
-          r.span({
+          r.div({
             className: "parameter-inputs"
           }, this.props.parameters === undefined ? "" :
             this.props.parameters.map(this._renderParameterInput))

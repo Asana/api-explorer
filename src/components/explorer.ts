@@ -472,20 +472,24 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
   private _maybeRenderAuthorizationLink() {
     var message = "";
+    var messageClass = "";
+
     switch (this.state.auth_state) {
       case Credentials.AuthState.Authorized:
         return null;
       case Credentials.AuthState.Unauthorized:
-        message = "Click to authorize!";
+        message = "Click to authorize API tester";
+        messageClass = "button authorize-link";
         break;
       case Credentials.AuthState.Expired:
         message = "Your authorization token has expired. Click here to refresh it!";
+        messageClass = "button button--red authorize-link";
         break;
     }
 
-    return r.div({ },
+    return r.p({ },
       r.a({
-        className: "authorize-link",
+        className: messageClass,
         href: "#",
         onClick: this.authorize
       }, message)
@@ -536,49 +540,76 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         r.div({ },
           this.state.action.method !== "GET" ? "" :
             // Show the user include/expand properties for GET requests only.
-            r.span({ },
-              PropertyEntry.create({
-                class_suffix: "include",
-                text: "Include Fields: ",
-                properties: this.state.resource.properties,
-                useProperty: property =>
-                  _.contains(this.state.params.include_fields, property),
-                isPropertyChecked: this.onChangePropertyChecked("include_fields")
-              }),
-              PropertyEntry.create({
-                class_suffix: "expand",
-                text: "Expand Fields: ",
-                properties: this.state.resource.properties,
-                useProperty: property =>
-                  _.contains(this.state.params.expand_fields, property),
-                isPropertyChecked: this.onChangePropertyChecked("expand_fields")
-              })
+            r.div({
+                className: "row"
+              },
+                r.div({
+                  className: "column-6"
+                },
+                  PropertyEntry.create({
+                    class_suffix: "include",
+                    text: r.h3({ }, "Include Fields"),
+                    properties: this.state.resource.properties,
+                    useProperty: property =>
+                      _.contains(this.state.params.include_fields, property),
+                    isPropertyChecked: this.onChangePropertyChecked("include_fields")
+                  })
+                ),
+
+                r.div({
+                  className: "column-6"
+                },
+                  PropertyEntry.create({
+                    class_suffix: "expand",
+                    text: r.h3({ }, "Expand Fields"),
+                    properties: this.state.resource.properties,
+                    useProperty: property =>
+                      _.contains(this.state.params.expand_fields, property),
+                    isPropertyChecked: this.onChangePropertyChecked("expand_fields")
+                  })
+                )
+              ),
+
+            r.div({
+              className: "row"
+            },
+              r.div({
+                className: "column-6"
+              },
+                PaginateEntry.create({
+                  can_paginate: this._canPaginate(),
+                  onPaginateChange: this.onChangePaginateState,
+                  paginate_params: this.state.params.paginate_params,
+                  text: r.h3({ }, "Paginate parameters")
+                })
+              ),
+
+              r.div({
+                className: "column-6"
+              },
+                ParameterEntry.create({
+                  text: r.h3({ }, "Attribute parameters"),
+                  parameters: this.state.action.params,
+                  onParameterChange: this.onChangeParameterState,
+                  workspace: this.state.workspace,
+                  workspaces: this.state.workspaces
+                })
+              )
             ),
-          PaginateEntry.create({
-            can_paginate: this._canPaginate(),
-            onPaginateChange: this.onChangePaginateState,
-            paginate_params: this.state.params.paginate_params,
-            text: "Paginate parameters: "
-          }),
-          ParameterEntry.create({
-            text: "Attribute parameters: ",
-            parameters: this.state.action.params,
-            onParameterChange: this.onChangeParameterState,
-            workspace: this.state.workspace,
-            workspaces: this.state.workspaces
-          }),
-          ExtraParameterEntry.create({
-            text: "Extra parameters: ",
-            syncExtraParameters: this.syncExtraParameters
-          })
+            ExtraParameterEntry.create({
+              text: r.h3({ }, "Extra parameters"),
+              syncExtraParameters: this.syncExtraParameters
+            })
         ),
         r.div({ },
           this._maybeRenderErrorMessage(),
-          r.button({
-            className: "submit-request",
-            disabled: !this._canSubmitRequest(),
-            type: "submit"
-          }, "Submit!")
+          r.p({ },
+            r.button({
+              className: "button submit-request",
+              disabled: !this._canSubmitRequest(),
+              type: "submit"
+            }, "Submit")
+          )
         )
       ]
     });

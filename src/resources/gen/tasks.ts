@@ -8,7 +8,7 @@
 /* tslint:disable:max-line-length */
 var resource = <Resource>{
   "name": "task",
-  "comment": "The _task_ is the basic object around which many operations in Asana are\ncentered. In the Asana application, multiple tasks populate the middle pane\naccording to some view parameters, and the set of selected tasks determines\nthe more detailed information presented in the details pane.\n",
+  "comment": "The task is the basic object around which many operations in Asana are\ncentered. In the Asana application, multiple tasks populate the middle pane\naccording to some view parameters, and the set of selected tasks determines\nthe more detailed information presented in the details pane.\n",
   "properties": [
     {
       "name": "assignee",

@@ -9,5 +9,5 @@ export function run(initial_resource?: string, initial_route?: string): void {
   react.render(Explorer.create({
     initial_resource_string: initial_resource,
     initial_route: initial_route
-  }), document.getElementById("container"));
+  }), document.getElementById("tab-tester"));
 }
