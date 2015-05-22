@@ -80,7 +80,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
 
 module ParameterEntry {
   export interface Props {
-    text: string;
+    text: React.DOMElement<any>;
     parameters: Parameter[];
     onParameterChange:
       (parameter: Parameter) => (event?: React.FormEvent) => void;

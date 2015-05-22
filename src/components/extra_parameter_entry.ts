@@ -116,7 +116,7 @@ module ExtraParameterEntry {
   }
 
   export interface Props {
-    text: string;
+    text: React.DOMElement<any>;
     syncExtraParameters: (parameters: ExtraParameter[]) => void;
   }
 

@@ -6,6 +6,7 @@ import _ = require("lodash");
 import ExtraParameterEntry = require("../../src/components/extra_parameter_entry");
 
 var assert = chai.assert;
+var r = React.DOM;
 var testUtils = React.addons.TestUtils;
 
 describe("ExtraParameterEntryComponent", () => {
@@ -23,7 +24,7 @@ describe("ExtraParameterEntryComponent", () => {
 
     root = testUtils.renderIntoDocument<ExtraParameterEntry>(
       ExtraParameterEntry.create({
-        text: "this is a test",
+        text: r.h3({ }, "this is a test"),
         syncExtraParameters: syncExtraParametersStub
       })
     );
