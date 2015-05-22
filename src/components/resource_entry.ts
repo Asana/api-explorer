@@ -1,5 +1,6 @@
 /// <reference path="../resources/interfaces.ts" />
 import React = require("react");
+import marked = require("marked");
 
 import ResourcesHelpers = require("../resources/helpers");
 
@@ -32,7 +33,9 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
     return r.div({ },
       r.div({ },
         r.h3({ }, "Resource description"),
-        r.p({ }, resource.comment)
+        r.p({ dangerouslySetInnerHTML: {
+          __html: marked(resource.comment, { sanitize: true }) }
+        })
       )
     );
   };

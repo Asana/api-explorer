@@ -34,6 +34,9 @@
     },
     "react/react-addons.d.ts": {
       "commit": "57340eca1e3aac68d59cc981b441da834ca38235"
+    },
+    "marked/marked.d.ts": {
+      "commit": "cfc0247741abbad9d12472cac7ec4a6e97f1f474"
     }
   }
 }

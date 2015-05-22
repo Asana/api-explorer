@@ -1,5 +1,6 @@
 /// <reference path="../resources/interfaces.ts" />
 import React = require("react");
+import marked = require("marked");
 
 import ResourcesHelpers = require("../resources/helpers");
 
@@ -30,7 +31,9 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
   private _renderRouteInfo = () => {
     return r.div({ },
       r.h3({ }, "Route description"),
-      r.p({ }, this.props.action.comment),
+      r.p({ dangerouslySetInnerHTML: {
+        __html: marked(this.props.action.comment, { sanitize: true }) }
+      }),
       r.hr({ }),
       r.h3({ }, "Current request URL"),
       r.p({ },
