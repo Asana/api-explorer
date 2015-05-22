@@ -6,6 +6,7 @@ import _ = require("lodash");
 import PaginateEntry = require("../../src/components/paginate_entry");
 
 var assert = chai.assert;
+var r = React.DOM;
 var testUtils = React.addons.TestUtils;
 
 describe("PaginateEntryComponent", () => {
@@ -37,7 +38,7 @@ describe("PaginateEntryComponent", () => {
             limit: 5,
             offset: "initial value"
           },
-          text: "this is a test"
+          text: r.h3({ }, "this is a test")
         })
       );
       limitInput = testUtils.findRenderedDOMComponentWithClass(
@@ -83,7 +84,7 @@ describe("PaginateEntryComponent", () => {
             limit: 5,
             offset: "initial value"
           },
-          text: "this is a test"
+          text: r.h3({ }, "this is a test")
         })
       );
     });

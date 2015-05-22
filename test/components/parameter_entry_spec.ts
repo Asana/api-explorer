@@ -8,6 +8,7 @@ import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
+var r = React.DOM;
 var testUtils = React.addons.TestUtils;
 
 describe("ParameterEntryComponent", () => {
@@ -29,7 +30,7 @@ describe("ParameterEntryComponent", () => {
 
     root = testUtils.renderIntoDocument<ParameterEntry>(
       ParameterEntry.create({
-        text: "this is a test",
+        text: r.h3({ }, "this is a test"),
         parameters: parameters,
         onParameterChange: onParameterChangeStub,
         workspace: undefined,

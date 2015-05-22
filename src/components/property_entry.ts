@@ -39,7 +39,7 @@ class PropertyEntry extends React.Component<PropertyEntry.Props, {}> {
 module PropertyEntry {
   export interface Props {
     class_suffix: string;
-    text: string;
+    text: React.DOMElement<any>;
     properties: Property[];
     useProperty: (property: string) => boolean;
     isPropertyChecked: (event?: React.FormEvent) => void;

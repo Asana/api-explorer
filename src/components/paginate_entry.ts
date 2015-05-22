@@ -63,7 +63,7 @@ module PaginateEntry {
       limit?: number;
       offset?: string;
     };
-    text: string;
+    text: React.DOMElement<any>;
   }
 }
 export = PaginateEntry;

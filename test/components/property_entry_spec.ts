@@ -8,6 +8,7 @@ import PropertyEntry = require("../../src/components/property_entry");
 import Resources = require("../../src/resources/resources");
 
 var assert = chai.assert;
+var r = React.DOM;
 var testUtils = React.addons.TestUtils;
 
 describe("PropertyEntryComponent", () => {
@@ -32,7 +33,7 @@ describe("PropertyEntryComponent", () => {
     root = testUtils.renderIntoDocument<PropertyEntry>(
       PropertyEntry.create({
         class_suffix: "test",
-        text: "this is a test",
+        text: r.h3({ }, "this is a test"),
         properties: properties,
         isPropertyChecked: isPropertyCheckedStub,
         useProperty: usePropertyStub
