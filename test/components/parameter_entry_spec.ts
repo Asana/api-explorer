@@ -57,7 +57,7 @@ describe("ParameterEntryComponent", () => {
     parameter_inputs.forEach(input => {
       assert.include(
         parameter_names,
-        input.props.children
+        input.props.placeholder
       );
     });
   });

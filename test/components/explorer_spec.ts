@@ -1065,15 +1065,13 @@ describe("ExplorerComponent", () => {
       });
 
       it("should be disabled with non-get request", () => {
-        var other_resource = Resources.Tasks;
+        var post_action = initial_resource.actions[2];
 
-        testUtils.Simulate.change(selectResource, {
-          target: {
-            value: ResourcesHelpers.resourceNameFromResource(other_resource)
-          }
+        testUtils.Simulate.change(selectRoute, {
+          target: {value: post_action.name}
         });
 
-        assert.equal(root.state.resource, other_resource);
+        assert.equal(root.state.action, post_action);
         assert.notEqual(root.state.action.method, "GET");
         assert.isTrue(submitRequest.props.disabled);
 
