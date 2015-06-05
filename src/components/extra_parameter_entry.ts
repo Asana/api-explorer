@@ -18,13 +18,13 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
     };
   }
 
-  private _setStateAndPropagate(new_state: ExtraParameterEntry.State) {
+  private _setStateAndPropagate = (new_state: ExtraParameterEntry.State) => {
     this.setState(new_state);
 
     // Pass new list of extra params to prop function, so we can propagate
     // changes in the parent component.
     this.props.syncExtraParameters(new_state.extra_params);
-  }
+  };
 
   private _renderAddNewExtraParameterLink = () => {
     return r.a({

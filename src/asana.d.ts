@@ -6,17 +6,16 @@ declare module "asana" {
 
   export class Client {
     constructor(dispatcher: Dispatcher, options?: any);
+    dispatcher: Dispatcher;
+    workspaces: resources.Workspaces;
     static create(options?: any): Client;
     useOauth(options?: any): Client;
     authorize(): Promise<Client>;
-    dispatcher: Dispatcher;
-
-    workspaces: resources.Workspaces;
   }
 
   export class Dispatcher {
-    get(path: string, query: any, dispatchOptions: any): Promise<any>;
     authenticator: auth.Authenticator;
+    get(path: string, query: any, dispatchOptions: any): Promise<any>;
     handleUnauthorized(): Promise<any>;
     url(path: string): string;
   }

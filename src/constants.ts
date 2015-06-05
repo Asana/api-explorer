@@ -24,8 +24,7 @@ switch (process.env.CONSTANTS_TYPE) {
   case "gh_pages":
     constant = ghPagesConstants;
     break;
-
-  case "localhost":
+  // case "localhost":
   default:
     constant = localhostConstants;
     break;

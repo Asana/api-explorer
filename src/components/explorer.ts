@@ -96,13 +96,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     }
   }
 
-  _canPaginate = (): boolean => {
-    // TODO: Also can't paginate on users over personal projects domain.
-
-    return this.state.action.collection &&
-      !this.state.action.collection_cannot_paginate;
-  };
-
   /**
    * Authorize the client, if it has expired, and force a re-rendering.
    */
@@ -121,14 +114,14 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
   /**
    * Fetches the user's workspaces via the API and stores response in state.
    */
-  fetchAndStoreWorkspaces() {
+  fetchAndStoreWorkspaces = (): void => {
     this.state.client.workspaces.findAll().then(workspaces => {
       this.setState({
         workspace: workspaces.data[0],
         workspaces: workspaces.data
       });
     });
-  }
+  };
 
   /**
    * Uses the state to return the properly-formatted request parameters.
@@ -403,10 +396,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     return Explorer.UserStateStatus.Okay;
   };
 
-  private _canSubmitRequest = (): boolean => {
-    return this.userStateStatus() === Explorer.UserStateStatus.Okay;
-  };
-
   /**
    * Send a get request to the API using the current state's route, and
    * update the state after receiving a response.
@@ -460,6 +449,31 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       Credentials.storeFromClient(this.state.client);
     });
   };
+
+  render() {
+    return r.div({
+      className: "api-explorer",
+      children: [
+        this._maybeRenderAuthorizationLink(),
+        this._renderRequestEntryForm(),
+        r.hr(),
+        JsonResponse.create({
+          response: this.state.response
+        })
+      ]
+    });
+  }
+
+  private _canPaginate(): boolean {
+    // TODO: Also can't paginate on users over personal projects domain.
+
+    return this.state.action.collection &&
+      !this.state.action.collection_cannot_paginate;
+  }
+
+  private _canSubmitRequest(): boolean {
+    return this.userStateStatus() === Explorer.UserStateStatus.Okay;
+  }
 
   private _resetParams(): Explorer.ParamData {
     var params = Explorer.emptyParams();
@@ -543,63 +557,63 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             r.div({
                 className: "row"
               },
-                r.div({
-                  className: "column-6"
-                },
-                  PropertyEntry.create({
-                    class_suffix: "include",
-                    text: r.h3({ }, "Include Fields"),
-                    properties: this.state.resource.properties,
-                    useProperty: property =>
-                      _.contains(this.state.params.include_fields, property),
-                    isPropertyChecked: this.onChangePropertyChecked("include_fields")
-                  })
-                ),
-
-                r.div({
-                  className: "column-6"
-                },
-                  PropertyEntry.create({
-                    class_suffix: "expand",
-                    text: r.h3({ }, "Expand Fields"),
-                    properties: this.state.resource.properties,
-                    useProperty: property =>
-                      _.contains(this.state.params.expand_fields, property),
-                    isPropertyChecked: this.onChangePropertyChecked("expand_fields")
-                  })
-                )
-              ),
-
-            r.div({
-              className: "row"
-            },
               r.div({
-                className: "column-6"
-              },
-                PaginateEntry.create({
-                  can_paginate: this._canPaginate(),
-                  onPaginateChange: this.onChangePaginateState,
-                  paginate_params: this.state.params.paginate_params,
-                  text: r.h3({ }, "Paginate parameters")
+                  className: "column-6"
+                },
+                PropertyEntry.create({
+                  class_suffix: "include",
+                  text: r.h3({ }, "Include Fields"),
+                  properties: this.state.resource.properties,
+                  useProperty: property =>
+                    _.contains(this.state.params.include_fields, property),
+                  isPropertyChecked: this.onChangePropertyChecked("include_fields")
                 })
               ),
 
               r.div({
-                className: "column-6"
-              },
-                ParameterEntry.create({
-                  text: r.h3({ }, "Attribute parameters"),
-                  parameters: this.state.action.params,
-                  onParameterChange: this.onChangeParameterState,
-                  workspace: this.state.workspace,
-                  workspaces: this.state.workspaces
+                  className: "column-6"
+                },
+                PropertyEntry.create({
+                  class_suffix: "expand",
+                  text: r.h3({ }, "Expand Fields"),
+                  properties: this.state.resource.properties,
+                  useProperty: property =>
+                    _.contains(this.state.params.expand_fields, property),
+                  isPropertyChecked: this.onChangePropertyChecked("expand_fields")
                 })
               )
             ),
-            ExtraParameterEntry.create({
-              text: r.h3({ }, "Extra parameters"),
-              syncExtraParameters: this.syncExtraParameters
-            })
+
+          r.div({
+              className: "row"
+            },
+            r.div({
+                className: "column-6"
+              },
+              PaginateEntry.create({
+                can_paginate: this._canPaginate(),
+                onPaginateChange: this.onChangePaginateState,
+                paginate_params: this.state.params.paginate_params,
+                text: r.h3({ }, "Paginate parameters")
+              })
+            ),
+
+            r.div({
+                className: "column-6"
+              },
+              ParameterEntry.create({
+                text: r.h3({ }, "Attribute parameters"),
+                parameters: this.state.action.params,
+                onParameterChange: this.onChangeParameterState,
+                workspace: this.state.workspace,
+                workspaces: this.state.workspaces
+              })
+            )
+          ),
+          ExtraParameterEntry.create({
+            text: r.h3({ }, "Extra parameters"),
+            syncExtraParameters: this.syncExtraParameters
+          })
         ),
         r.div({ },
           this._maybeRenderErrorMessage(),
@@ -611,20 +625,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
             }, "Submit")
           )
         )
-      ]
-    });
-  }
-
-  render() {
-    return r.div({
-      className: "api-explorer",
-      children: [
-        this._maybeRenderAuthorizationLink(),
-        this._renderRequestEntryForm(),
-        r.hr(),
-        JsonResponse.create({
-          response: this.state.response
-        })
       ]
     });
   }
