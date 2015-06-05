@@ -1,21 +1,39 @@
+# Cache node_modules and typings for future runs. This does make the builds
+# sometimes fail because of a bad cache but usually this is a huge test
+# performance win.
 cache:
   directories:
     - node_modules
     - typings
-language: node_js
-node_js:
-  - '0.10'
-sudo: false
 # Set up github token for higher tsd rate-limits
 before_install:
 - openssl aes-256-cbc -K $encrypted_d04ead2b6c5a_key -iv $encrypted_d04ead2b6c5a_iv
   -in .tsdrc.enc -out .tsdrc -d
-after_success:
-  - git config --global user.email "git@asana.com"
-  - git config --global user.name "Asana"
-  # only publish to gh-pages from the master branch.
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && gulp gh-pages
+# Set up environment variables for tests
 env:
   global:
     # ASANA_GITHUB_TOKEN = ...
     - secure: "DAwDB8TF1HEzqBzVHDR88kAOXOzcHx0AeFaazofh6OGDbxGuIbNWOgv8xXb4F1GScBX26KXwQPcskvP/qWJ49jW91iePcsTAIDtNLgg7UGj/L9eSeKyoHb93l7tah02zZzHjn4vCKjQfMeLAXdYbZf2VX5PM2cRdXlLx24WaqBY="
+    # Use a better mocha reporter for Travis
+    - MOCHA_REPORTER=spec
+# Use the Travis Docker build system which is faster
+sudo: false
+# Specify to use node
+language: node_js
+# Specify the node versions to run on
+node_js:
+  - "0.12"
+# Make sure to have typings before the test
+before_script:
+  - npm run typings
+# Make sure to bundle the application before any deploys
+before_deploy:
+  - npm run bundle
+# Report code coverage to coveralls after successful test runs
+# Push to gh-pages
+after_success:
+  - npm run coveralls
+  - git config --global user.email "git@asana.com"
+  - git config --global user.name "Asana"
+  # only publish to gh-pages from the master branch.
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && gulp gh-pages
