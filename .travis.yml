@@ -29,11 +29,10 @@ before_script:
 # Make sure to bundle the application before any deploys
 before_deploy:
   - npm run bundle
-# Report code coverage to coveralls after successful test runs
 # Push to gh-pages
-after_success:
-  - npm run coveralls
-  - git config --global user.email "git@asana.com"
-  - git config --global user.name "Asana"
-  # only publish to gh-pages from the master branch.
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && gulp gh-pages
+# TODO: Re-enable automatic push to gh-pages
+# after_success:
+#  - git config --global user.email "git@asana.com"
+#  - git config --global user.name "Asana"
+#  # only publish to gh-pages from the master branch.
+#  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && gulp gh-pages
