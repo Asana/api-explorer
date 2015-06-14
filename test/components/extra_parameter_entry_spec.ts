@@ -38,8 +38,8 @@ describe("ExtraParameterEntryComponent", () => {
     sand.restore();
   });
 
-  function _assertNumberOfExtraParams(n: number) {
-    assert.lengthOf(root.state.extra_params, n);
+  function assertNumberOfExtraParams(n: number) {
+    assert.lengthOf(root.state.extraParams, n);
 
     assert.lengthOf(
       testUtils.scryRenderedDOMComponentsWithClass(root, "extra-param-key"),
@@ -56,15 +56,15 @@ describe("ExtraParameterEntryComponent", () => {
   }
 
   it("should initialize with no extra parameter fields", () => {
-    _assertNumberOfExtraParams(0);
+    assertNumberOfExtraParams(0);
   });
 
   it("should add a parameter field after clicking link", () => {
     testUtils.Simulate.click(addExtraParam);
-    _assertNumberOfExtraParams(1);
+    assertNumberOfExtraParams(1);
 
     testUtils.Simulate.click(addExtraParam);
-    _assertNumberOfExtraParams(2);
+    assertNumberOfExtraParams(2);
   });
 
   it("should update state and trigger sync when text is entered", () => {
@@ -88,29 +88,29 @@ describe("ExtraParameterEntryComponent", () => {
         "extra-param-value"
       );
 
-      var unique_key = _.uniqueId();
+      var uniqueKey = _.uniqueId();
       testUtils.Simulate.change(keyInput, {
-        target: { value: unique_key }
+        target: { value: uniqueKey }
       });
       assert.include(
-        root.state.extra_params,
-        { key: unique_key, value: "" }
+        root.state.extraParams,
+        { key: uniqueKey, value: "" }
       );
       sinon.assert.calledWith(
         syncExtraParametersStub,
-        root.state.extra_params);
+        root.state.extraParams);
 
-      var unique_value = _.uniqueId();
+      var uniqueValue = _.uniqueId();
       testUtils.Simulate.change(valueInput, {
-        target: { value: unique_value }
+        target: { value: uniqueValue }
       });
       assert.include(
-        root.state.extra_params,
-        { key: unique_key, value: unique_value }
+        root.state.extraParams,
+        { key: uniqueKey, value: uniqueValue }
       );
       sinon.assert.calledWith(
         syncExtraParametersStub,
-        root.state.extra_params);
+        root.state.extraParams);
     });
   });
 
@@ -144,19 +144,19 @@ describe("ExtraParameterEntryComponent", () => {
     });
 
     // Now, we can remove each of the fields and verify.
-    var extra_params_copy = _.cloneDeep(root.state.extra_params);
-    while (root.state.extra_params.length > 0) {
+    var extraParamsCopy = _.cloneDeep(root.state.extraParams);
+    while (root.state.extraParams.length > 0) {
       var deleteLink = testUtils.findRenderedDOMComponentWithClass(
         extraParams[0],
         "delete-extra-param"
       );
       testUtils.Simulate.click(deleteLink);
 
-      extra_params_copy.shift();
-      assert.deepEqual(root.state.extra_params, extra_params_copy);
+      extraParamsCopy.shift();
+      assert.deepEqual(root.state.extraParams, extraParamsCopy);
       sinon.assert.calledWith(
         syncExtraParametersStub,
-        root.state.extra_params
+        root.state.extraParams
       );
     }
   });

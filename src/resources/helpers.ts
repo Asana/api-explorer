@@ -61,11 +61,11 @@ export function actionFromResourceAndName(resource: Resource, action_name: strin
  * Otherwise, we use the first action in the list.
  */
 export function defaultActionFromResource(resource: Resource): Action {
-  var get_actions = resource.actions.filter(
+  var getActions = resource.actions.filter(
     action => { return action.method === "GET"; }
   );
 
-  return get_actions.length > 0 ? get_actions[0] : resource.actions[0];
+  return getActions.length > 0 ? getActions[0] : resource.actions[0];
 }
 
 /**
@@ -81,8 +81,8 @@ export function defaultActionFromResource(resource: Resource): Action {
 export function pathForAction(action: Action, param_value?: number): string {
   // If there's a placeholder, then replace it with its required param.
   if (action.path.match(/%/g) !== null) {
-    var required_param = _.find(action.params, "required");
-    if (required_param === undefined) {
+    var requiredParam = _.find(action.params, "required");
+    if (requiredParam === undefined) {
       throw new Error("Placeholder in path but there's no required param.");
     }
 
@@ -92,7 +92,7 @@ export function pathForAction(action: Action, param_value?: number): string {
     } else {
       // Use the parameter name as a placeholder in the URL.
       return util.format(
-        action.path.replace("%d", "%s"), ":" + required_param.name);
+        action.path.replace("%d", "%s"), ":" + requiredParam.name);
     }
   }
 

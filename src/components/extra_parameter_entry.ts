@@ -14,16 +14,16 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
   constructor(props: ExtraParameterEntry.Props, context: any) {
     super(props, context);
     this.state = {
-      extra_params: []
+      extraParams: []
     };
   }
 
-  private _setStateAndPropagate = (new_state: ExtraParameterEntry.State) => {
-    this.setState(new_state);
+  private setStateAndPropagate = (newState: ExtraParameterEntry.State) => {
+    this.setState(newState);
 
     // Pass new list of extra params to prop function, so we can propagate
     // changes in the parent component.
-    this.props.syncExtraParameters(new_state.extra_params);
+    this.props.syncExtraParameters(newState.extraParams);
   };
 
   private _renderAddNewExtraParameterLink = () => {
@@ -33,7 +33,7 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
       onClick: (e) => {
         e.preventDefault();
         this.setState(update(this.state, <any>{
-          extra_params: {
+          extraParams: {
             $push: [<ExtraParameterEntry.ExtraParameter>{
               key: "",
               value: ""
@@ -44,22 +44,22 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
     }, "Add new parameter!");
   };
 
-  private _renderExtraParameterInput = (extra_param: ExtraParameterEntry.ExtraParameter, idx: number) => {
-    var id_prefix = "extra_param_" + idx;
+  private renderExtraParameterInput = (extraParam: ExtraParameterEntry.ExtraParameter, idx: number) => {
+    var idPrefix = "extra_param_" + idx;
 
     return r.p({
-      key: id_prefix,
+      key: idPrefix,
       className: "extra-param",
       children: [
         r.input({
           placeholder: "Key",
           type: "text",
-          id: id_prefix + "_key",
+          id: idPrefix + "_key",
           className: "parameter-input extra-param-key",
-          value: this.state.extra_params[idx].key,
+          value: this.state.extraParams[idx].key,
           onChange: (event: React.FormEvent) => {
-            this._setStateAndPropagate(update(this.state, <any>{
-              extra_params: _.object(
+            this.setStateAndPropagate(update(this.state, <any>{
+              extraParams: _.object(
                 [idx.toString()],
                 [{ key: { $set: (<any>event.target).value } }]
               )
@@ -70,12 +70,12 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
         r.input({
           placeholder: "Value",
           type: "text",
-          id: id_prefix + "_value",
+          id: idPrefix + "_value",
           className: "parameter-input extra-param-value",
-          value: this.state.extra_params[idx].value,
+          value: this.state.extraParams[idx].value,
           onChange: (event: React.FormEvent) => {
-            this._setStateAndPropagate(update(this.state, <any>{
-              extra_params: _.object(
+            this.setStateAndPropagate(update(this.state, <any>{
+              extraParams: _.object(
                 [idx.toString()],
                 [{ value: { $set: (<any>event.target).value } }]
               )
@@ -85,8 +85,8 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
         r.span({
           className: "delete-extra-param",
           onClick: () => {
-            this._setStateAndPropagate(update(this.state, <any> {
-              extra_params: {
+            this.setStateAndPropagate(update(this.state, <any> {
+              extraParams: {
                 $splice: [[ idx, 1 ]]
               }
             }));
@@ -101,7 +101,7 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
         className: "parameter-entry",
         children: [
           this.props.text,
-          this.state.extra_params.map(this._renderExtraParameterInput),
+          this.state.extraParams.map(this.renderExtraParameterInput),
           this._renderAddNewExtraParameterLink()
         ]
       }
@@ -121,7 +121,7 @@ module ExtraParameterEntry {
   }
 
   export interface State {
-    extra_params: ExtraParameter[];
+    extraParams: ExtraParameter[];
   }
 }
 

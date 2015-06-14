@@ -1,6 +1,7 @@
 // Type definitions for node-asana
 // Project: https://github.com/asana/node-asana/
 // Note: These type definitions are incomplete; only used sections of the API will be defined.
+/* tslint:disable variable-name */
 
 declare module "asana" {
 

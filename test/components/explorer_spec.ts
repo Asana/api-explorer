@@ -60,32 +60,32 @@ describe("ExplorerComponent", () => {
   describe("initial state", () => {
     it("should set initial routes if found in the resource", () => {
       var resource = Resources.Attachments;
-      var valid_action = resource.actions[1];
+      var validAction = resource.actions[1];
       var explorer = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
-          initial_resource_string:
+          initialResourceString:
             ResourcesHelpers.resourceNameFromResource(resource),
-          initial_route: valid_action.path
+          initialRoute: validAction.path
         })
       );
 
-      assert.equal(explorer.state.action, valid_action);
+      assert.equal(explorer.state.action, validAction);
     });
 
     it("should ignore initial routes if not found in the resource", () => {
-      var invalid_route = "/this/does/not/exist";
+      var invalidRoute = "/this/does/not/exist";
       var resource = Resources.Attachments;
       var explorer = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
-          initial_resource_string:
+          initialResourceString:
             ResourcesHelpers.resourceNameFromResource(resource),
-          initial_route: invalid_route
+          initialRoute: invalidRoute
         })
       );
 
-      assert.notEqual(explorer.state.action.path, invalid_route);
+      assert.notEqual(explorer.state.action.path, invalidRoute);
       assert.include(resource.actions, explorer.state.action);
     });
   });
@@ -252,21 +252,21 @@ describe("ExplorerComponent", () => {
     var selectRoute: React.HTMLComponent;
     var routeEntry: React.HTMLComponent;
 
-    var initial_action: Action;
-    var initial_resource: Resource;
+    var initialAction: Action;
+    var initialResource: Resource;
 
     beforeEach(() => {
       authStateFromClientStub.returns(Credentials.AuthState.Authorized);
 
-      initial_resource = Resources.Attachments;
-      initial_action = initial_resource.actions[0];
+      initialResource = Resources.Attachments;
+      initialAction = initialResource.actions[0];
 
       root = testUtils.renderIntoDocument<Explorer>(
         Explorer.create({
           initialClient: client,
-          initial_route: initial_action.path,
-          initial_resource_string:
-            ResourcesHelpers.resourceNameFromResource(initial_resource)
+          initialRoute: initialAction.path,
+          initialResourceString:
+            ResourcesHelpers.resourceNameFromResource(initialResource)
         })
       );
       selectResource = testUtils.findRenderedDOMComponentWithClass(
@@ -303,59 +303,59 @@ describe("ExplorerComponent", () => {
 
     describe("state updates", () => {
       describe("on no resource change", () => {
-        var old_action: Action;
-        var old_params: any;
+        var oldAction: Action;
+        var oldParams: any;
 
         beforeEach(() => {
-          old_action = root.state.action;
-          old_params = root.state.params;
+          oldAction = root.state.action;
+          oldParams = root.state.params;
 
-          root.state.params.include_fields.push("test");
+          root.state.params.includeFields.push("test");
 
           testUtils.Simulate.change(selectResource, {
             target: {
-              value: ResourcesHelpers.resourceNameFromResource(initial_resource)
+              value: ResourcesHelpers.resourceNameFromResource(initialResource)
             }
           });
         });
 
         it("should not change resource", () => {
-          assert.equal(root.state.resource, initial_resource);
+          assert.equal(root.state.resource, initialResource);
         });
 
         it("should not change action", () => {
-          assert.equal(root.state.action, initial_action);
-          assert.include(initial_resource.actions, root.state.action);
+          assert.equal(root.state.action, initialAction);
+          assert.include(initialResource.actions, root.state.action);
         });
 
         it("should not clear params", () => {
-          assert.deepEqual(root.state.params, old_params);
+          assert.deepEqual(root.state.params, oldParams);
         });
       });
 
       describe("on resource change", () => {
-        var other_resource: Resource;
+        var otherResource: Resource;
 
         beforeEach(() => {
-          other_resource = Resources.Events;
+          otherResource = Resources.Events;
 
-          root.state.params.include_fields.push("test");
+          root.state.params.includeFields.push("test");
 
           testUtils.Simulate.change(selectResource, {
             target: {
-              value: ResourcesHelpers.resourceNameFromResource(other_resource)
+              value: ResourcesHelpers.resourceNameFromResource(otherResource)
             }
           });
         });
 
         it("should update resource", () => {
-          assert.notEqual(initial_resource, other_resource);
-          assert.equal(root.state.resource, other_resource);
+          assert.notEqual(initialResource, otherResource);
+          assert.equal(root.state.resource, otherResource);
         });
 
         it("should reset action to a valid state", () => {
-          assert.notEqual(root.state.action, initial_action);
-          assert.include(other_resource.actions, root.state.action);
+          assert.notEqual(root.state.action, initialAction);
+          assert.include(otherResource.actions, root.state.action);
         });
 
         it("should clear params", () => {
@@ -364,42 +364,42 @@ describe("ExplorerComponent", () => {
       });
 
       describe("on no action change", () => {
-        var old_params: any;
+        var oldParams: any;
 
         beforeEach(() => {
-          old_params = root.state.params;
+          oldParams = root.state.params;
 
-          root.state.params.include_fields.push("test");
+          root.state.params.includeFields.push("test");
 
           testUtils.Simulate.change(selectRoute, {
-            target: {value: initial_action.name}
+            target: {value: initialAction.name}
           });
         });
 
         it("should not change action", () => {
-          assert.equal(root.state.action, initial_action);
-          assert.include(initial_resource.actions, root.state.action);
+          assert.equal(root.state.action, initialAction);
+          assert.include(initialResource.actions, root.state.action);
         });
 
         it("should not clear params", () => {
-          assert.deepEqual(root.state.params, old_params);
+          assert.deepEqual(root.state.params, oldParams);
         });
       });
 
       describe("on action change", () => {
-        var other_action: Action;
+        var otherAction: Action;
 
         beforeEach(() => {
-          other_action = initial_resource.actions[1];
+          otherAction = initialResource.actions[1];
 
           testUtils.Simulate.change(selectRoute, {
-            target: {value: other_action.name}
+            target: {value: otherAction.name}
           });
         });
 
         it("should update action", () => {
-          assert.notEqual(root.state.action, initial_action);
-          assert.include(initial_resource.actions, root.state.action);
+          assert.notEqual(root.state.action, initialAction);
+          assert.include(initialResource.actions, root.state.action);
         });
 
         it("should clear params", () => {
@@ -417,11 +417,11 @@ describe("ExplorerComponent", () => {
           );
 
           // Add an existing field to ensure no data clobbering.
-          root.state.params.include_fields.push("example");
+          root.state.params.includeFields.push("example");
         });
 
         it("should add property to params if previously unchecked", () => {
-          assert.sameMembers(root.state.params.include_fields, ["example"]);
+          assert.sameMembers(root.state.params.includeFields, ["example"]);
 
           var checkbox = propertyCheckboxes[0];
           testUtils.Simulate.change(checkbox, {
@@ -432,7 +432,7 @@ describe("ExplorerComponent", () => {
           });
 
           assert.sameMembers(
-            root.state.params.include_fields,
+            root.state.params.includeFields,
             ["example", checkbox.props.value]
           );
         });
@@ -441,7 +441,7 @@ describe("ExplorerComponent", () => {
           var checkbox = propertyCheckboxes[0];
           var value = React.findDOMNode<HTMLInputElement>(checkbox).value;
 
-          root.state.params.include_fields.push(value);
+          root.state.params.includeFields.push(value);
           testUtils.Simulate.change(checkbox, {
             target: {
               checked: false,
@@ -450,7 +450,7 @@ describe("ExplorerComponent", () => {
           });
 
           assert.sameMembers(
-            root.state.params.include_fields,
+            root.state.params.includeFields,
             ["example"]
           );
         });
@@ -480,15 +480,15 @@ describe("ExplorerComponent", () => {
         });
 
         describe("with required parameters", () => {
-          var param_name: string;
+          var paramName: string;
 
           beforeEach(() => {
             var parameter = _.find(root.state.action.params, "required");
-            param_name = parameter.name;
+            paramName = parameter.name;
 
             // Add an existing parameters to ensure no data clobbering.
-            root.state.params.required_params.example = "data here";
-            root.state.params.optional_params.other_example = "other data";
+            root.state.params.requiredParams.example = "data here";
+            root.state.params.optionalParams.other_example = "other data";
           });
 
           it("should add parameter when previously empty", () => {
@@ -500,23 +500,23 @@ describe("ExplorerComponent", () => {
             });
 
             assert.deepEqual(
-              root.state.params.required_params,
-              _.object(["example", param_name], ["data here", "some content"])
+              root.state.params.requiredParams,
+              _.object(["example", paramName], ["data here", "some content"])
             );
 
             // Other parameters should be unchanged.
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               { other_example: "other data" }
             );
           });
 
           it("should update parameter when previously set", () => {
             // Add some initial data and verify it's there.
-            root.state.params.required_params[param_name] = "old data";
+            root.state.params.requiredParams[paramName] = "old data";
             assert.deepEqual(
-              root.state.params.required_params,
-              _.object(["example", param_name], ["data here", "old data"])
+              root.state.params.requiredParams,
+              _.object(["example", paramName], ["data here", "old data"])
             );
 
             // We now change the data and verify it was updated.
@@ -527,23 +527,23 @@ describe("ExplorerComponent", () => {
               }
             });
             assert.deepEqual(
-              root.state.params.required_params,
-              _.object(["example", param_name], ["data here", "new content!"])
+              root.state.params.requiredParams,
+              _.object(["example", paramName], ["data here", "new content!"])
             );
 
             // Other parameters should be unchanged.
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               { other_example: "other data" }
             );
           });
 
           it("should remove parameter when unset", () => {
             // Add some initial data and verify it's there.
-            root.state.params.required_params[param_name] = "old data";
+            root.state.params.requiredParams[paramName] = "old data";
             assert.deepEqual(
-              root.state.params.required_params,
-              _.object(["example", param_name], ["data here", "old data"])
+              root.state.params.requiredParams,
+              _.object(["example", paramName], ["data here", "old data"])
             );
 
             // We now change the data and verify it was updated.
@@ -554,29 +554,29 @@ describe("ExplorerComponent", () => {
               }
             });
             assert.deepEqual(
-              root.state.params.required_params,
+              root.state.params.requiredParams,
               { example: "data here" }
             );
 
             // Other parameters should be unchanged.
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               { other_example: "other data" }
             );
           });
         });
 
         describe("with optional parameters", () => {
-          var param_name: string;
+          var paramName: string;
 
           beforeEach(() => {
             var parameter = _.find(
               root.state.action.params, param => !param.required);
-            param_name = parameter.name;
+            paramName = parameter.name;
 
             // Add an existing parameters to ensure no data clobbering.
-            root.state.params.required_params.example = "data here";
-            root.state.params.optional_params.other_example = "other data";
+            root.state.params.requiredParams.example = "data here";
+            root.state.params.optionalParams.other_example = "other data";
           });
 
           it("should add parameter when previously empty", () => {
@@ -588,26 +588,26 @@ describe("ExplorerComponent", () => {
             });
 
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               _.object(
-                ["other_example", param_name],
+                ["other_example", paramName],
                 ["other data", "some content"])
             );
 
             // Other parameters should be unchanged.
             assert.deepEqual(
-              root.state.params.required_params,
+              root.state.params.requiredParams,
               { example: "data here" }
             );
           });
 
           it("should update parameter when previously set", () => {
             // Add some initial data and verify it's there.
-            root.state.params.optional_params[param_name] = "old data";
+            root.state.params.optionalParams[paramName] = "old data";
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               _.object(
-                ["other_example", param_name],
+                ["other_example", paramName],
                 ["other data", "old data"])
             );
 
@@ -619,26 +619,26 @@ describe("ExplorerComponent", () => {
               }
             });
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               _.object(
-                ["other_example", param_name],
+                ["other_example", paramName],
                 ["other data", "new content!"])
             );
 
             // Other parameters should be unchanged.
             assert.deepEqual(
-              root.state.params.required_params,
+              root.state.params.requiredParams,
               { example: "data here" }
             );
           });
 
           it("should remove parameter when unset", () => {
             // Add some initial data and verify it's there.
-            root.state.params.optional_params[param_name] = "old data";
+            root.state.params.optionalParams[paramName] = "old data";
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               _.object(
-                ["other_example", param_name], ["other data", "old data"])
+                ["other_example", paramName], ["other data", "old data"])
             );
 
             // We now change the data and verify it was updated.
@@ -649,13 +649,13 @@ describe("ExplorerComponent", () => {
               }
             });
             assert.deepEqual(
-              root.state.params.optional_params,
+              root.state.params.optionalParams,
               { other_example: "other data" }
             );
 
             // Other parameters should be unchanged.
             assert.deepEqual(
-              root.state.params.required_params,
+              root.state.params.requiredParams,
               { example: "data here" }
             );
           });
@@ -663,9 +663,9 @@ describe("ExplorerComponent", () => {
 
         describe("with extra params", () => {
           it("should include only fully-entered parameter fields", () => {
-            assert.deepEqual(root.state.params.extra_params, {});
+            assert.deepEqual(root.state.params.extraParams, {});
 
-            var parameter_list = [
+            var parameterList = [
               { key: "hi", value: "yeah" },
               { key: "", value: "empty" },
               { key: "real", value: "data" },
@@ -673,38 +673,38 @@ describe("ExplorerComponent", () => {
             ];
 
             // Syncing the parameters should add each accordingly.
-            root.syncExtraParameters(parameter_list);
+            root.syncExtraParameters(parameterList);
             assert.deepEqual(
-              root.state.params.extra_params,
+              root.state.params.extraParams,
               { hi: "yeah", real: "data" }
             );
           });
 
           it("should remove parameter fields that no longer exist", () => {
-            var original_parameter_list = [
+            var originalParameterList = [
               { key: "hi", value: "bye" },
               { key: "yeah", value: "data" }
             ];
-            root.syncExtraParameters(original_parameter_list);
+            root.syncExtraParameters(originalParameterList);
             assert.deepEqual(
-              root.state.params.extra_params,
+              root.state.params.extraParams,
               { hi: "bye", yeah: "data" }
             );
 
             // Syncing an altered parameter list should update accordingly.
-            var new_parameter_list = [
+            var newParameterList = [
               { key: "yeah", value: "new_data" }
             ];
-            root.syncExtraParameters(new_parameter_list);
+            root.syncExtraParameters(newParameterList);
             assert.deepEqual(
-              root.state.params.extra_params,
+              root.state.params.extraParams,
               { yeah: "new_data" }
             );
           });
 
           it("should be empty with no parameters", () => {
             root.syncExtraParameters([]);
-            assert.deepEqual(root.state.params.extra_params, {});
+            assert.deepEqual(root.state.params.extraParams, {});
           });
         });
       });
@@ -724,12 +724,12 @@ describe("ExplorerComponent", () => {
             _.contains(param.props.id, "parameter_input_workspace"));
 
           // Add an existing parameters to ensure no data clobbering.
-          root.state.params.required_params.example = "data here";
-          root.state.params.optional_params.other_example = "other data";
+          root.state.params.requiredParams.example = "data here";
+          root.state.params.optionalParams.other_example = "other data";
         });
 
         it("should update workspace when select from dropdown", () => {
-          var old_params = _.cloneDeep(root.state.params);
+          var oldParams = _.cloneDeep(root.state.params);
 
           // Verify initial workspace is chosen.
           assert.equal(root.state.workspace, root.state.workspaces[0]);
@@ -744,11 +744,11 @@ describe("ExplorerComponent", () => {
           assert.equal(root.state.workspace, root.state.workspaces[1]);
 
           // Ensure other params have not changed.
-          assert.deepEqual(root.state.params, old_params);
+          assert.deepEqual(root.state.params, oldParams);
         });
 
         it("should not change state when select same workspace", () => {
-          var old_params = _.cloneDeep(root.state.params);
+          var oldParams = _.cloneDeep(root.state.params);
 
           // We now change the data to the same workspace.
           testUtils.Simulate.change(workspaceParam, {
@@ -758,7 +758,7 @@ describe("ExplorerComponent", () => {
             }
           });
 
-          assert.deepEqual(root.state.params, old_params);
+          assert.deepEqual(root.state.params, oldParams);
         });
       });
 
@@ -781,7 +781,7 @@ describe("ExplorerComponent", () => {
             root, "paginate-entry-offset");
         });
 
-        function _setDataForPaginationParam(
+        function setDataForPaginationParam(
           param: React.HTMLComponent, value: string, opt_validity?: boolean) {
           testUtils.Simulate.change(param, {
             target: {
@@ -793,66 +793,66 @@ describe("ExplorerComponent", () => {
         }
 
         it("should change state after updating limit/offset values", () => {
-          _setDataForPaginationParam(inputOffsetParam, "abc abc");
+          setDataForPaginationParam(inputOffsetParam, "abc abc");
           assert.deepEqual(
-            root.state.params.paginate_params,
+            root.state.params.paginateParams,
             { limit: constants.INITIAL_PAGINATION_LIMIT, offset: "abc abc" }
           );
 
-          _setDataForPaginationParam(inputLimitParam, "123");
+          setDataForPaginationParam(inputLimitParam, "123");
           assert.deepEqual(
-            root.state.params.paginate_params,
+            root.state.params.paginateParams,
             { limit: "123", offset: "abc abc" }
           );
         });
 
         it("should remove parameter when clearing limit/offset input", () => {
-          _setDataForPaginationParam(inputLimitParam, "");
-          assert.deepEqual(root.state.params.paginate_params, {});
+          setDataForPaginationParam(inputLimitParam, "");
+          assert.deepEqual(root.state.params.paginateParams, {});
 
-          _setDataForPaginationParam(inputOffsetParam, "hi there");
+          setDataForPaginationParam(inputOffsetParam, "hi there");
           assert.deepEqual(
-            root.state.params.paginate_params, { offset: "hi there" });
+            root.state.params.paginateParams, { offset: "hi there" });
 
-          _setDataForPaginationParam(inputLimitParam, "123");
+          setDataForPaginationParam(inputLimitParam, "123");
           assert.deepEqual(
-            root.state.params.paginate_params,
+            root.state.params.paginateParams,
             { limit: "123", offset: "hi there" }
           );
 
-          _setDataForPaginationParam(inputOffsetParam, "");
+          setDataForPaginationParam(inputOffsetParam, "");
           assert.deepEqual(
-            root.state.params.paginate_params, { limit: "123" });
+            root.state.params.paginateParams, { limit: "123" });
 
-          _setDataForPaginationParam(inputLimitParam, "");
-          assert.deepEqual(root.state.params.paginate_params, {});
+          setDataForPaginationParam(inputLimitParam, "");
+          assert.deepEqual(root.state.params.paginateParams, {});
         });
 
         it("should not change state if validity check fails", () => {
-          var old_paginate_params = _.cloneDeep(
-            root.state.params.paginate_params);
+          var oldPaginateParams = _.cloneDeep(
+            root.state.params.paginateParams);
 
-          _setDataForPaginationParam(inputLimitParam, "hi there", false);
+          setDataForPaginationParam(inputLimitParam, "hi there", false);
           assert.deepEqual(
-            root.state.params.paginate_params, old_paginate_params);
+            root.state.params.paginateParams, oldPaginateParams);
 
-          _setDataForPaginationParam(inputOffsetParam, "hi there", false);
+          setDataForPaginationParam(inputOffsetParam, "hi there", false);
           assert.deepEqual(
-            root.state.params.paginate_params, old_paginate_params);
+            root.state.params.paginateParams, oldPaginateParams);
         });
       });
     });
 
     describe("on submit", () => {
-      var raw_response_promise: Promise<any>;
-      var json_response: string;
+      var rawResponsePromise: Promise<any>;
+      var jsonResponse: string;
       var getStub: SinonStub;
 
       beforeEach(() => {
-        var raw_response = {data: "{ a: 2 }"};
-        json_response = JSON.stringify(raw_response, undefined, 2);
+        var rawResponse = {data: "{ a: 2 }"};
+        jsonResponse = JSON.stringify(rawResponse, undefined, 2);
         getStub = sand.stub(client.dispatcher, "get", () => {
-          return raw_response_promise = Promise.resolve(raw_response);
+          return rawResponsePromise = Promise.resolve(rawResponse);
         });
 
         // For these tests, we'll bypass the check for allowable submission.
@@ -861,19 +861,19 @@ describe("ExplorerComponent", () => {
       });
 
       it("should display the submitted route URL", (cb) => {
-        var required_param = _.find(initial_action.params, "required");
+        var requiredParam = _.find(initialAction.params, "required");
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         // The path with no parameters should use a placeholder.
-        var action_path =
-          initial_action.path.replace("%d", ":" + required_param.name);
+        var actionPath =
+          initialAction.path.replace("%d", ":" + requiredParam.name);
 
-        raw_response_promise.then(function () {
+        rawResponsePromise.then(function () {
           assert.include(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-info")).textContent,
-            action_path
+            actionPath
           );
 
           cb();
@@ -881,29 +881,29 @@ describe("ExplorerComponent", () => {
       });
 
       it("should display the submitted route URL with parameters", (cb) => {
-        var required_param = _.find(initial_action.params, "required");
+        var requiredParam = _.find(initialAction.params, "required");
 
         root.state.params = {
-          expand_fields: ["test"],
-          include_fields: ["other", "this"],
-          required_params: _.object([required_param.name], ["123"]),
-          optional_params: {abc: 456},
-          extra_params: {test: "hi"},
-          paginate_params: {}
+          expandFields: ["test"],
+          includeFields: ["other", "this"],
+          requiredParams: _.object([requiredParam.name], ["123"]),
+          optionalParams: {abc: 456},
+          extraParams: {test: "hi"},
+          paginateParams: {}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         // The path should include all the params initialized above.
-        var action_path =
-          initial_action.path.replace(/%d/, "123") +
+        var actionPath =
+          initialAction.path.replace(/%d/, "123") +
           "?opt_expand=test&opt_fields=other,this&abc=456&test=hi";
 
-        raw_response_promise.then(function () {
+        rawResponsePromise.then(function () {
           assert.include(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-info")).textContent,
-            action_path
+            actionPath
           );
 
           cb();
@@ -913,11 +913,11 @@ describe("ExplorerComponent", () => {
       it("should display the current route method", (cb) => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        raw_response_promise.then(function () {
+        rawResponsePromise.then(function () {
           assert.include(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-info")).textContent,
-            initial_action.method
+            initialAction.method
           );
 
           cb();
@@ -927,40 +927,40 @@ describe("ExplorerComponent", () => {
       it("should make a GET request with no parameters", (cb) => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        raw_response_promise.then(function () {
+        rawResponsePromise.then(function () {
           sinon.assert.calledWith(
             getStub,
-            ResourcesHelpers.pathForAction(initial_action),
+            ResourcesHelpers.pathForAction(initialAction),
             {}
           );
 
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-block")).textContent,
-            json_response);
+            jsonResponse);
 
           cb();
         }).catch(cb);
       });
 
       it("should make a GET request with parameters", (cb) => {
-        var required_param = _.find(initial_action.params, "required");
+        var requiredParam = _.find(initialAction.params, "required");
 
         root.state.params = {
-          expand_fields: ["test"],
-          include_fields: ["other", "this"],
-          required_params: _.object([required_param.name], ["123"]),
-          optional_params: {abc: 456},
-          extra_params: {test: "hi"},
-          paginate_params: {}
+          expandFields: ["test"],
+          includeFields: ["other", "this"],
+          requiredParams: _.object([requiredParam.name], ["123"]),
+          optionalParams: {abc: 456},
+          extraParams: {test: "hi"},
+          paginateParams: {}
         };
 
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        raw_response_promise.then(function () {
+        rawResponsePromise.then(function () {
           sinon.assert.calledWith(
             getStub,
-            initial_action.path.replace(/%d/, "123"),
+            initialAction.path.replace(/%d/, "123"),
             {
               opt_expand: "test",
               opt_fields: "other,this",
@@ -972,56 +972,56 @@ describe("ExplorerComponent", () => {
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-block")).textContent,
-            json_response);
+            jsonResponse);
 
           cb();
         }).catch(cb);
       });
 
       it("should make the correct request after changing resource", (cb) => {
-        var other_resource = Resources.Events;
-        var other_action = other_resource.actions[0];
+        var otherResource = Resources.Events;
+        var otherAction = otherResource.actions[0];
 
         // We change the resource, which in-turn will change the route.
         testUtils.Simulate.change(selectResource, {
           target: {
-            value: ResourcesHelpers.resourceNameFromResource(other_resource)
+            value: ResourcesHelpers.resourceNameFromResource(otherResource)
           }
         });
 
         // Clicking the link should send request with the correct route.
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        raw_response_promise.then(function () {
-          sinon.assert.calledWith(getStub, other_action.path);
+        rawResponsePromise.then(function () {
+          sinon.assert.calledWith(getStub, otherAction.path);
 
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-block")).textContent,
-            json_response);
+            jsonResponse);
 
           cb();
         }).catch(cb);
       });
 
       it("should make the correct request after changing route", (cb) => {
-        var other_action = initial_resource.actions[1];
+        var otherAction = initialResource.actions[1];
 
         testUtils.Simulate.change(selectRoute, {
-          target: {value: other_action.name}
+          target: {value: otherAction.name}
         });
 
         // Clicking the link should send request with the correct route.
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
-        raw_response_promise.then(function () {
+        rawResponsePromise.then(function () {
           sinon.assert.calledWith(
-            getStub, ResourcesHelpers.pathForAction(other_action));
+            getStub, ResourcesHelpers.pathForAction(otherAction));
 
           assert.equal(
             React.findDOMNode(testUtils.findRenderedDOMComponentWithClass(
               root, "json-response-block")).textContent,
-            json_response);
+            jsonResponse);
 
           cb();
         }).catch(cb);
@@ -1065,13 +1065,13 @@ describe("ExplorerComponent", () => {
       });
 
       it("should be disabled with non-get request", () => {
-        var post_action = initial_resource.actions[2];
+        var postAction = initialResource.actions[2];
 
         testUtils.Simulate.change(selectRoute, {
-          target: {value: post_action.name}
+          target: {value: postAction.name}
         });
 
-        assert.equal(root.state.action, post_action);
+        assert.equal(root.state.action, postAction);
         assert.notEqual(root.state.action.method, "GET");
         assert.isTrue(submitRequest.props.disabled);
 

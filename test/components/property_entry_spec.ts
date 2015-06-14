@@ -32,7 +32,7 @@ describe("PropertyEntryComponent", () => {
 
     root = testUtils.renderIntoDocument<PropertyEntry>(
       PropertyEntry.create({
-        class_suffix: "test",
+        classSuffix: "test",
         text: r.h3({ }, "this is a test"),
         properties: properties,
         isPropertyChecked: isPropertyCheckedStub,
@@ -50,12 +50,12 @@ describe("PropertyEntryComponent", () => {
   });
 
   it("should contain a checkbox for each property", () => {
-    var property_names = _.pluck(properties, "name");
+    var propertyNames = _.pluck(properties, "name");
 
     assert.equal(checkboxes.length, properties.length);
     checkboxes.forEach(checkbox => {
       assert.include(
-        property_names,
+        propertyNames,
         (React.findDOMNode<HTMLInputElement>(checkbox)).value
       );
     });
@@ -69,10 +69,10 @@ describe("PropertyEntryComponent", () => {
 
   it("should trigger onChange property on each check action", () => {
     checkboxes.forEach(checkbox => {
-      var checkbox_node = React.findDOMNode<HTMLInputElement>(checkbox);
+      var checkboxNode = React.findDOMNode<HTMLInputElement>(checkbox);
 
       testUtils.Simulate.change(checkbox, {
-        checked: !checkbox_node.checked
+        checked: !checkboxNode.checked
       });
     });
     sinon.assert.callCount(isPropertyCheckedStub, properties.length);

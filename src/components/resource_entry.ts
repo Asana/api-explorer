@@ -12,7 +12,7 @@ var r = React.DOM;
 class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
   static create = React.createFactory(ResourceEntry);
 
-  private _renderSelectResource = () => {
+  private renderSelectResource = () => {
     return r.p({ },
         r.select({
         className: "select-resource",
@@ -27,7 +27,7 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
     );
   };
 
-  private _renderResourceInfo = () => {
+  private renderResourceInfo = () => {
     var resource = this.props.resource;
 
     return r.div({ },
@@ -42,8 +42,8 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
 
   render() {
     return r.div({ },
-      this._renderSelectResource(),
-      this._renderResourceInfo()
+      this.renderSelectResource(),
+      this.renderResourceInfo()
     );
   }
 }

@@ -1,3 +1,4 @@
+/* tslint:disable variable-name */
 interface Action {
   name: string;
   method: string;

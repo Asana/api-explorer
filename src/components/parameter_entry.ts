@@ -13,7 +13,7 @@ var r = React.DOM;
 class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
   static create = React.createFactory(ParameterEntry);
 
-  private _useWorkspaceDropdown = (parameter: Parameter) => {
+  private useWorkspaceDropdown = (parameter: Parameter) => {
     // Ensure workspaces have loaded successfully.
     if (this.props.workspaces === undefined) {
       return false;
@@ -22,7 +22,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
      return parameter.name === "workspace" || parameter.name === "organization";
   };
 
-  private _renderParameterInput = (parameter: Parameter) => {
+  private renderParameterInput = (parameter: Parameter) => {
     var classes = cx({
       "parameter-input": true,
       "required-param": parameter.required
@@ -30,7 +30,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
     var id = "parameter_input_" + parameter.name;
 
     // We pre-fetch workspaces, so show a dropdown instead.
-    if (this._useWorkspaceDropdown(parameter)) {
+    if (this.useWorkspaceDropdown(parameter)) {
       return r.span({ key: parameter.name },
         r.label({ },
           "Workspace"
@@ -71,7 +71,7 @@ class ParameterEntry extends React.Component<ParameterEntry.Props, {}> {
           r.div({
             className: "parameter-inputs"
           }, this.props.parameters === undefined ? "" :
-            this.props.parameters.map(this._renderParameterInput))
+            this.props.parameters.map(this.renderParameterInput))
         ]
       }
     );
