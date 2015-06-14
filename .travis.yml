@@ -6,9 +6,10 @@ cache:
     - node_modules
     - typings
 # Set up github token for higher tsd rate-limits
-before_install:
-- openssl aes-256-cbc -K $encrypted_d04ead2b6c5a_key -iv $encrypted_d04ead2b6c5a_iv
-  -in .tsdrc.enc -out .tsdrc -d
+# TODO: Fix the encrypted token and uncomment this.
+#before_install:
+#- openssl aes-256-cbc -K $encrypted_d04ead2b6c5a_key -iv $encrypted_d04ead2b6c5a_iv
+#  -in .tsdrc.enc -out .tsdrc -d
 # Set up environment variables for tests
 env:
   global:
@@ -26,9 +27,8 @@ node_js:
 # Make sure to have typings before the test
 before_script:
   - npm run typings
-# Make sure to bundle the application before any deploys
 before_deploy:
-  - npm run bundle
+  - npm run web
 # Push to gh-pages
 # TODO: Re-enable automatic push to gh-pages
 # after_success:
