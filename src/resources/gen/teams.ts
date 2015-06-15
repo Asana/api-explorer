@@ -8,7 +8,7 @@
 /* tslint:disable:max-line-length */
 var resource = <Resource>{
   "name": "team",
-  "comment": "A team is used to group related projects and people together within an\norganization. Each project in an organization is associated with a team.\n",
+  "comment": "A _team_ is used to group related projects and people together within an\norganization. Each project in an organization is associated with a team.\n",
   "properties": [
     {
       "name": "id",

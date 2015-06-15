@@ -8,7 +8,7 @@
 /* tslint:disable:max-line-length */
 var resource = <Resource>{
   "name": "attachment",
-  "comment": "An attachment object represents any file attached to a task in Asana,\nwhether it's an uploaded file or one associated via a third-party service\nsuch as Dropbox or Google Drive.\n",
+  "comment": "An _attachment_ object represents any file attached to a task in Asana,\nwhether it's an uploaded file or one associated via a third-party service\nsuch as Dropbox or Google Drive.\n",
   "properties": [
     {
       "name": "id",

@@ -8,7 +8,7 @@
 /* tslint:disable:max-line-length */
 var resource = <Resource>{
   "name": "project",
-  "comment": "A project represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
+  "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
   "properties": [
     {
       "name": "id",
