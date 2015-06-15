@@ -1,13 +1,10 @@
 # api-explorer [![Build Status][travis-image]][travis-url]
-React component to explore the Asana API
 
-# Background
 The Asana Api Explorer is a React component that was built to allow one to explore the Asana Api. It is built in typescript with React to allow easy integration with the [Asana Developers Site](https://asana.com/developers/api-reference/), and uses the [node.js asana client](https://github.com/Asana/node-asana). To populate the API Explorer, we use metadata from the [asana-api-meta](https://github.com/Asana/asana-api-meta) repository, which contains structural information of the various resources and endpoints in the API.
 
-You may notice that we avoid using the convenience methods provided by the node.js client (e.g. calling `client.users.me()`), in favor of explicit GET requests with the dispatcher (`dispatcher.get(route, params, null)`). This allows us to consistently cover all endpoint and parameter permutations across the API.
+We avoid using the convenience methods provided by the node.js client (e.g. `client.users.me()`), in favor of explicit GET requests with the dispatcher (`dispatcher.get('/users/me', params, null)`). This allows us to consistently cover all endpoint and parameter permutations across the API instead of mixing the two styles throughout.
 
 # Setup
-## Installiation
 ### Node
 If you do not have Node, run the following commands
 
@@ -42,7 +39,8 @@ cd dist && python -m SimpleHTTPServer 8338
 ```
 
 ## Testing locally
-To run the test suite locally, just run `npm run test`. This is automatically run using [travis-ci](https://travis-ci.org/Asana/api-explorer) on each commit.
+To run the test suite locally, just run `npm run test`.
+
 
 ## Updating resource metadata
 
