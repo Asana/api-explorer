@@ -1,0 +1,45 @@
+{
+    "version": "1.5.0-alpha",
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "files": [
+        "./asana.d.ts",
+        "./components/explorer.ts",
+        "./components/extra_parameter_entry.ts",
+        "./components/json_response.ts",
+        "./components/paginate_entry.ts",
+        "./components/parameter_entry.ts",
+        "./components/property_entry.ts",
+        "./components/resource_entry.ts",
+        "./components/route_entry.ts",
+        "./constants.ts",
+        "./credentials.ts",
+        "./explorer.ts",
+        "./index.ts",
+        "./receiver.ts",
+        "./resources/gen/attachments.ts",
+        "./resources/gen/events.ts",
+        "./resources/gen/projects.ts",
+        "./resources/gen/stories.ts",
+        "./resources/gen/tags.ts",
+        "./resources/gen/tasks.ts",
+        "./resources/gen/teams.ts",
+        "./resources/gen/users.ts",
+        "./resources/gen/workspaces.ts",
+        "./resources/helpers.ts",
+        "./resources/interfaces.ts",
+        "./resources/resources.ts"
+    ]
+}
