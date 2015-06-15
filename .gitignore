@@ -32,3 +32,11 @@ build
 *.d.ts
 *.js
 typings
+
+# Vim
+*.sw[op]
+
+.DS_Store
+
+# TypeScript
+tsconfig.json
