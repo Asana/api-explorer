@@ -8,7 +8,7 @@ interface BaseConstants {
 var ghPagesConstants: BaseConstants = {
   LOCALSTORAGE_KEY: "api_tester_credentials",
   CLIENT_ID: "29147353239426",
-  REDIRECT_URI: "https://asana.github.io/node-asana-tester/popup_receiver.html",
+  REDIRECT_URI: "https://asana.github.io/api-explorer/popup_receiver.html",
   INITIAL_PAGINATION_LIMIT: 10
 };
 

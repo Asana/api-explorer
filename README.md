@@ -1,5 +1,5 @@
-# node-asana-tester [![Build Status][travis-image]][travis-url] 
-Library for use with the asana developers API tester
+# api-explorer [![Build Status][travis-image]][travis-url]
+Library for use with the asana developers API explorer
 
-[travis-url]: http://travis-ci.org/Asana/node-asana-tester
-[travis-image]: https://travis-ci.org/Asana/node-asana-tester.svg?branch=master
+[travis-url]: http://travis-ci.org/Asana/api-explorer
+[travis-image]: https://travis-ci.org/Asana/api-explorer.svg?branch=master
