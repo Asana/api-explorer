@@ -24,9 +24,9 @@ describe("JsonResponseComponent", () => {
     props = props || {
       response: <JsonResponse.ResponseData>{
         action: undefined,
-        raw_response: undefined,
+        rawResponse: undefined,
         route: undefined,
-        route_url: undefined
+        routeUrl: undefined
       }
     };
 
@@ -61,19 +61,19 @@ describe("JsonResponseComponent", () => {
     var action = Resources.Attachments.actions[0];
 
     // Set the props to have a non-empty response.
-    var raw_response = { error: { again: 2 } };
+    var rawResponse = { error: { again: 2 } };
     renderWithProps({
         response: {
           action: action,
           error: "something",
-          raw_response: raw_response,
+          rawResponse: rawResponse,
           route: action.path,
-          route_url: "https://app.asana.com/api/1.0/" + action.path
+          routeUrl: "https://app.asana.com/api/1.0/" + action.path
         }
       });
 
     // We should stringify a non-empty string.
-    sinon.assert.calledWith(stringifySpy, raw_response);
+    sinon.assert.calledWith(stringifySpy, rawResponse);
 
     // Verify the DOM for the json response block.
     var node = React.findDOMNode<HTMLElement>(responseBlock);
@@ -82,7 +82,7 @@ describe("JsonResponseComponent", () => {
     assert.equal(node.childNodes[0].nodeName, "CODE");
     assert.equal(
       node.childNodes[0].textContent,
-      JSON.stringify(raw_response, undefined, 2)
+      JSON.stringify(rawResponse, undefined, 2)
     );
 
     // Should contain error class for styling.
@@ -93,28 +93,28 @@ describe("JsonResponseComponent", () => {
       root,
       "json-response-info"
     );
-    var text_content = React.findDOMNode(responseInfo).textContent;
-    assert.include(text_content, action.method);
-    assert.include(text_content, action.path);
+    var textContent = React.findDOMNode(responseInfo).textContent;
+    assert.include(textContent, action.method);
+    assert.include(textContent, action.path);
   });
 
   it("should show non-empty json response after updating props", () => {
     var action = Resources.Attachments.actions[0];
 
     // Set the props to have a non-empty response.
-    var raw_response = { test: { again: 2 } };
+    var rawResponse = { test: { again: 2 } };
     renderWithProps({
       response: {
         action: action,
         params: { },
-        raw_response: raw_response,
+        rawResponse: rawResponse,
         route: action.path,
-        route_url: "https://app.asana.com/api/1.0/" + action.path
+        routeUrl: "https://app.asana.com/api/1.0/" + action.path
       }
     });
 
     // We should stringify a non-empty string.
-    sinon.assert.calledWith(stringifySpy, raw_response);
+    sinon.assert.calledWith(stringifySpy, rawResponse);
 
     // Verify the DOM for the json response block.
     var node = React.findDOMNode(responseBlock);
@@ -123,7 +123,7 @@ describe("JsonResponseComponent", () => {
     assert.equal(node.childNodes[0].nodeName, "CODE");
     assert.equal(
       node.childNodes[0].textContent,
-      JSON.stringify(raw_response, undefined, 2)
+      JSON.stringify(rawResponse, undefined, 2)
     );
 
     // Verify the DOM for the response header info.

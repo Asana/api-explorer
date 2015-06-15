@@ -13,7 +13,7 @@ var testUtils = React.addons.TestUtils;
 describe("ResourceEntryComponent", () => {
   var sand: SinonSandbox;
 
-  var initial_resource: Resource;
+  var initialResource: Resource;
 
   var onResourceChangeStub: SinonStub;
 
@@ -23,13 +23,13 @@ describe("ResourceEntryComponent", () => {
   beforeEach(() => {
     sand = sinon.sandbox.create();
 
-    initial_resource = Resources.Events;
+    initialResource = Resources.Events;
 
     onResourceChangeStub = sand.stub();
 
     root = testUtils.renderIntoDocument<ResourceEntry>(
       ResourceEntry.create({
-        resource: initial_resource,
+        resource: initialResource,
         onResourceChange: onResourceChangeStub
       })
     );
@@ -46,16 +46,16 @@ describe("ResourceEntryComponent", () => {
   it("should select the current resource", () => {
     assert.include(
       React.findDOMNode<HTMLInputElement>(selectResource).value,
-      ResourcesHelpers.resourceNameFromResource(initial_resource)
+      ResourcesHelpers.resourceNameFromResource(initialResource)
     );
   });
 
   it("should contain dropdown with other resources", () => {
     var children = React.findDOMNode(selectResource).childNodes;
-    var resource_names = ResourcesHelpers.names();
+    var resourceNames = ResourcesHelpers.names();
 
-    assert.equal(children.length, resource_names.length);
-    resource_names.forEach((resource_name, idx) => {
+    assert.equal(children.length, resourceNames.length);
+    resourceNames.forEach((resource_name, idx) => {
       assert.equal(
         (<HTMLOptionElement>children.item(idx)).value,
         resource_name
@@ -64,10 +64,10 @@ describe("ResourceEntryComponent", () => {
   });
 
   it("should trigger onResourceChange property on resource change", () => {
-    var other_resource = Resources.Attachments;
+    var otherResource = Resources.Attachments;
 
     testUtils.Simulate.change(selectResource, {
-      target: { value: other_resource }
+      target: { value: otherResource }
     });
     sinon.assert.called(onResourceChangeStub);
   });

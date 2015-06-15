@@ -9,12 +9,12 @@ var r = React.DOM;
 class PropertyEntry extends React.Component<PropertyEntry.Props, {}> {
   static create = React.createFactory(PropertyEntry);
 
-  private _renderPropertyCheckbox = (property: Property) => {
+  private renderPropertyCheckbox = (property: Property) => {
     return r.span({ key: property.name },
       r.input({
         type: "checkbox",
         id: "property_checkbox_" + property.name,
-        className: "property-checkbox-" + this.props.class_suffix,
+        className: "property-checkbox-" + this.props.classSuffix,
         checked: this.props.useProperty(property.name),
         onChange: this.props.isPropertyChecked,
         value: property.name
@@ -24,12 +24,12 @@ class PropertyEntry extends React.Component<PropertyEntry.Props, {}> {
 
   render() {
     return r.p({
-        className: "property-entry-" + this.props.class_suffix,
+        className: "property-entry-" + this.props.classSuffix,
         children: [
           this.props.text,
           r.span({
-            className: "property-checkboxes-" + this.props.class_suffix
-          }, this.props.properties.map(this._renderPropertyCheckbox))
+            className: "property-checkboxes-" + this.props.classSuffix
+          }, this.props.properties.map(this.renderPropertyCheckbox))
         ]
       }
     );
@@ -38,7 +38,7 @@ class PropertyEntry extends React.Component<PropertyEntry.Props, {}> {
 
 module PropertyEntry {
   export interface Props {
-    class_suffix: string;
+    classSuffix: string;
     text: React.DOMElement<any>;
     properties: Property[];
     useProperty: (property: string) => boolean;

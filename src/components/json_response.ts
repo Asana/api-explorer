@@ -11,7 +11,7 @@ var r = React.DOM;
 class JsonResponse extends React.Component<JsonResponse.Props, {}> {
   static create = React.createFactory(JsonResponse);
 
-  private _renderResponseHeaderInfo = () => {
+  private renderResponseHeaderInfo = () => {
     var action = this.props.response.action;
 
     return action === undefined ? null :
@@ -22,7 +22,7 @@ class JsonResponse extends React.Component<JsonResponse.Props, {}> {
           action.method !== "GET" ? "" :
             r.a({
               className: "raw-route-link",
-              href: this.props.response.route_url,
+              href: this.props.response.routeUrl,
               target: "_blank"
             }, r.small({ }, " (open raw response)"))
         ]
@@ -30,23 +30,23 @@ class JsonResponse extends React.Component<JsonResponse.Props, {}> {
   };
 
   render() {
-    var raw_response = this.props.response.raw_response;
+    var rawResponse = this.props.response.rawResponse;
 
-    var json_string = raw_response === undefined ? null :
-      JSON.stringify(raw_response, undefined, 2);
+    var jsonString = rawResponse === undefined ? null :
+      JSON.stringify(rawResponse, undefined, 2);
 
     return r.div({ },
-      this._renderResponseHeaderInfo(),
+      this.renderResponseHeaderInfo(),
       r.pre({
         className: cx({
             "json-response-block": true,
             "json-error": this.props.response.error !== undefined,
-            "json-loading": this.props.response.is_loading
+            "json-loading": this.props.response.isLoading
           }),
         children: [
           r.code({
             className: "json"
-          }, json_string)
+          }, jsonString)
         ]
       })
     );
@@ -61,10 +61,10 @@ module JsonResponse {
   export interface ResponseData {
     action: Action;
     error?: any;
-    is_loading?: boolean;
-    raw_response?: any;
+    isLoading?: boolean;
+    rawResponse?: any;
     route: string;
-    route_url: string;
+    routeUrl: string;
   }
 
   export interface Props {

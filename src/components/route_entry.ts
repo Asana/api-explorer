@@ -12,7 +12,7 @@ var r = React.DOM;
 class RouteEntry extends React.Component<RouteEntry.Props, {}> {
   static create = React.createFactory(RouteEntry);
 
-  private _renderSelectRoute = () => {
+  private renderSelectRoute = () => {
     return r.p({ },
       r.select({
         className: "select-route",
@@ -28,7 +28,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
     );
   };
 
-  private _renderRouteInfo = () => {
+  private renderRouteInfo = () => {
     return r.div({ },
       r.h3({ }, "Route description"),
       r.p({ dangerouslySetInnerHTML: {
@@ -38,7 +38,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
       r.h3({ }, "Current request URL"),
       r.p({ },
         r.pre({ },
-          r.code({ }, this.props.action.method + " " + this.props.current_request_url)
+          r.code({ }, this.props.action.method + " " + this.props.currentRequestUrl)
         )
       ),
       r.hr({ })
@@ -50,8 +50,8 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
       className: "route-entry",
       children: [
         r.hr({ }),
-        this._renderSelectRoute(),
-        this._renderRouteInfo()
+        this.renderSelectRoute(),
+        this.renderRouteInfo()
       ]
     });
   }
@@ -60,7 +60,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
 module RouteEntry {
   export interface Props {
     action: Action;
-    current_request_url: string;
+    currentRequestUrl: string;
     onActionChange: (event?: React.FormEvent) => void;
     resource: Resource;
   }

@@ -32,8 +32,8 @@ export function authStateFromClient(client: Asana.Client): AuthState {
   }
 
   // If the credentials have expired, then mark as expired.
-  var expiry_timestamp = credentials.expiry_timestamp;
-  if (!expiry_timestamp || expiry_timestamp - Date.now() < EXPIRY_BUFFER_MS) {
+  var expiryTimestamp = credentials.expiry_timestamp;
+  if (!expiryTimestamp || expiryTimestamp - Date.now() < EXPIRY_BUFFER_MS) {
     return AuthState.Expired;
   }
 

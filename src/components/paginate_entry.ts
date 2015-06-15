@@ -8,12 +8,12 @@ var r = React.DOM;
 class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
   static create = React.createFactory(PaginateEntry);
 
-  private _renderPaginateInputs = () => {
+  private renderPaginateInputs = () => {
     // If the values are not set, or 0, display empty string.
-    var limit_value = !this.props.paginate_params.limit ?
-      "" : this.props.paginate_params.limit.toString();
-    var offset_value = !this.props.paginate_params.offset ?
-      "" : this.props.paginate_params.offset;
+    var limitValue = !this.props.paginateParams.limit ?
+      "" : this.props.paginateParams.limit.toString();
+    var offsetValue = !this.props.paginateParams.offset ?
+      "" : this.props.paginateParams.offset;
 
     return r.span({},
       r.label({ },
@@ -25,7 +25,7 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
         min: "0",
         onChange: this.props.onPaginateChange("limit"),
         placeholder: "Limit",
-        value: limit_value
+        value: limitValue
       }),
       r.label({ },
         "Offset"
@@ -35,7 +35,7 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
         className: "paginate-entry-offset",
         onChange: this.props.onPaginateChange("offset"),
         placeholder: "Offset",
-        value: offset_value
+        value: offsetValue
       })
     );
   };
@@ -45,8 +45,8 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
         className: "paginate-entry",
         children: [
           this.props.text,
-          this.props.can_paginate ?
-            this._renderPaginateInputs() :
+          this.props.canPaginate ?
+            this.renderPaginateInputs() :
             r.small({ }, "Pagination is not available on this route.")
         ]
       }
@@ -56,10 +56,10 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
 
 module PaginateEntry {
   export interface Props {
-    can_paginate: boolean;
+    canPaginate: boolean;
     onPaginateChange: (limit_or_offset: string) =>
       (event?: React.FormEvent) => void;
-    paginate_params: {
+    paginateParams: {
       limit?: number;
       offset?: string;
     };

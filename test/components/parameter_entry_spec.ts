@@ -48,16 +48,16 @@ describe("ParameterEntryComponent", () => {
   });
 
   it("should contain an input for each parameter", () => {
-    var parameter_names = _.pluck(parameters, "name");
+    var parameterNames = _.pluck(parameters, "name");
 
     // Filter out the extra-param for this test.
-    var parameter_inputs = _.filter(
+    var parameterInputs = _.filter(
       inputs, input => !_.contains(input.props.className, "extra-param"));
 
-    parameter_inputs.forEach(input => {
+    parameterInputs.forEach(input => {
       assert.include(
-        parameter_names,
-        input.props.children
+        parameterNames,
+        input.props.placeholder
       );
     });
   });

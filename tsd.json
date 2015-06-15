@@ -1,6 +1,6 @@
 {
   "version": "v4",
-  "repo": "asana/DefinitelyTyped",
+  "repo": "Asana/DefinitelyTyped",
   "ref": "master",
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
@@ -9,10 +9,13 @@
       "commit": "016db435a6d07149b825d2f2b0bf2f639cff3986"
     },
     "mocha/mocha.d.ts": {
-      "commit": "016db435a6d07149b825d2f2b0bf2f639cff3986"
+      "commit": "66d8808c98856feae7d5a2d5acfc955110fb126d"
+    },
+    "node/node.d.ts": {
+      "commit": "66d8808c98856feae7d5a2d5acfc955110fb126d"
     },
     "sinon/sinon.d.ts": {
-      "commit": "016db435a6d07149b825d2f2b0bf2f639cff3986"
+      "commit": "66d8808c98856feae7d5a2d5acfc955110fb126d"
     },
     "bluebird/bluebird.d.ts": {
       "commit": "01ce3ccf7f071514ff5057ef32a4550bf0b81dfe"
@@ -22,9 +25,6 @@
     },
     "jsdom/jsdom.d.ts": {
       "commit": "84db5f1b5934ab9048185e784a34c545f1d705af"
-    },
-    "node/node.d.ts": {
-      "commit": "0acdbea7fda268fafae18a061070c7544b0596b9"
     },
     "lodash/lodash.d.ts": {
       "commit": "3882d337bb0808cde9fe4c08012508a48c135482"
@@ -36,7 +36,7 @@
       "commit": "57340eca1e3aac68d59cc981b441da834ca38235"
     },
     "marked/marked.d.ts": {
-      "commit": "cfc0247741abbad9d12472cac7ec4a6e97f1f474"
+      "commit": "66d8808c98856feae7d5a2d5acfc955110fb126d"
     }
   }
 }

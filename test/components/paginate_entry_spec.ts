@@ -32,9 +32,9 @@ describe("PaginateEntryComponent", () => {
     beforeEach(() => {
       root = testUtils.renderIntoDocument<PaginateEntry>(
         PaginateEntry.create({
-          can_paginate: true,
+          canPaginate: true,
           onPaginateChange: onPaginateChangeStub,
-          paginate_params: {
+          paginateParams: {
             limit: 5,
             offset: "initial value"
           },
@@ -78,9 +78,9 @@ describe("PaginateEntryComponent", () => {
     beforeEach(() => {
       root = testUtils.renderIntoDocument<PaginateEntry>(
         PaginateEntry.create({
-          can_paginate: false,
+          canPaginate: false,
           onPaginateChange: onPaginateChangeStub,
-          paginate_params: {
+          paginateParams: {
             limit: 5,
             offset: "initial value"
           },
