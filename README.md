@@ -2,9 +2,9 @@
 React component to explore the Asana API
 
 # Background
-The Asana Api Explorer is a React component that was built to allow one to explore the Asana Api. It is built in typescript with React to allow easy integration with the [Asana Developers Site](https://asana.com/developers/api-reference/), and uses the [node.js asana client](https://github.com/Asana/node-asana) for authentication and request dispatch. To populate the API Explorer, we use metadata from the [asana-api-meta](https://github.com/Asana/asana-api-meta) repository, which contains structural information of the various resources and endpoints in the API.
+The Asana Api Explorer is a React component that was built to allow one to explore the Asana Api. It is built in typescript with React to allow easy integration with the [Asana Developers Site](https://asana.com/developers/api-reference/), and uses the [node.js asana client](https://github.com/Asana/node-asana). To populate the API Explorer, we use metadata from the [asana-api-meta](https://github.com/Asana/asana-api-meta) repository, which contains structural information of the various resources and endpoints in the API.
 
-You may notice that we do not use the node.js client directly (e.g. calls to `client.users.me()`). Instead, we use the client for authentication and use its dispatcher to send explicit GET requests (using `dispatcher.get(route, params, null)`). With this, the API Explorer can be more flexible and agnostic to the client library specifications.
+You may notice that we avoid using the convenience methods provided by the node.js client (e.g. calling `client.users.me()`), in favor of explicit GET requests with the dispatcher (`dispatcher.get(route, params, null)`). This allows us to consistently cover all endpoint and parameter permutations across the API.
 
 # Setup
 ## Installiation
@@ -28,8 +28,8 @@ npm run update
 
 # Developing
 
-## Running the explorer locally
-Since the base of the API Explorer is a React component, we've created a sample HTML page to load and run the explorer locally. After making some changes, run:
+## Running locally
+Since the base of the API Explorer is a React component, we've created a sample HTML page to run the explorer locally. After making some changes, run:
 
 ```
 # Clean setup to have the latest version of everything
@@ -46,7 +46,7 @@ To run the test suite locally, just run `npm run test`. This is automatically ru
 
 ## Updating resource metadata
 
-The asana-api-meta repository generates [resource files](https://github.com/Asana/api-explorer/tree/master/src/resources/gen) from [templates](https://github.com/Asana/api-explorer/tree/master/src/resources/templates), and these resources are used to populate the API Explorer. These generated resource files should not be changed directly. Instead, they should be updated with within the `asana-api-meta` repository using `gulp deploy-api_explorer`.
+The asana-api-meta repository generates [resource files](https://github.com/Asana/api-explorer/tree/master/src/resources/gen) from [templates](https://github.com/Asana/api-explorer/tree/master/src/resources/templates), and these resources are used to populate the API Explorer. These generated resource files should not be changed directly. Instead, they should be updated within the `asana-api-meta` repository using `gulp deploy-api_explorer`.
 
 [travis-url]: http://travis-ci.org/Asana/api-explorer
 [travis-image]: https://travis-ci.org/Asana/api-explorer.svg?branch=master
