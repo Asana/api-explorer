@@ -12,7 +12,7 @@
     "lint": "find src test -name \"*.ts\" | sed 's/^/--file=/g' | xargs tslint",
     "setup": "rm -rf node_modules typings && npm install && npm run typings",
     "prebrowserify": "mkdir -p dist/",
-    "browserify": "browserify build/src/index.js -t [ envify purge ] --standalone AsanaTester --outfile dist/asana-tester.js",
+    "browserify": "browserify build/src/index.js -t [ envify purge ] --standalone AsanaExplorer --outfile dist/asana-explorer.js",
     "postbrowserify": "cp -r public/* dist/.",
     "pretest": "npm run compile -- --sourceMap && find build -type f -name *.js -exec sed -i .bak -e '1s/^var __extends/\\/\\* istanbul ignore next \\*\\/\rvar __extends/; 1s/^/require(\"source-map-support\").install();\r/' {} \\;",
     "test": "istanbul cover _mocha -- --reporter ${MOCHA_REPORTER-nyan} --slow 10 --timeout 3000 --ui tdd --full-trace --require build/test/env.js --recursive **/*_spec.js",
@@ -22,7 +22,7 @@
     "update": "git fetch && git merge origin master && npm run setup",
     "// TODO: Use a server and browser-sync (gulp?) for a better experience.": null,
     "web": "npm run compile && npm run browserify",
-    "release": "npm run web && uglifyjs dist/asana-tester.js -o dist/asana-tester-min.js"
+    "release": "npm run web && uglifyjs dist/asana-explorer.js -o dist/asana-explorer-min.js"
   },
   "repository": {
     "type": "git",

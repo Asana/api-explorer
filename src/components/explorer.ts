@@ -492,7 +492,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       case Credentials.AuthState.Authorized:
         return null;
       case Credentials.AuthState.Unauthorized:
-        message = "Click to authorize API tester";
+        message = "Click to authorize API explorer";
         messageClass = "button authorize-link";
         break;
       case Credentials.AuthState.Expired:
