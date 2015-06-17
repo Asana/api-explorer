@@ -21,7 +21,8 @@
     "typings": "tsd reinstall && tsd rebundle",
     "update": "git fetch && git merge origin master && npm run setup",
     "// TODO: Use a server and browser-sync (gulp?) for a better experience.": null,
-    "web": "npm run compile && npm run browserify"
+    "web": "npm run compile && npm run browserify",
+    "release": "npm run compile && npm run browserify -- -t uglifyify"
   },
   "repository": {
     "type": "git",
@@ -51,7 +52,8 @@
     "source-map-support": "^0.2.10",
     "tsd": "^0.6.0-beta.5",
     "tslint": "^2.1.1",
-    "typescript": "^1.4.1"
+    "typescript": "^1.4.1",
+    "uglifyify": "^3.0.1"
   },
   "dependencies": {
     "asana": "^0.7.6",
