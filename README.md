@@ -41,10 +41,12 @@ cd dist && python -m SimpleHTTPServer 8338
 ## Testing locally
 To run the test suite locally, just run `npm run test`.
 
-
 ## Updating resource metadata
 
 The asana-api-meta repository generates [resource files](https://github.com/Asana/api-explorer/tree/master/src/resources/gen) from [templates](https://github.com/Asana/api-explorer/tree/master/src/resources/templates), and these resources are used to populate the API Explorer. These generated resource files should not be changed directly. Instead, they should be updated within the `asana-api-meta` repository using `gulp deploy-api_explorer`.
+
+## Generating minified release
+If you want to use this live, you can minify the javascript file with `npm run release`.
 
 [travis-url]: http://travis-ci.org/Asana/api-explorer
 [travis-image]: https://travis-ci.org/Asana/api-explorer.svg?branch=master

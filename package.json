@@ -21,7 +21,8 @@
     "typings": "tsd reinstall && tsd rebundle",
     "update": "git fetch && git merge origin master && npm run setup",
     "// TODO: Use a server and browser-sync (gulp?) for a better experience.": null,
-    "web": "npm run compile && npm run browserify"
+    "web": "npm run compile && npm run browserify",
+    "release": "npm run web && uglifyjs dist/asana-tester.js -o dist/asana-tester-min.js"
   },
   "repository": {
     "type": "git",
@@ -46,12 +47,13 @@
     "envify": "^3.3.1",
     "istanbul": "^0.3.14",
     "jsdom": "^3.1.1",
-    "mocha": "git@github.com:mochajs/mocha.git#master",
+    "mocha": "^2.2.5",
     "sinon": "^1.14.1",
     "source-map-support": "^0.2.10",
     "tsd": "^0.6.0-beta.5",
     "tslint": "^2.1.1",
-    "typescript": "^1.4.1"
+    "typescript": "^1.4.1",
+    "uglify-js": "^2.4.23"
   },
   "dependencies": {
     "asana": "^0.7.6",
