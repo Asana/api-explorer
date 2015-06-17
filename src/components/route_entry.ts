@@ -31,7 +31,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
   private renderRouteInfo = () => {
     return r.div({ },
       r.h3({ }, "Route description"),
-      r.p({ dangerouslySetInnerHTML: {
+      r.div({ dangerouslySetInnerHTML: {
         __html: marked(this.props.action.comment, { sanitize: true }) }
       }),
       r.hr({ }),
