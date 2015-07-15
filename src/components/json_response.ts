@@ -1,8 +1,7 @@
 /// <reference path="../resources/interfaces.ts" />
+import cx = require("../class_names");
 import React = require("react/addons");
 
-// TODO: Remove deprecated classSet.
-var cx = React.addons.classSet;
 var r = React.DOM;
 
 /**
