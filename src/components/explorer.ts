@@ -145,17 +145,27 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       params = _.extend(params, this.state.params.paginateParams);
     }
 
-    // The first required parameter is injected into the URL.
-    // Other required parameters are included here, so we extract them out.
+    // Sometimes, the first required param is put into the URL directly, whereas
+    // other times we put the required params as a request parameter.
     var requiredParams = _.filter(this.state.action.params, "required");
-    if (requiredParams.length > 1) {
+    if (ResourcesHelpers.pathForActionContainsRequiredParam(this.state.action)) {
+      // The first required param is put into the URL, so include later ones.
+      if (requiredParams.length > 1) {
+        _.forEach(
+            this.state.params.requiredParams,
+            (value: string, key: string) => {
+              if (requiredParams[0].name !== key) {
+                params[key] = value;
+              }
+            });
+      }
+    } else {
+      // The first required param is not in the URL, so include them all.
       _.forEach(
-        this.state.params.requiredParams,
-        (value: string, key: string) => {
-          if (requiredParams[0].name !== key) {
+          this.state.params.requiredParams,
+          (value: string, key: string) => {
             params[key] = value;
-          }
-        });
+      });
     }
 
     // If an optional param is for workspace, then inject the chosen workspace.
