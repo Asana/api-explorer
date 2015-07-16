@@ -80,7 +80,7 @@ export function defaultActionFromResource(resource: Resource): Action {
  */
 export function pathForAction(action: Action, param_value?: number): string {
   // If there's a placeholder, then replace it with its required param.
-  if (action.path.match(/%/g) !== null) {
+  if (pathForActionContainsRequiredParam(action)) {
     var requiredParam = _.find(action.params, "required");
     if (requiredParam === undefined) {
       throw new Error("Placeholder in path but there's no required param.");
@@ -98,4 +98,15 @@ export function pathForAction(action: Action, param_value?: number): string {
 
   // Otherwise, we just return the path.
   return action.path;
+}
+
+/**
+ * Given an action, checks the path to check if there's a placeholder value for
+ * a required param.
+ *
+ * @param action
+ * @returns {boolean}
+ */
+export function pathForActionContainsRequiredParam(action: Action): boolean {
+  return action.path.match(/%/g) !== null;
 }
