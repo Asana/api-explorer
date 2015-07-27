@@ -14,7 +14,7 @@ var resource = <Resource>{
       "name": "assignee",
       "type": "User",
       "example_values": [
-        "{ id: 1234, name: 'Tim Bizarro' }",
+        "{ id: 12345, name: 'Tim Bizarro' }",
         "null"
       ],
       "comment": "User to which this task is assigned, or `null` if the task is\nunassigned.\n"
