@@ -44,6 +44,155 @@ var resource = <Resource>{
         }
       ],
       "comment": "Scheduling status of this task for the user it is assigned to.\nThis field can only be set if the `assignee` is non-null.\n"
+    },
+    {
+      "name": "created_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this task was created.\n"
+    },
+    {
+      "name": "completed",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the task is currently marked complete, false if not.\n"
+    },
+    {
+      "name": "completed_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this task was completed, or null if the task is incomplete.\n"
+    },
+    {
+      "name": "due_on",
+      "type": "String",
+      "example_values": [
+        "'2012-03-26'"
+      ],
+      "comment": "Date on which this task is due, or null if the task has no due date. This\ntakes a date with YYYY-MM-DD format and should not be used together with\n'due_at'.\n"
+    },
+    {
+      "name": "due_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "comment": "Date and time on which this task is due, or null if the task has no due\ntime. This takes a UTC timestamp and should not be used together with\n'due_on'.\n"
+    },
+    {
+      "name": "external",
+      "type": "Map",
+      "example_values": [
+        "{ id: 'my_id', data: 'A blob of information.' }"
+      ],
+      "access": "Oauth Required",
+      "comment": "The external field allows you to store app-specific metadata on tasks,\nincluding an id that can be used to retrieve tasks and a data blob that\ncan store app-specific character strings. Note that you will need to\nauthenticate with Oauth to access or modify this data. Once an external\nid is set, you can use the notation 'external:custom_id' to reference your\nobject anywhere in the API where you may use the original object id.\nSee the page on Custom External Data for more details.\n"
+    },
+    {
+      "name": "followers",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "comment": "Array of users following this task.\n"
+    },
+    {
+      "name": "hearted",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the task is hearted by the authorized user, false if not.\n"
+    },
+    {
+      "name": "hearts",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users who have hearted this task.\n"
+    },
+    {
+      "name": "modified_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this task was last modified.\n",
+      "notes": [
+        "This does not currently reflect any changes in associations such as\nprojects or comments that may have been added or removed from the task.\n"
+      ]
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Buy catnip'"
+      ],
+      "comment": "Name of the task. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+    },
+    {
+      "name": "notes",
+      "type": "String",
+      "example_values": [
+        "'Mittens really likes the stuff from Humboldt.'"
+      ],
+      "comment": "More detailed, free-form textual information associated with the task.\n"
+    },
+    {
+      "name": "num_hearts",
+      "type": "Integer",
+      "example_values": [
+        "5"
+      ],
+      "access": "Read-only",
+      "comment": "The number of users who have hearted this task.\n"
+    },
+    {
+      "name": "projects",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1331, name: 'Stuff to Buy' }, ... ]"
+      ],
+      "access": "Create-only",
+      "comment": "Array of projects this task is associated with. At task creation time,\nthis array can be used to add the task to many projects at once. After\ntask creation, these associations can be modified using the 'addProject'\nand 'removeProject' endpoints.\n"
+    },
+    {
+      "name": "parent",
+      "type": "Task",
+      "example_values": [
+        "{ id: 1234, name: 'Bug task' }"
+      ],
+      "access": "Read-only",
+      "comment": "The parent of this task, or 'null' if this is not a subtask. This property\ncannot be modified using a PUT request but you can change it with the\n'setParent' endpoint. You can create subtasks by using the subtasks endpoint.\n"
+    },
+    {
+      "name": "workspace",
+      "type": "Workspace",
+      "example_values": [
+        "{ id: 14916, name: 'My Workspace' }"
+      ],
+      "access": "Create-only",
+      "comment": "The workspace this task is associated with. Once created, task cannot be\nmoved to a different workspace. This attribute can only be specified at\ncreation time.\n"
+    },
+    {
+      "name": "memberships",
+      "type": "Array",
+      "example_values": [
+        "[ { project: { id: 1331, name: 'Bugs' }, section: { id: 1123, name: 'P1:' } }, ... ]"
+      ],
+      "access": "Create-only",
+      "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe 'addProject' and 'removeProject' endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
     }
   ],
   "actions": [
@@ -172,7 +321,7 @@ var resource = <Resource>{
           ],
           "comment": "The assignee to filter tasks on.",
           "notes": [
-            "If you specify `assignee`, you must also specify the `workspace` to filter on."
+            "If you specify `assignee`, you must also specify the `workspace` to filter on.\n"
           ]
         },
         {
@@ -183,7 +332,7 @@ var resource = <Resource>{
           ],
           "comment": "The workspace or organization to filter tasks on.",
           "notes": [
-            "If you specify `workspace`, you must also specify the `assignee` to filter on."
+            "If you specify `workspace`, you must also specify the `assignee` to filter on.\n"
           ]
         },
         {

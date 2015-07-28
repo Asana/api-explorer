@@ -11,13 +11,63 @@ var resource = <Resource>{
   "comment": "An _attachment_ object represents any file attached to a task in Asana,\nwhether it's an uploaded file or one associated via a third-party service\nsuch as Dropbox or Google Drive.\n",
   "properties": [
     {
-      "name": "id",
-      "type": "Id",
+      "name": "created_at",
+      "type": "String",
       "example_values": [
-        "1234"
+        "'2012-02-22T02:06:58.147Z'"
       ],
-      "read_only": true,
-      "comment": "Globally unique identifier for this object.\n"
+      "access": "Read-only",
+      "comment": "The time at which this attachment was uploaded.\n"
+    },
+    {
+      "name": "download_url",
+      "type": "String",
+      "example_values": [
+        "'https://www.dropbox.com/s/123/Screenshot.png?dl=1'",
+        "null"
+      ],
+      "access": "Read-only",
+      "comment": "The URL containing the content of the attachment.\n",
+      "notes": [
+        "May be 'null' if the attachment is hosted by box. If present, this URL\nmay only be valid for 1 hour from the time of retrieval. You should avoid\npersisting this URL somewhere and just refresh it on demand to ensure you\ndo not keep stale URLs.\n"
+      ]
+    },
+    {
+      "name": "host",
+      "type": "String",
+      "example_values": [
+        "'dropbox'"
+      ],
+      "access": "Read-only",
+      "comment": "The service hosting the attachment. Valid values are 'asana', 'dropbox',\n'gdrive' and 'box'.\n"
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Screenshot.png'"
+      ],
+      "access": "Read-only",
+      "comment": "The name of the file.\n"
+    },
+    {
+      "name": "parent",
+      "type": "Task",
+      "example_values": [
+        "{ id: 1234, name: 'Bug task' }"
+      ],
+      "access": "Read-only",
+      "comment": "The task this attachment is attached to.\n"
+    },
+    {
+      "name": "view_url",
+      "type": "String",
+      "example_values": [
+        "'https://www.dropbox.com/s/123/Screenshot.png'",
+        "null"
+      ],
+      "access": "Read-only",
+      "comment": "The URL where the attachment can be viewed, which may be friendlier to\nusers in a browser than just directing them to a raw file.\n"
     }
   ],
   "actions": [

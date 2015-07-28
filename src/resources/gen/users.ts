@@ -11,13 +11,13 @@ var resource = <Resource>{
   "comment": "A _user_ object represents an account in Asana that can be given access to\nvarious workspaces, projects, and tasks.\n\nLike other objects in the system, users are referred to by numerical IDs.\nHowever, the special string identifier `me` can be used anywhere\na user ID is accepted, to refer to the current authenticated user.\n",
   "properties": [
     {
-      "name": "id",
-      "type": "Id",
+      "name": "name",
+      "type": "String",
       "example_values": [
-        "1234"
+        "'Greg Sanchez'"
       ],
-      "read_only": true,
-      "comment": "Globally unique identifier for this object.\n"
+      "access": "Read-only",
+      "comment": "The user's name.\n"
     },
     {
       "name": "email",
@@ -25,28 +25,28 @@ var resource = <Resource>{
       "example_values": [
         "'gsanchez@example.com'"
       ],
-      "read_only": true,
+      "access": "Read-only",
       "comment": "The user's email address.\n"
     },
     {
       "name": "photo",
       "type": "Struct",
       "example_values": [
-        "{ \"image_21x21\": \"https://...\", ... }"
+        "{ 'image_21x21': 'https://...', ... }"
       ],
-      "read_only": true,
-      "comment": "A map of the user's profile photo in various sizes, or null if no photo\nis set. Sizes provided are 21, 27, 36, 60, and 128. Images are in\nPNG format.\n"
+      "access": "Read-only",
+      "comment": "A map of the user's profile photo in various sizes, or 'null' if no photo\nis set. Sizes provided are 21, 27, 36, 60, and 128. Images are in\nPNG format.\n"
     },
     {
       "name": "workspaces",
       "type": "Array",
       "example_values": [
-        "[ { id: 14916, name: \"My Workspace\"} ... ]"
+        "[ { id: 14916, name: 'My Workspace' }, ... ]"
       ],
-      "read_only": true,
+      "access": "Read-only",
       "comment": "Workspaces and organizations this user may access.\n",
       "notes": [
-        "The API will only return workspaces and organizations that also contain the authenticated user."
+        "The API will only return workspaces and organizations that also\ncontain the authenticated user.\n"
       ]
     }
   ],
