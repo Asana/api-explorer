@@ -22,7 +22,7 @@
     "update": "git fetch && git merge origin master && npm run setup",
     "// TODO: Use a server and browser-sync (gulp?) for a better experience.": null,
     "web": "npm run compile && npm run browserify",
-    "release": "npm run web && uglifyjs dist/asana-explorer.js -o dist/asana-explorer-min.js"
+    "release": "CONSTANTS_TYPE=production npm run web && uglifyjs dist/asana-explorer.js -o dist/asana-explorer-min.js"
   },
   "repository": {
     "type": "git",
