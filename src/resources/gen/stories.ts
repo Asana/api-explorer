@@ -83,7 +83,7 @@ var resource = <Resource>{
       "access": "Read-only",
       "comment": "HTML formatted text for a comment. This will not include the name of the creator.\n",
       "notes": [
-        "This field is only returned if explicitly requested using the 'opt_fields'\nquery parameter.\n"
+        "This field is only returned if explicitly requested using the `opt_fields`\nquery parameter.\n"
       ]
     },
     {
@@ -146,9 +146,24 @@ var resource = <Resource>{
       "comment": "The type of story this is.\n"
     }
   ],
+  "action_classes": [
+    {
+      "name": "Get stories on object",
+      "url": "get-all"
+    },
+    {
+      "name": "Get a single story",
+      "url": "get-single"
+    },
+    {
+      "name": "Commenting on an object",
+      "url": "post-comment"
+    }
+  ],
   "actions": [
     {
       "name": "findById",
+      "class": "get-all",
       "method": "GET",
       "path": "/stories/%d",
       "params": [
@@ -166,6 +181,7 @@ var resource = <Resource>{
     },
     {
       "name": "findByTask",
+      "class": "get-single",
       "method": "GET",
       "path": "/tasks/%d/stories",
       "collection": true,
@@ -184,6 +200,7 @@ var resource = <Resource>{
     },
     {
       "name": "createOnTask",
+      "class": "post-comment",
       "method": "POST",
       "path": "/tasks/%d/stories",
       "params": [
@@ -199,6 +216,9 @@ var resource = <Resource>{
         {
           "name": "text",
           "type": "String",
+          "example_values": [
+            "'This is a comment.'"
+          ],
           "required": true,
           "comment": "The plain text of the comment to add."
         }

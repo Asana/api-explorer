@@ -42,7 +42,7 @@ var resource = <Resource>{
       "example_values": [
         "'2012-02-22T02:06:58.147Z'"
       ],
-      "comment": "Color of the project. Must be either 'null' or one of: 'dark-pink',\n'dark-green', 'dark-blue', 'dark-red', 'dark-teal', 'dark-brown',\n'dark-orange', 'dark-purple', 'dark-warm-gray', 'light-pink', 'light-green',\n'light-blue', 'light-red', 'light-teal', 'light-yellow', 'light-orange',\n'light-purple', 'light-warm-gray'.\n"
+      "comment": "Color of the project. Must be either `null` or one of: `dark-pink`,\n`dark-green`, `dark-blue`, `dark-red`, `dark-teal`, `dark-brown`,\n`dark-orange`, `dark-purple`, `dark-warm-gray`, `light-pink`, `light-green`,\n`light-blue`, `light-red`, `light-teal`, `light-yellow`, `light-orange`,\n`light-purple`, `light-warm-gray`.\n"
     },
     {
       "name": "notes",
@@ -62,9 +62,32 @@ var resource = <Resource>{
       "comment": "The workspace or organization this tag is associated with. Once created,\ntags cannot be moved to a different workspace. This attribute can only\nbe specified at creation time.\n"
     }
   ],
+  "action_classes": [
+    {
+      "name": "Create a tag",
+      "url": "create"
+    },
+    {
+      "name": "Get a single tag",
+      "url": "get-single"
+    },
+    {
+      "name": "Update a tag",
+      "url": "update"
+    },
+    {
+      "name": "Query for tags",
+      "url": "query"
+    },
+    {
+      "name": "Get tasks with tag",
+      "url": "get-tasks"
+    }
+  ],
   "actions": [
     {
       "name": "create",
+      "class": "create",
       "method": "POST",
       "path": "/tags",
       "params": [
@@ -82,6 +105,7 @@ var resource = <Resource>{
     },
     {
       "name": "createInWorkspace",
+      "class": "create",
       "method": "POST",
       "path": "/workspaces/%d/tags",
       "params": [
@@ -99,6 +123,7 @@ var resource = <Resource>{
     },
     {
       "name": "findById",
+      "class": "get-single",
       "method": "GET",
       "path": "/tags/%d",
       "params": [
@@ -116,6 +141,7 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
       "path": "/tags/%d",
       "params": [
@@ -133,6 +159,7 @@ var resource = <Resource>{
     },
     {
       "name": "delete",
+      "class": "delete",
       "method": "DELETE",
       "path": "/tags/%d",
       "params": [
@@ -150,6 +177,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "query",
       "method": "GET",
       "path": "/tags",
       "collection": true,
@@ -183,6 +211,7 @@ var resource = <Resource>{
     },
     {
       "name": "findByWorkspace",
+      "class": "query",
       "method": "GET",
       "path": "/workspaces/%d/tags",
       "params": [
@@ -198,6 +227,25 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact tag records for all tags in the workspace.\n"
+    },
+    {
+      "name": "getTasksWithTag",
+      "class": "get-tasks",
+      "method": "GET",
+      "path": "/tags/%d/tasks",
+      "params": [
+        {
+          "name": "tag",
+          "type": "Id",
+          "example_values": [
+            "11235"
+          ],
+          "comment": "The tag to fetch tasks from.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "Returns the compact task records for all tasks with the given tag.\nTasks can have more than one tag at a time.\n"
     }
   ]
 };

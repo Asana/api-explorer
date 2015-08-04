@@ -62,7 +62,7 @@ var resource = <Resource>{
       "example_values": [
         "'2012-02-22T02:06:58.147Z'"
       ],
-      "comment": "Color of the project. Must be either 'null' or one of: 'dark-pink',\n'dark-green', 'dark-blue', 'dark-red', 'dark-teal', 'dark-brown',\n'dark-orange', 'dark-purple', 'dark-warm-gray', 'light-pink', 'light-green',\n'light-blue', 'light-red', 'light-teal', 'light-yellow', 'light-orange',\n'light-purple', 'light-warm-gray'.\n"
+      "comment": "Color of the project. Must be either `null` or one of: `dark-pink`,\n`dark-green`, `dark-blue`, `dark-red`, `dark-teal`, `dark-brown`,\n`dark-orange`, `dark-purple`, `dark-warm-gray`, `light-pink`, `light-green`,\n`light-blue`, `light-red`, `light-teal`, `light-yellow`, `light-orange`,\n`light-purple`, `light-warm-gray`.\n"
     },
     {
       "name": "notes",
@@ -91,9 +91,41 @@ var resource = <Resource>{
       "comment": "The team that this project is shared with. This field only exists for\nprojects in organizations.\n"
     }
   ],
+  "action_classes": [
+    {
+      "name": "Create a project",
+      "url": "create"
+    },
+    {
+      "name": "Get single project",
+      "url": "get-single"
+    },
+    {
+      "name": "Update a project",
+      "url": "update"
+    },
+    {
+      "name": "Delete a project",
+      "url": "delete"
+    },
+    {
+      "name": "Query for projects",
+      "url": "query"
+    },
+    {
+      "name": "Get project tasks",
+      "url": "get-tasks"
+    },
+    {
+      "name": "Get project sections",
+      "url": "sections",
+      "comment": "Sections are tasks whose names end with a colon character `:` . For instance\nsections will be included in query results for tasks and be represented with\nthe same fields. The `memberships` property of a task contains the project/section\npairs a task belongs to when applicable.\n\nSee [Task, Project, and Section Associations](/developers/api-reference/tasks#projects)\nfor more techniques on managing sections.\n"
+    }
+  ],
   "actions": [
     {
       "name": "create",
+      "class": "create",
       "method": "POST",
       "path": "/projects",
       "params": [
@@ -119,6 +151,7 @@ var resource = <Resource>{
     },
     {
       "name": "createInWorkspace",
+      "class": "create",
       "method": "POST",
       "path": "/workspaces/%d/projects",
       "params": [
@@ -136,6 +169,7 @@ var resource = <Resource>{
     },
     {
       "name": "createInTeam",
+      "class": "create",
       "method": "POST",
       "path": "/teams/%d/projects",
       "params": [
@@ -153,6 +187,7 @@ var resource = <Resource>{
     },
     {
       "name": "findById",
+      "class": "get-single",
       "method": "GET",
       "path": "/projects/%d",
       "params": [
@@ -170,6 +205,7 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
       "path": "/projects/%d",
       "params": [
@@ -187,6 +223,7 @@ var resource = <Resource>{
     },
     {
       "name": "delete",
+      "class": "delete",
       "method": "DELETE",
       "path": "/projects/%d",
       "params": [
@@ -204,6 +241,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "query",
       "method": "GET",
       "path": "/projects",
       "collection": true,
@@ -237,6 +275,7 @@ var resource = <Resource>{
     },
     {
       "name": "findByWorkspace",
+      "class": "query",
       "method": "GET",
       "path": "/workspaces/%d/projects",
       "params": [
@@ -263,6 +302,7 @@ var resource = <Resource>{
     },
     {
       "name": "findByTeam",
+      "class": "query",
       "method": "GET",
       "path": "/teams/%d/projects",
       "params": [
@@ -286,6 +326,44 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact project records for all projects in the team.\n"
+    },
+    {
+      "name": "sections",
+      "class": "sections",
+      "method": "GET",
+      "path": "/projects/%d/sections",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to get sections from.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "Returns compact records for all sections in the specified project.\n"
+    },
+    {
+      "name": "getTasksInProject",
+      "class": "get-tasks",
+      "method": "GET",
+      "path": "/projects/%d/tasks",
+      "params": [
+        {
+          "name": "projectId",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project in which to search for tasks.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "Returns the compact task records for all tasks within the given project,\nordered by their priority within the project. Tasks can exist in more than one project at a time.\n"
     }
   ]
 };

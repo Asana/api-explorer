@@ -27,9 +27,24 @@ var resource = <Resource>{
       "comment": "Whether the workspace is an _organization_.\n"
     }
   ],
+  "action_classes": [
+    {
+      "name": "Get available workspaces",
+      "url": "get"
+    },
+    {
+      "name": "Update a workspace",
+      "url": "update"
+    },
+    {
+      "name": "Typeahead search",
+      "url": "typeahead"
+    }
+  ],
   "actions": [
     {
       "name": "findById",
+      "class": "get",
       "method": "GET",
       "path": "/workspaces/%d",
       "params": [
@@ -47,6 +62,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "get",
       "method": "GET",
       "path": "/workspaces",
       "collection": true,
@@ -54,6 +70,7 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
       "path": "/workspaces/%d",
       "params": [
@@ -67,10 +84,11 @@ var resource = <Resource>{
           "required": true
         }
       ],
-      "comment": "Update properties on a workspace. Returns the complete, updated workspace record.\n"
+      "comment": "A specific, existing workspace can be updated by making a PUT request on\nthe URL for that workspace. Only the fields provided in the data block\nwill be updated; any unspecified fields will remain unchanged.\n\nCurrently the only field that can be modified for a workspace is its `name`.\n\nReturns the complete, updated workspace record.\n"
     },
     {
       "name": "typeahead",
+      "class": "typeahead",
       "method": "GET",
       "path": "/workspaces/%d/typeahead",
       "params": [
@@ -86,6 +104,9 @@ var resource = <Resource>{
         {
           "name": "type",
           "type": "Enum",
+          "example_values": [
+            "user"
+          ],
           "values": [
             {
               "name": "task",
@@ -110,11 +131,17 @@ var resource = <Resource>{
         {
           "name": "query",
           "type": "String",
+          "example_values": [
+            "Greg"
+          ],
           "comment": "The string that will be used to search for relevant objects. If an\nempty string is passed in, the API will currently return an empty\nresult set.\n"
         },
         {
           "name": "count",
           "type": "Number",
+          "example_values": [
+            "10"
+          ],
           "comment": "The number of results to return. The default is `20` if this\nparameter is omitted, with a minimum of `1` and a maximum of `100`.\nIf there are fewer results found than requested, all will be returned.\n"
         }
       ],
