@@ -35,7 +35,7 @@ var resource = <Resource>{
         "{ 'image_21x21': 'https://...', ... }"
       ],
       "access": "Read-only",
-      "comment": "A map of the user's profile photo in various sizes, or 'null' if no photo\nis set. Sizes provided are 21, 27, 36, 60, and 128. Images are in\nPNG format.\n"
+      "comment": "A map of the user's profile photo in various sizes, or `null` if no photo\nis set. Sizes provided are 21, 27, 36, 60, and 128. Images are in\nPNG format.\n"
     },
     {
       "name": "workspaces",
@@ -50,15 +50,27 @@ var resource = <Resource>{
       ]
     }
   ],
+  "action_classes": [
+    {
+      "name": "Get a single user",
+      "url": "get-single"
+    },
+    {
+      "name": "Get all users",
+      "url": "get-all"
+    }
+  ],
   "actions": [
     {
       "name": "me",
+      "class": "get-single",
       "method": "GET",
       "path": "/users/me",
       "comment": "Returns the full user record for the currently authenticated user.\n"
     },
     {
       "name": "findById",
+      "class": "get-single",
       "method": "GET",
       "path": "/users/%d",
       "params": [
@@ -72,10 +84,11 @@ var resource = <Resource>{
           "required": true
         }
       ],
-      "comment": "Returns the full user record for a single user.\n"
+      "comment": "Returns the full user record for the single user with the provided ID.\n"
     },
     {
       "name": "findByWorkspace",
+      "class": "get-all",
       "method": "GET",
       "path": "/workspaces/%d/users",
       "collection": true,
@@ -91,10 +104,14 @@ var resource = <Resource>{
           "required": true
         }
       ],
-      "comment": "Returns the user records for all users in all workspaces and organizations\naccessible to the authenticated user.\n"
+      "comment": "Returns the user records for all users in the specified workspace or\norganization.\n",
+      "notes": [
+        "Results are sorted alphabetically by user `name`s.\n"
+      ]
     },
     {
       "name": "findAll",
+      "class": "get-all",
       "method": "GET",
       "path": "/users",
       "collection": true,
@@ -108,7 +125,10 @@ var resource = <Resource>{
           "comment": "The workspace or organization to filter users on."
         }
       ],
-      "comment": "Returns the user records for all users in the specified workspace or\norganization.\n"
+      "comment": "Returns the user records for all users in all workspaces and organizations\naccessible to the authenticated user. Accepts an optional workspace ID\nparameter.\n",
+      "notes": [
+        "Results are sorted by user ID.\n"
+      ]
     }
   ]
 };

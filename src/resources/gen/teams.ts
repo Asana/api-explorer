@@ -19,9 +19,20 @@ var resource = <Resource>{
       "comment": "The name of the team.\n"
     }
   ],
+  "action_classes": [
+    {
+      "name": "Get teams in organization",
+      "url": "get"
+    },
+    {
+      "name": "Get team members",
+      "url": "users"
+    }
+  ],
   "actions": [
     {
       "name": "findById",
+      "class": "get",
       "method": "GET",
       "path": "/teams/%d",
       "params": [
@@ -39,6 +50,7 @@ var resource = <Resource>{
     },
     {
       "name": "findByOrganization",
+      "class": "get",
       "method": "GET",
       "path": "/organizations/%d/teams",
       "collection": true,
@@ -57,6 +69,7 @@ var resource = <Resource>{
     },
     {
       "name": "users",
+      "class": "users",
       "method": "GET",
       "path": "/teams/%d/users",
       "collection": true,
