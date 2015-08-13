@@ -353,7 +353,7 @@ var resource = <Resource>{
       "path": "/projects/%d/tasks",
       "params": [
         {
-          "name": "projectId",
+          "name": "project",
           "type": "Id",
           "example_values": [
             "13579"
