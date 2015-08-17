@@ -45,8 +45,11 @@ To run the test suite locally, just run `npm run test`.
 
 The asana-api-meta repository generates [resource files](https://github.com/Asana/api-explorer/tree/master/src/resources/gen) from [templates](https://github.com/Asana/api-explorer/tree/master/src/resources/templates), and these resources are used to populate the API Explorer. These generated resource files should not be changed directly. Instead, they should be updated within the `asana-api-meta` repository using `gulp deploy-api_explorer`.
 
+## Application constants
+When generating a bundle, we use an environment variable to decide which [set of constants](https://github.com/Asana/api-explorer/blob/master/src/constants.ts) to use. This allows us to easily transition from testing the app locally, and running it in a production environment. In order to switch which constants you run, simply run `CONSTANTS_TYPE=localhost npm run web`. 
+
 ## Generating minified release
-If you want to use this live, you can minify the javascript file with `npm run release`.
+If you want to use this live, you can minify the javascript file with `npm run release`. By default, this uses the production set of constants.
 
 [travis-url]: http://travis-ci.org/Asana/api-explorer
 [travis-image]: https://travis-ci.org/Asana/api-explorer.svg?branch=master
