@@ -347,7 +347,7 @@ var resource = <Resource>{
       "comment": "Returns compact records for all sections in the specified project.\n"
     },
     {
-      "name": "getTasksInProject",
+      "name": "tasks",
       "class": "get-tasks",
       "method": "GET",
       "path": "/projects/%d/tasks",
