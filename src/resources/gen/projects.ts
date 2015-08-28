@@ -153,7 +153,7 @@ var resource = <Resource>{
       "name": "createInWorkspace",
       "class": "create",
       "method": "POST",
-      "path": "/workspaces/%d/projects",
+      "path": "/workspaces/%s/projects",
       "params": [
         {
           "name": "workspace",
@@ -171,7 +171,7 @@ var resource = <Resource>{
       "name": "createInTeam",
       "class": "create",
       "method": "POST",
-      "path": "/teams/%d/projects",
+      "path": "/teams/%s/projects",
       "params": [
         {
           "name": "team",
@@ -189,7 +189,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get-single",
       "method": "GET",
-      "path": "/projects/%d",
+      "path": "/projects/%s",
       "params": [
         {
           "name": "project",
@@ -207,7 +207,7 @@ var resource = <Resource>{
       "name": "update",
       "class": "update",
       "method": "PUT",
-      "path": "/projects/%d",
+      "path": "/projects/%s",
       "params": [
         {
           "name": "project",
@@ -225,7 +225,7 @@ var resource = <Resource>{
       "name": "delete",
       "class": "delete",
       "method": "DELETE",
-      "path": "/projects/%d",
+      "path": "/projects/%s",
       "params": [
         {
           "name": "project",
@@ -277,7 +277,7 @@ var resource = <Resource>{
       "name": "findByWorkspace",
       "class": "query",
       "method": "GET",
-      "path": "/workspaces/%d/projects",
+      "path": "/workspaces/%s/projects",
       "params": [
         {
           "name": "workspace",
@@ -304,7 +304,7 @@ var resource = <Resource>{
       "name": "findByTeam",
       "class": "query",
       "method": "GET",
-      "path": "/teams/%d/projects",
+      "path": "/teams/%s/projects",
       "params": [
         {
           "name": "team",
@@ -331,7 +331,7 @@ var resource = <Resource>{
       "name": "sections",
       "class": "sections",
       "method": "GET",
-      "path": "/projects/%d/sections",
+      "path": "/projects/%s/sections",
       "params": [
         {
           "name": "project",
@@ -350,7 +350,7 @@ var resource = <Resource>{
       "name": "tasks",
       "class": "get-tasks",
       "method": "GET",
-      "path": "/projects/%d/tasks",
+      "path": "/projects/%s/tasks",
       "params": [
         {
           "name": "project",

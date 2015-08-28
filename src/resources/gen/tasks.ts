@@ -267,7 +267,7 @@ var resource = <Resource>{
       "name": "createInWorkspace",
       "class": "create",
       "method": "POST",
-      "path": "/workspaces/%d/tasks",
+      "path": "/workspaces/%s/tasks",
       "params": [
         {
           "name": "workspace",
@@ -285,7 +285,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get",
       "method": "GET",
-      "path": "/tasks/%d",
+      "path": "/tasks/%s",
       "params": [
         {
           "name": "task",
@@ -303,7 +303,7 @@ var resource = <Resource>{
       "name": "update",
       "class": "update",
       "method": "PUT",
-      "path": "/tasks/%d",
+      "path": "/tasks/%s",
       "params": [
         {
           "name": "task",
@@ -321,7 +321,7 @@ var resource = <Resource>{
       "name": "delete",
       "class": "delete",
       "method": "DELETE",
-      "path": "/tasks/%d",
+      "path": "/tasks/%s",
       "params": [
         {
           "name": "task",
@@ -339,7 +339,7 @@ var resource = <Resource>{
       "name": "findByProject",
       "class": "query",
       "method": "GET",
-      "path": "/projects/%d/tasks",
+      "path": "/projects/%s/tasks",
       "params": [
         {
           "name": "projectId",
@@ -358,7 +358,7 @@ var resource = <Resource>{
       "name": "findByTag",
       "class": "query",
       "method": "GET",
-      "path": "/tags/%d/tasks",
+      "path": "/tags/%s/tasks",
       "params": [
         {
           "name": "tag",
@@ -430,7 +430,7 @@ var resource = <Resource>{
       "name": "addFollowers",
       "class": "followers",
       "method": "POST",
-      "path": "/tasks/%d/addFollowers",
+      "path": "/tasks/%s/addFollowers",
       "params": [
         {
           "name": "task",
@@ -457,7 +457,7 @@ var resource = <Resource>{
       "name": "removeFollowers",
       "class": "followers",
       "method": "POST",
-      "path": "/tasks/%d/removeFollowers",
+      "path": "/tasks/%s/removeFollowers",
       "params": [
         {
           "name": "task",
@@ -484,7 +484,7 @@ var resource = <Resource>{
       "name": "projects",
       "class": "projects",
       "method": "GET",
-      "path": "/tasks/%d/projects",
+      "path": "/tasks/%s/projects",
       "collection": true,
       "params": [
         {
@@ -503,7 +503,7 @@ var resource = <Resource>{
       "name": "addProject",
       "class": "projects",
       "method": "POST",
-      "path": "/tasks/%d/addProject",
+      "path": "/tasks/%s/addProject",
       "params": [
         {
           "name": "task",
@@ -556,7 +556,7 @@ var resource = <Resource>{
       "name": "removeProject",
       "class": "projects",
       "method": "POST",
-      "path": "/tasks/%d/removeProject",
+      "path": "/tasks/%s/removeProject",
       "params": [
         {
           "name": "task",
@@ -583,7 +583,7 @@ var resource = <Resource>{
       "name": "tags",
       "class": "tags",
       "method": "GET",
-      "path": "/tasks/%d/tags",
+      "path": "/tasks/%s/tags",
       "collection": true,
       "params": [
         {
@@ -602,7 +602,7 @@ var resource = <Resource>{
       "name": "addTag",
       "class": "tags",
       "method": "POST",
-      "path": "/tasks/%d/addTag",
+      "path": "/tasks/%s/addTag",
       "params": [
         {
           "name": "task",
@@ -629,7 +629,7 @@ var resource = <Resource>{
       "name": "removeTag",
       "class": "tags",
       "method": "POST",
-      "path": "/tasks/%d/removeTag",
+      "path": "/tasks/%s/removeTag",
       "params": [
         {
           "name": "task",
@@ -656,7 +656,7 @@ var resource = <Resource>{
       "name": "subtasks",
       "class": "subtasks",
       "method": "GET",
-      "path": "/tasks/%d/subtasks",
+      "path": "/tasks/%s/subtasks",
       "collection": true,
       "params": [
         {
@@ -675,7 +675,7 @@ var resource = <Resource>{
       "name": "addSubtask",
       "class": "subtasks",
       "method": "POST",
-      "path": "/tasks/%d/subtasks",
+      "path": "/tasks/%s/subtasks",
       "params": [
         {
           "name": "task",
@@ -693,7 +693,7 @@ var resource = <Resource>{
       "name": "setParent",
       "class": "subtasks",
       "method": "POST",
-      "path": "/tasks/%d/setParent",
+      "path": "/tasks/%s/setParent",
       "no_code": true,
       "params": [
         {
@@ -722,7 +722,7 @@ var resource = <Resource>{
       "name": "stories",
       "class": "stories",
       "method": "GET",
-      "path": "/tasks/%d/stories",
+      "path": "/tasks/%s/stories",
       "collection": true,
       "params": [
         {
@@ -741,7 +741,7 @@ var resource = <Resource>{
       "name": "addComment",
       "class": "stories",
       "method": "POST",
-      "path": "/tasks/%d/stories",
+      "path": "/tasks/%s/stories",
       "params": [
         {
           "name": "task",

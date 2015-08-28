@@ -89,7 +89,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get-single",
       "method": "GET",
-      "path": "/attachments/%d",
+      "path": "/attachments/%s",
       "params": [
         {
           "name": "attachment",
@@ -107,7 +107,7 @@ var resource = <Resource>{
       "name": "findByTask",
       "class": "get-all-task",
       "method": "GET",
-      "path": "/tasks/%d/attachments",
+      "path": "/tasks/%s/attachments",
       "collection": true,
       "params": [
         {
@@ -126,7 +126,7 @@ var resource = <Resource>{
       "name": "createOnTask",
       "class": "upload",
       "method": "POST",
-      "path": "/tasks/%d/attachments",
+      "path": "/tasks/%s/attachments",
       "no_code": true,
       "params": [
         {

@@ -165,7 +165,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get-all",
       "method": "GET",
-      "path": "/stories/%d",
+      "path": "/stories/%s",
       "params": [
         {
           "name": "story",
@@ -183,7 +183,7 @@ var resource = <Resource>{
       "name": "findByTask",
       "class": "get-single",
       "method": "GET",
-      "path": "/tasks/%d/stories",
+      "path": "/tasks/%s/stories",
       "collection": true,
       "params": [
         {
@@ -202,7 +202,7 @@ var resource = <Resource>{
       "name": "createOnTask",
       "class": "post-comment",
       "method": "POST",
-      "path": "/tasks/%d/stories",
+      "path": "/tasks/%s/stories",
       "params": [
         {
           "name": "task",

@@ -46,7 +46,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get",
       "method": "GET",
-      "path": "/workspaces/%d",
+      "path": "/workspaces/%s",
       "params": [
         {
           "name": "workspace",
@@ -72,7 +72,7 @@ var resource = <Resource>{
       "name": "update",
       "class": "update",
       "method": "PUT",
-      "path": "/workspaces/%d",
+      "path": "/workspaces/%s",
       "params": [
         {
           "name": "workspace",
@@ -90,7 +90,7 @@ var resource = <Resource>{
       "name": "typeahead",
       "class": "typeahead",
       "method": "GET",
-      "path": "/workspaces/%d/typeahead",
+      "path": "/workspaces/%s/typeahead",
       "params": [
         {
           "name": "workspace",

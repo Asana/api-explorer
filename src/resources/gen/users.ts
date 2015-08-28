@@ -72,7 +72,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get-single",
       "method": "GET",
-      "path": "/users/%d",
+      "path": "/users/%s",
       "params": [
         {
           "name": "user",
@@ -90,7 +90,7 @@ var resource = <Resource>{
       "name": "findByWorkspace",
       "class": "get-all",
       "method": "GET",
-      "path": "/workspaces/%d/users",
+      "path": "/workspaces/%s/users",
       "collection": true,
       "collection_cannot_paginate": true,
       "params": [

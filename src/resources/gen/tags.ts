@@ -107,7 +107,7 @@ var resource = <Resource>{
       "name": "createInWorkspace",
       "class": "create",
       "method": "POST",
-      "path": "/workspaces/%d/tags",
+      "path": "/workspaces/%s/tags",
       "params": [
         {
           "name": "workspace",
@@ -125,7 +125,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get-single",
       "method": "GET",
-      "path": "/tags/%d",
+      "path": "/tags/%s",
       "params": [
         {
           "name": "tag",
@@ -143,7 +143,7 @@ var resource = <Resource>{
       "name": "update",
       "class": "update",
       "method": "PUT",
-      "path": "/tags/%d",
+      "path": "/tags/%s",
       "params": [
         {
           "name": "tag",
@@ -161,7 +161,7 @@ var resource = <Resource>{
       "name": "delete",
       "class": "delete",
       "method": "DELETE",
-      "path": "/tags/%d",
+      "path": "/tags/%s",
       "params": [
         {
           "name": "tag",
@@ -213,7 +213,7 @@ var resource = <Resource>{
       "name": "findByWorkspace",
       "class": "query",
       "method": "GET",
-      "path": "/workspaces/%d/tags",
+      "path": "/workspaces/%s/tags",
       "params": [
         {
           "name": "workspace",
@@ -232,7 +232,7 @@ var resource = <Resource>{
       "name": "getTasksWithTag",
       "class": "get-tasks",
       "method": "GET",
-      "path": "/tags/%d/tasks",
+      "path": "/tags/%s/tasks",
       "params": [
         {
           "name": "tag",

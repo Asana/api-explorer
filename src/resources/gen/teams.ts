@@ -34,7 +34,7 @@ var resource = <Resource>{
       "name": "findById",
       "class": "get",
       "method": "GET",
-      "path": "/teams/%d",
+      "path": "/teams/%s",
       "params": [
         {
           "name": "team",
@@ -52,7 +52,7 @@ var resource = <Resource>{
       "name": "findByOrganization",
       "class": "get",
       "method": "GET",
-      "path": "/organizations/%d/teams",
+      "path": "/organizations/%s/teams",
       "collection": true,
       "params": [
         {
@@ -71,7 +71,7 @@ var resource = <Resource>{
       "name": "users",
       "class": "users",
       "method": "GET",
-      "path": "/teams/%d/users",
+      "path": "/teams/%s/users",
       "collection": true,
       "collection_cannot_paginate": true,
       "params": [
