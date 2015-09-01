@@ -11,6 +11,15 @@ var resource = <Resource>{
   "comment": "A _user_ object represents an account in Asana that can be given access to\nvarious workspaces, projects, and tasks.\n\nLike other objects in the system, users are referred to by numerical IDs.\nHowever, the special string identifier `me` can be used anywhere\na user ID is accepted, to refer to the current authenticated user.\n",
   "properties": [
     {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the user.\n"
+    },
+    {
       "name": "name",
       "type": "String",
       "example_values": [

@@ -14,6 +14,15 @@ var resource = <Resource>{
   ],
   "properties": [
     {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the task.\n"
+    },
+    {
       "name": "assignee",
       "type": "User",
       "example_values": [

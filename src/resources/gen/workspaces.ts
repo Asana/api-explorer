@@ -11,6 +11,15 @@ var resource = <Resource>{
   "comment": "A _workspace_ is the highest-level organizational unit in Asana. All projects\nand tasks have an associated workspace.\n\nAn _organization_ is a special kind of workspace that represents a company.\nIn an organization, you can group your projects into teams. You can read\nmore about how organizations work on the Asana Guide.\nTo tell if your workspace is an organization or not, check its\n`is_organization` property.\n\nOver time, we intend to migrate most workspaces into organizations and to\nrelease more organization-specific functionality. We may eventually deprecate\nusing workspace-based APIs for organizations. Currently, and until after\nsome reasonable grace period following any further announcements, you can\nstill reference organizations in any `workspace` parameter.\n",
   "properties": [
     {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the workspace.\n"
+    },
+    {
       "name": "name",
       "type": "String",
       "example_values": [

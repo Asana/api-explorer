@@ -11,6 +11,15 @@ var resource = <Resource>{
   "comment": "An _attachment_ object represents any file attached to a task in Asana,\nwhether it's an uploaded file or one associated via a third-party service\nsuch as Dropbox or Google Drive.\n",
   "properties": [
     {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the attachment.\n"
+    },
+    {
       "name": "created_at",
       "type": "String",
       "example_values": [

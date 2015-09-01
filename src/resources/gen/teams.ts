@@ -11,6 +11,15 @@ var resource = <Resource>{
   "comment": "A _team_ is used to group related projects and people together within an\norganization. Each project in an organization is associated with a team.\n",
   "properties": [
     {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the team.\n"
+    },
+    {
       "name": "name",
       "type": "String",
       "example_values": [
