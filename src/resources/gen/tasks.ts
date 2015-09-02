@@ -392,9 +392,11 @@ var resource = <Resource>{
       "params": [
         {
           "name": "assignee",
-          "type": "Id",
+          "type": "String",
           "example_values": [
-            "14641"
+            "14641",
+            "me",
+            "sashimi@asana.com"
           ],
           "comment": "The assignee to filter tasks on.",
           "notes": [

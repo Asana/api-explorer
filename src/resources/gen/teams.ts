@@ -95,6 +95,64 @@ var resource = <Resource>{
         }
       ],
       "comment": "Returns the compact records for all users that are members of the team.\n"
+    },
+    {
+      "name": "addUser",
+      "class": "users",
+      "method": "POST",
+      "path": "/teams/%s/addUser",
+      "params": [
+        {
+          "name": "team",
+          "type": "Id",
+          "example_values": [
+            "14916"
+          ],
+          "comment": "Globally unique identifier for the team.\n",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        }
+      ],
+      "comment": "The user making this call must be a member of the team in order to invite others.\nThe user to invite must exist in the same organization as the team in order to be invited.\nThe user to invite can be referenced by their globally unique user ID or their email address.\nReturns the full user record for the invited user.\n"
+    },
+    {
+      "name": "removeUser",
+      "class": "users",
+      "method": "POST",
+      "path": "/teams/%s/removeUser",
+      "params": [
+        {
+          "name": "team",
+          "type": "Id",
+          "example_values": [
+            "14916"
+          ],
+          "comment": "Globally unique identifier for the team.\n",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        }
+      ],
+      "comment": "The user to remove can be referenced by their globally unique user ID or their email address.\nRemoves the user from the specified team. Returns an empty data record.\n"
     }
   ]
 };

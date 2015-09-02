@@ -85,11 +85,13 @@ var resource = <Resource>{
       "params": [
         {
           "name": "user",
-          "type": "Id",
+          "type": "String",
           "example_values": [
-            "14641"
+            "14641",
+            "me",
+            "sashimi@asana.com"
           ],
-          "comment": "Globally unique identifier for the user.\n",
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
         }
       ],
@@ -138,6 +140,64 @@ var resource = <Resource>{
       "notes": [
         "Results are sorted by user ID.\n"
       ]
+    },
+    {
+      "name": "add",
+      "class": "add-user",
+      "method": "POST",
+      "path": "/workspaces/%s/addUser",
+      "params": [
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace or organization to invite the user to.",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        }
+      ],
+      "comment": "The user can be referenced by their globally unique user ID or their email address.\nReturns the full user record for the invited user.\n"
+    },
+    {
+      "name": "remove",
+      "class": "remove-user",
+      "method": "POST",
+      "path": "/workspaces/%s/removeUser",
+      "params": [
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace or organization to invite the user to.",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        }
+      ],
+      "comment": "The user making this call must be an admin in the workspace.\nReturns an empty data record.\n"
     }
   ]
 };
