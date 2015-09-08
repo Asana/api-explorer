@@ -171,26 +171,8 @@ var resource = <Resource>{
   ],
   "actions": [
     {
-      "name": "findById",
-      "class": "get-all",
-      "method": "GET",
-      "path": "/stories/%s",
-      "params": [
-        {
-          "name": "story",
-          "type": "Id",
-          "example_values": [
-            "182764"
-          ],
-          "comment": "Globally unique identifier for the story.\n",
-          "required": true
-        }
-      ],
-      "comment": "Returns the full record for a single story.\n"
-    },
-    {
       "name": "findByTask",
-      "class": "get-single",
+      "class": "get-all",
       "method": "GET",
       "path": "/tasks/%s/stories",
       "collection": true,
@@ -206,6 +188,24 @@ var resource = <Resource>{
         }
       ],
       "comment": "Returns the compact records for all stories on the task.\n"
+    },
+    {
+      "name": "findById",
+      "class": "get-single",
+      "method": "GET",
+      "path": "/stories/%s",
+      "params": [
+        {
+          "name": "story",
+          "type": "Id",
+          "example_values": [
+            "182764"
+          ],
+          "comment": "Globally unique identifier for the story.\n",
+          "required": true
+        }
+      ],
+      "comment": "Returns the full record for a single story.\n"
     },
     {
       "name": "createOnTask",
