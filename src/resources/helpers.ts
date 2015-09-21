@@ -91,8 +91,7 @@ export function pathForAction(action: Action, param_value?: number): string {
       return util.format(action.path, param_value);
     } else {
       // Use the parameter name as a placeholder in the URL.
-      return util.format(
-        action.path.replace("%d", "%s"), ":" + requiredParam.name);
+      return util.format(action.path, ":" + requiredParam.name);
     }
   }
 

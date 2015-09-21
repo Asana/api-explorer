@@ -5,6 +5,7 @@ import chai = require("chai");
 import Promise = require("bluebird");
 import React = require("react/addons");
 import sinon = require("sinon");
+import util = require("util");
 import _ = require("lodash");
 
 import constants = require("../../src/constants");
@@ -866,8 +867,7 @@ describe("ExplorerComponent", () => {
         testUtils.Simulate.submit(React.findDOMNode(routeEntry));
 
         // The path with no parameters should use a placeholder.
-        var actionPath =
-          initialAction.path.replace("%d", ":" + requiredParam.name);
+        var actionPath = util.format(initialAction.path, ":" + requiredParam.name);
 
         rawResponsePromise.then(function () {
           assert.include(
@@ -896,7 +896,7 @@ describe("ExplorerComponent", () => {
 
         // The path should include all the params initialized above.
         var actionPath =
-          initialAction.path.replace(/%d/, "123") +
+          util.format(initialAction.path, "123") +
           "?opt_expand=test&opt_fields=other,this&abc=456&test=hi";
 
         rawResponsePromise.then(function () {
@@ -960,7 +960,7 @@ describe("ExplorerComponent", () => {
         rawResponsePromise.then(function () {
           sinon.assert.calledWith(
             getStub,
-            initialAction.path.replace(/%d/, "123"),
+            util.format(initialAction.path, "123"),
             {
               opt_expand: "test",
               opt_fields: "other,this",
