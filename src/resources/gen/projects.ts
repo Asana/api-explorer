@@ -6,10 +6,19 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "project",
   "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
   "properties": [
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Stuff to buy'"
+      ],
+      "comment": "Name of the project. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+    },
     {
       "name": "id",
       "type": "Id",
@@ -20,12 +29,29 @@ var resource = <Resource>{
       "comment": "Globally unique ID of the project.\n"
     },
     {
-      "name": "archived",
-      "type": "Boolean",
+      "name": "owner",
+      "type": "User",
       "example_values": [
-        "false"
+        "{ id: 12345, name: 'Tim Bizarro' }",
+        "null"
       ],
-      "comment": "True if the project is archived, false if not. Archived projects do not\nshow in the UI by default and may be treated differently for queries.\n"
+      "comment": "The current owner of the project, may be null.\n"
+    },
+    {
+      "name": "current_status",
+      "type": "Struct",
+      "example_values": [
+        "{ 'color': green, 'text': 'All gravy!', 'author':{ ... } ... } "
+      ],
+      "comment": "A description of the project's status containing a color (must be either\n`null` or one of: `green`, `yellow`, `red`) and a short description.\n"
+    },
+    {
+      "name": "due_date",
+      "type": "String",
+      "example_values": [
+        "'2012-03-26'"
+      ],
+      "comment": "The day on which this project is due. This takes a date with format YYYY-MM-DD.\n"
     },
     {
       "name": "created_at",
@@ -35,15 +61,6 @@ var resource = <Resource>{
       ],
       "access": "Read-only",
       "comment": "The time at which this project was created.\n"
-    },
-    {
-      "name": "followers",
-      "type": "Array",
-      "example_values": [
-        "[ { id: 1123, name: 'Mittens' }, ... ]"
-      ],
-      "access": "Read-only",
-      "comment": "Array of users following this project.\n"
     },
     {
       "name": "modified_at",
@@ -58,12 +75,38 @@ var resource = <Resource>{
       ]
     },
     {
-      "name": "name",
-      "type": "String",
+      "name": "archived",
+      "type": "Boolean",
       "example_values": [
-        "'Stuff to buy'"
+        "false"
       ],
-      "comment": "Name of the project. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+      "comment": "True if the project is archived, false if not. Archived projects do not\nshow in the UI by default and may be treated differently for queries.\n"
+    },
+    {
+      "name": "public",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the project is public to the organization. If false, do not share this project with other users in\nthis organization without explicitly checking to see if they have access.\n"
+    },
+    {
+      "name": "members",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users who are members of this project.\n"
+    },
+    {
+      "name": "followers",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users following this project. Followers are members who receive all notifcations for a project (default).\n"
     },
     {
       "name": "color",

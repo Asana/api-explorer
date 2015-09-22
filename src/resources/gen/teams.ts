@@ -6,6 +6,7 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "team",
   "comment": "A _team_ is used to group related projects and people together within an\norganization. Each project in an organization is associated with a team.\n",
