@@ -49,6 +49,10 @@ var resource = <Resource>{
     {
       "name": "Typeahead search",
       "url": "typeahead"
+    },
+    {
+      "name": "User Managment",
+      "url": "user-mgmt"
     }
   ],
   "actions": [
@@ -161,7 +165,7 @@ var resource = <Resource>{
     },
     {
       "name": "addUser",
-      "class": "add-user",
+      "class": "user-mgmt",
       "method": "POST",
       "path": "/workspaces/%s/addUser",
       "params": [
@@ -190,7 +194,7 @@ var resource = <Resource>{
     },
     {
       "name": "removeUser",
-      "class": "remove-user",
+      "class": "user-mgmt",
       "method": "POST",
       "path": "/workspaces/%s/removeUser",
       "params": [
