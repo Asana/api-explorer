@@ -86,11 +86,13 @@ var resource = <Resource>{
       "params": [
         {
           "name": "user",
-          "type": "Id",
+          "type": "String",
           "example_values": [
-            "14641"
+            "14641",
+            "me",
+            "sashimi@asana.com"
           ],
-          "comment": "Globally unique identifier for the user.\n",
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
         }
       ],
