@@ -6,15 +6,28 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "task",
   "comment": "The _task_ is the basic object around which many operations in Asana are\ncentered. In the Asana application, multiple tasks populate the middle pane\naccording to some view parameters, and the set of selected tasks determines\nthe more detailed information presented in the details pane.\n",
+  "notes": [
+    "A _section_, at its core, is a task whose name ends with the colon character `:`. Sections are unique in that they will\nbe included in the `memberships` field of task objects returned in the API when the task is within a section. As\nexplained [below](#projects) they can also be used to manipulate the ordering of a task within a project.\n\n[Queries](#query) return a compact representation of each object which is typically the `id` and `name` fields.\nInterested in a specific set of fields or *all* of the fields?\nUse [field selectors](/developers/documentation/getting-started/input-output-options) to manipulate what data is included in a response.\n"
+  ],
   "properties": [
+    {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the task.\n"
+    },
     {
       "name": "assignee",
       "type": "User",
       "example_values": [
-        "{ id: 1234, name: 'Tim Bizarro' }",
+        "{ id: 12345, name: 'Tim Bizarro' }",
         "null"
       ],
       "comment": "User to which this task is assigned, or `null` if the task is\nunassigned.\n"
@@ -44,19 +57,227 @@ var resource = <Resource>{
         }
       ],
       "comment": "Scheduling status of this task for the user it is assigned to.\nThis field can only be set if the `assignee` is non-null.\n"
+    },
+    {
+      "name": "created_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this task was created.\n"
+    },
+    {
+      "name": "completed",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the task is currently marked complete, false if not.\n"
+    },
+    {
+      "name": "completed_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this task was completed, or null if the task is incomplete.\n"
+    },
+    {
+      "name": "due_on",
+      "type": "String",
+      "example_values": [
+        "'2012-03-26'"
+      ],
+      "comment": "Date on which this task is due, or null if the task has no due date. This\ntakes a date with YYYY-MM-DD format and should not be used together with\n`due_at`.\n"
+    },
+    {
+      "name": "due_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "comment": "Date and time on which this task is due, or null if the task has no due\ntime. This takes a UTC timestamp and should not be used together with\n`due_on`.\n"
+    },
+    {
+      "name": "external",
+      "type": "Map",
+      "example_values": [
+        "{ id: 'my_id', data: 'A blob of information.' }"
+      ],
+      "access": "Oauth Required",
+      "comment": "The external field allows you to store app-specific metadata on tasks,\nincluding an id that can be used to retrieve tasks and a data blob that\ncan store app-specific character strings. Note that you will need to\nauthenticate with Oauth to access or modify this data. Once an external\nid is set, you can use the notation `external:custom_id` to reference your\nobject anywhere in the API where you may use the original object id.\nSee the page on Custom External Data for more details.\n"
+    },
+    {
+      "name": "followers",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "comment": "Array of users following this task.\n"
+    },
+    {
+      "name": "hearted",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the task is hearted by the authorized user, false if not.\n"
+    },
+    {
+      "name": "hearts",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users who have hearted this task.\n"
+    },
+    {
+      "name": "modified_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this task was last modified.\n",
+      "notes": [
+        "This does not currently reflect any changes in associations such as\nprojects or comments that may have been added or removed from the task.\n"
+      ]
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Buy catnip'"
+      ],
+      "comment": "Name of the task. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+    },
+    {
+      "name": "notes",
+      "type": "String",
+      "example_values": [
+        "'Mittens really likes the stuff from Humboldt.'"
+      ],
+      "comment": "More detailed, free-form textual information associated with the task.\n"
+    },
+    {
+      "name": "num_hearts",
+      "type": "Integer",
+      "example_values": [
+        "5"
+      ],
+      "access": "Read-only",
+      "comment": "The number of users who have hearted this task.\n"
+    },
+    {
+      "name": "projects",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1331, name: 'Stuff to Buy' }, ... ]"
+      ],
+      "access": "Create-only",
+      "comment": "Array of projects this task is associated with. At task creation time,\nthis array can be used to add the task to many projects at once. After\ntask creation, these associations can be modified using the `addProject`\nand `removeProject` endpoints.\n"
+    },
+    {
+      "name": "parent",
+      "type": "Task",
+      "example_values": [
+        "{ id: 1234, name: 'Bug task' }"
+      ],
+      "access": "Read-only",
+      "comment": "The parent of this task, or `null` if this is not a subtask. This property\ncannot be modified using a PUT request but you can change it with the\n`setParent` endpoint. You can create subtasks by using the subtasks endpoint.\n"
+    },
+    {
+      "name": "workspace",
+      "type": "Workspace",
+      "example_values": [
+        "{ id: 14916, name: 'My Workspace' }"
+      ],
+      "access": "Create-only",
+      "comment": "The workspace this task is associated with. Once created, task cannot be\nmoved to a different workspace. This attribute can only be specified at\ncreation time.\n"
+    },
+    {
+      "name": "memberships",
+      "type": "Array",
+      "example_values": [
+        "[ { project: { id: 1331, name: 'Bugs' }, section: { id: 1123, name: 'P1:' } }, ... ]"
+      ],
+      "access": "Create-only",
+      "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe `addProject` and `removeProject` endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
+    }
+  ],
+  "action_classes": [
+    {
+      "name": "Create a task",
+      "url": "create"
+    },
+    {
+      "name": "Get a task",
+      "url": "get"
+    },
+    {
+      "name": "Update a task",
+      "url": "update"
+    },
+    {
+      "name": "Delete a task",
+      "url": "delete"
+    },
+    {
+      "name": "Query for tasks",
+      "url": "query"
+    },
+    {
+      "name": "Work with subtasks",
+      "url": "subtasks",
+      "comment": "Creating a subtask is the same as a creating an normal task, but instead of specifying a workspace you must specify a\nparent task. Each task can only have a single parent and you can use the `setParent` endpoint to add or remove a parent from an existing task.\n\nCreated subtasks are added to the end of their parent's list of subtasks.\n\nYou can find all of the subtasks of a task via the `tasks/:ID/subtasks` endpoint.\n"
+    },
+    {
+      "name": "Task activity and comments",
+      "url": "stories",
+      "comment": "Tasks, like some other objects in the system, have a series of <a href=\"/developers/api-reference/stories\">stories</a>\nassociated with them. A story can be an indicator of some action taken on a task (such as completing it), or it could be a comment left by a user.\n\nSee the sections on <a href=\"/developers/api-reference/stories#get-all\">querying for all stories</a>\nand <a href=\"/developers/api-reference/stories#post-comment\">commenting on an object</a> for more information.\n"
+    },
+    {
+      "name": "Task, project, and section associations",
+      "url": "projects",
+      "comment": "Each task can be associated with zero or more <a href=\"/developers/api-reference/projects\">projects</a>.\n\nThe `projects` endpoint on a task will return a compact representation of each of the projects on the task specified.\n\nThe `addProject` or `removeProject` endpoints can be used to add and remove projects that a task is a member of by\nproviding the required `project` parameter.\n\nNote that a task may belong to many projects and a single section within each project.\n\nRequests to add/remove projects, if successful, will return success and an empty data block.\n"
+    },
+    {
+      "name": "Tags on tasks",
+      "url": "tags",
+      "comment": "Each task can be associated with zero or more <a href=\"/developers/api-reference/tags\">tags</a> in the system.\nThe API allows you to query and change those associations.\n\nYou can get the list of tags associated with a task by using the `tags` endpoint on a task, which will return a compact\nrepresentation of each of the tags on the task specified.\n\nYou can add or remove a tag using the `addTag` or `removeTag` endpoints, respectively, providing the parameters below.\n\nRequests to add/remove tags, if successful, will return success and an empty data block.\n"
+    },
+    {
+      "name": "Followers on tasks",
+      "url": "followers",
+      "comment": "Each task can be associated with zero or more followers in the system.\n\nYou can add or remove followers using the `addFollowers` or `removeFollowers` endpoints, respectively, providing the parameters below.\n\nRequests to add/remove followers, if successful, will return the complete updated task record, described above.\n"
     }
   ],
   "actions": [
     {
       "name": "create",
+      "class": "create",
       "method": "POST",
       "path": "/tasks",
+      "params": [
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace to create a task in."
+        }
+      ],
       "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify a `project` or a `parent` task instead.\n"
     },
     {
       "name": "createInWorkspace",
+      "class": "create",
       "method": "POST",
-      "path": "/workspaces/%d/tasks",
+      "path": "/workspaces/%s/tasks",
       "params": [
         {
           "name": "workspace",
@@ -68,12 +289,13 @@ var resource = <Resource>{
           "required": true
         }
       ],
-      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify a project or a parent task instead.\n"
+      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify a `project` or a `parent` task instead.\n"
     },
     {
       "name": "findById",
+      "class": "get",
       "method": "GET",
-      "path": "/tasks/%d",
+      "path": "/tasks/%s",
       "params": [
         {
           "name": "task",
@@ -89,8 +311,9 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
-      "path": "/tasks/%d",
+      "path": "/tasks/%s",
       "params": [
         {
           "name": "task",
@@ -106,8 +329,9 @@ var resource = <Resource>{
     },
     {
       "name": "delete",
+      "class": "delete",
       "method": "DELETE",
-      "path": "/tasks/%d",
+      "path": "/tasks/%s",
       "params": [
         {
           "name": "task",
@@ -123,8 +347,9 @@ var resource = <Resource>{
     },
     {
       "name": "findByProject",
+      "class": "query",
       "method": "GET",
-      "path": "/projects/%d/tasks",
+      "path": "/projects/%s/tasks",
       "params": [
         {
           "name": "projectId",
@@ -141,8 +366,9 @@ var resource = <Resource>{
     },
     {
       "name": "findByTag",
+      "class": "query",
       "method": "GET",
-      "path": "/tags/%d/tasks",
+      "path": "/tags/%s/tasks",
       "params": [
         {
           "name": "tag",
@@ -159,6 +385,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "query",
       "method": "GET",
       "path": "/tasks",
       "collection": true,
@@ -166,13 +393,15 @@ var resource = <Resource>{
       "params": [
         {
           "name": "assignee",
-          "type": "Id",
+          "type": "String",
           "example_values": [
-            "14641"
+            "14641",
+            "me",
+            "sashimi@asana.com"
           ],
           "comment": "The assignee to filter tasks on.",
           "notes": [
-            "If you specify `assignee`, you must also specify the `workspace` to filter on."
+            "If you specify `assignee`, you must also specify the `workspace` to filter on.\n"
           ]
         },
         {
@@ -183,7 +412,7 @@ var resource = <Resource>{
           ],
           "comment": "The workspace or organization to filter tasks on.",
           "notes": [
-            "If you specify `workspace`, you must also specify the `assignee` to filter on."
+            "If you specify `workspace`, you must also specify the `assignee` to filter on.\n"
           ]
         },
         {
@@ -211,8 +440,9 @@ var resource = <Resource>{
     },
     {
       "name": "addFollowers",
+      "class": "followers",
       "method": "POST",
-      "path": "/tasks/%d/addFollowers",
+      "path": "/tasks/%s/addFollowers",
       "params": [
         {
           "name": "task",
@@ -237,8 +467,9 @@ var resource = <Resource>{
     },
     {
       "name": "removeFollowers",
+      "class": "followers",
       "method": "POST",
-      "path": "/tasks/%d/removeFollowers",
+      "path": "/tasks/%s/removeFollowers",
       "params": [
         {
           "name": "task",
@@ -263,8 +494,9 @@ var resource = <Resource>{
     },
     {
       "name": "projects",
+      "class": "projects",
       "method": "GET",
-      "path": "/tasks/%d/projects",
+      "path": "/tasks/%s/projects",
       "collection": true,
       "params": [
         {
@@ -281,8 +513,9 @@ var resource = <Resource>{
     },
     {
       "name": "addProject",
+      "class": "projects",
       "method": "POST",
-      "path": "/tasks/%d/addProject",
+      "path": "/tasks/%s/addProject",
       "params": [
         {
           "name": "task",
@@ -333,8 +566,9 @@ var resource = <Resource>{
     },
     {
       "name": "removeProject",
+      "class": "projects",
       "method": "POST",
-      "path": "/tasks/%d/removeProject",
+      "path": "/tasks/%s/removeProject",
       "params": [
         {
           "name": "task",
@@ -359,8 +593,9 @@ var resource = <Resource>{
     },
     {
       "name": "tags",
+      "class": "tags",
       "method": "GET",
-      "path": "/tasks/%d/tags",
+      "path": "/tasks/%s/tags",
       "collection": true,
       "params": [
         {
@@ -377,8 +612,9 @@ var resource = <Resource>{
     },
     {
       "name": "addTag",
+      "class": "tags",
       "method": "POST",
-      "path": "/tasks/%d/addTag",
+      "path": "/tasks/%s/addTag",
       "params": [
         {
           "name": "task",
@@ -403,8 +639,9 @@ var resource = <Resource>{
     },
     {
       "name": "removeTag",
+      "class": "tags",
       "method": "POST",
-      "path": "/tasks/%d/removeTag",
+      "path": "/tasks/%s/removeTag",
       "params": [
         {
           "name": "task",
@@ -429,8 +666,9 @@ var resource = <Resource>{
     },
     {
       "name": "subtasks",
+      "class": "subtasks",
       "method": "GET",
-      "path": "/tasks/%d/subtasks",
+      "path": "/tasks/%s/subtasks",
       "collection": true,
       "params": [
         {
@@ -447,8 +685,9 @@ var resource = <Resource>{
     },
     {
       "name": "addSubtask",
+      "class": "subtasks",
       "method": "POST",
-      "path": "/tasks/%d/subtasks",
+      "path": "/tasks/%s/subtasks",
       "params": [
         {
           "name": "task",
@@ -458,23 +697,15 @@ var resource = <Resource>{
           ],
           "comment": "The task to add a subtask to.",
           "required": true
-        },
-        {
-          "name": "subtask",
-          "type": "Id",
-          "example_values": [
-            "124816"
-          ],
-          "comment": "The subtask to add to the task.",
-          "required": true
         }
       ],
-      "comment": "Makes an existing task a subtask of another. Returns an empty data block.\n"
+      "comment": "Creates a new subtask and adds it to the parent task. Returns the full record\nfor the newly created subtask.\n"
     },
     {
       "name": "setParent",
+      "class": "subtasks",
       "method": "POST",
-      "path": "/tasks/%d/setParent",
+      "path": "/tasks/%s/setParent",
       "no_code": true,
       "params": [
         {
@@ -501,8 +732,9 @@ var resource = <Resource>{
     },
     {
       "name": "stories",
+      "class": "stories",
       "method": "GET",
-      "path": "/tasks/%d/stories",
+      "path": "/tasks/%s/stories",
       "collection": true,
       "params": [
         {
@@ -519,8 +751,9 @@ var resource = <Resource>{
     },
     {
       "name": "addComment",
+      "class": "stories",
       "method": "POST",
-      "path": "/tasks/%d/stories",
+      "path": "/tasks/%s/stories",
       "params": [
         {
           "name": "task",
@@ -534,6 +767,9 @@ var resource = <Resource>{
         {
           "name": "text",
           "type": "String",
+          "example_values": [
+            "'This is a comment.'"
+          ],
           "required": true,
           "comment": "The plain text of the comment to add."
         }

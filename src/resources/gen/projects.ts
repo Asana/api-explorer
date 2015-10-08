@@ -6,23 +6,178 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "project",
   "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
   "properties": [
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Stuff to buy'"
+      ],
+      "comment": "Name of the project. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+    },
     {
       "name": "id",
       "type": "Id",
       "example_values": [
         "1234"
       ],
-      "read_only": true,
-      "comment": "Globally unique identifier for this object.\n"
+      "access": "Read-only",
+      "comment": "Globally unique ID of the project.\n"
+    },
+    {
+      "name": "owner",
+      "type": "User",
+      "example_values": [
+        "{ id: 12345, name: 'Tim Bizarro' }",
+        "null"
+      ],
+      "comment": "The current owner of the project, may be null.\n"
+    },
+    {
+      "name": "current_status",
+      "type": "Struct",
+      "example_values": [
+        "{ 'color': green, 'text': 'All gravy!', 'author':{ ... } ... } "
+      ],
+      "comment": "A description of the project's status containing a color (must be either\n`null` or one of: `green`, `yellow`, `red`) and a short description.\n"
+    },
+    {
+      "name": "due_date",
+      "type": "String",
+      "example_values": [
+        "'2012-03-26'"
+      ],
+      "comment": "The day on which this project is due. This takes a date with format YYYY-MM-DD.\n"
+    },
+    {
+      "name": "created_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this project was created.\n"
+    },
+    {
+      "name": "modified_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this project was last modified.\n",
+      "notes": [
+        "This does not currently reflect any changes in associations such as tasks\nor comments that may have been added or removed from the project.\n"
+      ]
+    },
+    {
+      "name": "archived",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the project is archived, false if not. Archived projects do not\nshow in the UI by default and may be treated differently for queries.\n"
+    },
+    {
+      "name": "public",
+      "type": "Boolean",
+      "example_values": [
+        "false"
+      ],
+      "comment": "True if the project is public to the organization. If false, do not share this project with other users in\nthis organization without explicitly checking to see if they have access.\n"
+    },
+    {
+      "name": "members",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users who are members of this project.\n"
+    },
+    {
+      "name": "followers",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users following this project. Followers are members who receive all notifcations for a project (default).\n"
+    },
+    {
+      "name": "color",
+      "type": "Enum",
+      "example_values": [
+        "'dark-purple'"
+      ],
+      "comment": "Color of the project. Must be either `null` or one of: `dark-pink`,\n`dark-green`, `dark-blue`, `dark-red`, `dark-teal`, `dark-brown`,\n`dark-orange`, `dark-purple`, `dark-warm-gray`, `light-pink`, `light-green`,\n`light-blue`, `light-red`, `light-teal`, `light-yellow`, `light-orange`,\n`light-purple`, `light-warm-gray`.\n"
+    },
+    {
+      "name": "notes",
+      "type": "String",
+      "example_values": [
+        "'These are things we need to purchase.'"
+      ],
+      "comment": "More detailed, free-form textual information associated with the project.\n"
+    },
+    {
+      "name": "workspace",
+      "type": "Workspace",
+      "example_values": [
+        "{ id: 14916, name: 'My Workspace' }"
+      ],
+      "access": "Create-only",
+      "comment": "The workspace or organization this project is associated with. Once created,\nprojects cannot be moved to a different workspace. This attribute can only\nbe specified at creation time.\n"
+    },
+    {
+      "name": "team",
+      "type": "Team",
+      "example_values": [
+        "{ id: 692353, name: 'organization.com Marketing' }"
+      ],
+      "access": "Create-only",
+      "comment": "The team that this project is shared with. This field only exists for\nprojects in organizations.\n"
+    }
+  ],
+  "action_classes": [
+    {
+      "name": "Create a project",
+      "url": "create"
+    },
+    {
+      "name": "Get single project",
+      "url": "get-single"
+    },
+    {
+      "name": "Update a project",
+      "url": "update"
+    },
+    {
+      "name": "Delete a project",
+      "url": "delete"
+    },
+    {
+      "name": "Query for projects",
+      "url": "query"
+    },
+    {
+      "name": "Get project tasks",
+      "url": "get-tasks"
+    },
+    {
+      "name": "Get project sections",
+      "url": "sections",
+      "comment": "Sections are tasks whose names end with a colon character `:` . For instance\nsections will be included in query results for tasks and be represented with\nthe same fields. The `memberships` property of a task contains the project/section\npairs a task belongs to when applicable.\n\nSee [Task, Project, and Section Associations](/developers/api-reference/tasks#projects)\nfor more techniques on managing sections.\n"
     }
   ],
   "actions": [
     {
       "name": "create",
+      "class": "create",
       "method": "POST",
       "path": "/projects",
       "params": [
@@ -48,8 +203,9 @@ var resource = <Resource>{
     },
     {
       "name": "createInWorkspace",
+      "class": "create",
       "method": "POST",
-      "path": "/workspaces/%d/projects",
+      "path": "/workspaces/%s/projects",
       "params": [
         {
           "name": "workspace",
@@ -65,8 +221,9 @@ var resource = <Resource>{
     },
     {
       "name": "createInTeam",
+      "class": "create",
       "method": "POST",
-      "path": "/teams/%d/projects",
+      "path": "/teams/%s/projects",
       "params": [
         {
           "name": "team",
@@ -82,8 +239,9 @@ var resource = <Resource>{
     },
     {
       "name": "findById",
+      "class": "get-single",
       "method": "GET",
-      "path": "/projects/%d",
+      "path": "/projects/%s",
       "params": [
         {
           "name": "project",
@@ -99,8 +257,9 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
-      "path": "/projects/%d",
+      "path": "/projects/%s",
       "params": [
         {
           "name": "project",
@@ -116,8 +275,9 @@ var resource = <Resource>{
     },
     {
       "name": "delete",
+      "class": "delete",
       "method": "DELETE",
-      "path": "/projects/%d",
+      "path": "/projects/%s",
       "params": [
         {
           "name": "project",
@@ -133,6 +293,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "query",
       "method": "GET",
       "path": "/projects",
       "collection": true,
@@ -166,8 +327,9 @@ var resource = <Resource>{
     },
     {
       "name": "findByWorkspace",
+      "class": "query",
       "method": "GET",
-      "path": "/workspaces/%d/projects",
+      "path": "/workspaces/%s/projects",
       "params": [
         {
           "name": "workspace",
@@ -192,8 +354,9 @@ var resource = <Resource>{
     },
     {
       "name": "findByTeam",
+      "class": "query",
       "method": "GET",
-      "path": "/teams/%d/projects",
+      "path": "/teams/%s/projects",
       "params": [
         {
           "name": "team",
@@ -215,6 +378,44 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact project records for all projects in the team.\n"
+    },
+    {
+      "name": "sections",
+      "class": "sections",
+      "method": "GET",
+      "path": "/projects/%s/sections",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to get sections from.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "Returns compact records for all sections in the specified project.\n"
+    },
+    {
+      "name": "tasks",
+      "class": "get-tasks",
+      "method": "GET",
+      "path": "/projects/%s/tasks",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project in which to search for tasks.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "Returns the compact task records for all tasks within the given project,\nordered by their priority within the project. Tasks can exist in more than one project at a time.\n"
     }
   ]
 };

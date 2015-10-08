@@ -6,6 +6,7 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "user",
   "comment": "A _user_ object represents an account in Asana that can be given access to\nvarious workspaces, projects, and tasks.\n\nLike other objects in the system, users are referred to by numerical IDs.\nHowever, the special string identifier `me` can be used anywhere\na user ID is accepted, to refer to the current authenticated user.\n",
@@ -16,8 +17,17 @@ var resource = <Resource>{
       "example_values": [
         "1234"
       ],
-      "read_only": true,
-      "comment": "Globally unique identifier for this object.\n"
+      "access": "Read-only",
+      "comment": "Globally unique ID of the user.\n"
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Greg Sanchez'"
+      ],
+      "access": "Read-only",
+      "comment": "The user's name.\n"
     },
     {
       "name": "email",
@@ -25,59 +35,74 @@ var resource = <Resource>{
       "example_values": [
         "'gsanchez@example.com'"
       ],
-      "read_only": true,
+      "access": "Read-only",
       "comment": "The user's email address.\n"
     },
     {
       "name": "photo",
       "type": "Struct",
       "example_values": [
-        "{ \"image_21x21\": \"https://...\", ... }"
+        "{ 'image_21x21': 'https://...', ... }"
       ],
-      "read_only": true,
-      "comment": "A map of the user's profile photo in various sizes, or null if no photo\nis set. Sizes provided are 21, 27, 36, 60, and 128. Images are in\nPNG format.\n"
+      "access": "Read-only",
+      "comment": "A map of the user's profile photo in various sizes, or `null` if no photo\nis set. Sizes provided are 21, 27, 36, 60, and 128. Images are in\nPNG format.\n"
     },
     {
       "name": "workspaces",
       "type": "Array",
       "example_values": [
-        "[ { id: 14916, name: \"My Workspace\"} ... ]"
+        "[ { id: 14916, name: 'My Workspace' }, ... ]"
       ],
-      "read_only": true,
+      "access": "Read-only",
       "comment": "Workspaces and organizations this user may access.\n",
       "notes": [
-        "The API will only return workspaces and organizations that also contain the authenticated user."
+        "The API will only return workspaces and organizations that also\ncontain the authenticated user.\n"
       ]
+    }
+  ],
+  "action_classes": [
+    {
+      "name": "Get a single user",
+      "url": "get-single"
+    },
+    {
+      "name": "Get all users",
+      "url": "get-all"
     }
   ],
   "actions": [
     {
       "name": "me",
+      "class": "get-single",
       "method": "GET",
       "path": "/users/me",
       "comment": "Returns the full user record for the currently authenticated user.\n"
     },
     {
       "name": "findById",
+      "class": "get-single",
       "method": "GET",
-      "path": "/users/%d",
+      "path": "/users/%s",
       "params": [
         {
           "name": "user",
-          "type": "Id",
+          "type": "String",
           "example_values": [
-            "14641"
+            "14641",
+            "me",
+            "sashimi@asana.com"
           ],
-          "comment": "Globally unique identifier for the user.\n",
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
         }
       ],
-      "comment": "Returns the full user record for a single user.\n"
+      "comment": "Returns the full user record for the single user with the provided ID.\n"
     },
     {
       "name": "findByWorkspace",
+      "class": "get-all",
       "method": "GET",
-      "path": "/workspaces/%d/users",
+      "path": "/workspaces/%s/users",
       "collection": true,
       "collection_cannot_paginate": true,
       "params": [
@@ -91,10 +116,14 @@ var resource = <Resource>{
           "required": true
         }
       ],
-      "comment": "Returns the user records for all users in all workspaces and organizations\naccessible to the authenticated user.\n"
+      "comment": "Returns the user records for all users in the specified workspace or\norganization.\n",
+      "notes": [
+        "Results are sorted alphabetically by user `name`s.\n"
+      ]
     },
     {
       "name": "findAll",
+      "class": "get-all",
       "method": "GET",
       "path": "/users",
       "collection": true,
@@ -108,7 +137,10 @@ var resource = <Resource>{
           "comment": "The workspace or organization to filter users on."
         }
       ],
-      "comment": "Returns the user records for all users in the specified workspace or\norganization.\n"
+      "comment": "Returns the user records for all users in all workspaces and organizations\naccessible to the authenticated user. Accepts an optional workspace ID\nparameter.\n",
+      "notes": [
+        "Results are sorted by user ID.\n"
+      ]
     }
   ]
 };

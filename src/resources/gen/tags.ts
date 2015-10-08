@@ -6,6 +6,7 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "tag",
   "comment": "A _tag_ is a label that can be attached to any task in Asana. It exists in a\nsingle workspace or organization.\n\nTags have some metadata associated with them, but it is possible that we will\nsimplify them in the future so it is not encouraged to rely too heavily on it.\nUnlike projects, tags do not provide any ordering on the tasks they\nare associated with.\n",
@@ -16,13 +17,87 @@ var resource = <Resource>{
       "example_values": [
         "1234"
       ],
-      "read_only": true,
-      "comment": "Globally unique identifier for this object.\n"
+      "access": "Read-only",
+      "comment": "Globally unique ID of the tag.\n"
+    },
+    {
+      "name": "created_at",
+      "type": "String",
+      "example_values": [
+        "'2012-02-22T02:06:58.147Z'"
+      ],
+      "access": "Read-only",
+      "comment": "The time at which this tag was created.\n"
+    },
+    {
+      "name": "followers",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1123, name: 'Mittens' }, ... ]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of users following this tag.\n"
+    },
+    {
+      "name": "name",
+      "type": "String",
+      "example_values": [
+        "'Stuff to buy'"
+      ],
+      "comment": "Name of the tag. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+    },
+    {
+      "name": "color",
+      "type": "Enum",
+      "example_values": [
+        "'dark-purple'"
+      ],
+      "comment": "Color of the project. Must be either `null` or one of: `dark-pink`,\n`dark-green`, `dark-blue`, `dark-red`, `dark-teal`, `dark-brown`,\n`dark-orange`, `dark-purple`, `dark-warm-gray`, `light-pink`, `light-green`,\n`light-blue`, `light-red`, `light-teal`, `light-yellow`, `light-orange`,\n`light-purple`, `light-warm-gray`.\n"
+    },
+    {
+      "name": "notes",
+      "type": "String",
+      "example_values": [
+        "'These are things we need to purchase.'"
+      ],
+      "comment": "More detailed, free-form textual information associated with the tag.\n"
+    },
+    {
+      "name": "workspace",
+      "type": "Workspace",
+      "example_values": [
+        "{ id: 14916, name: 'My Workspace' }"
+      ],
+      "access": "Create-only",
+      "comment": "The workspace or organization this tag is associated with. Once created,\ntags cannot be moved to a different workspace. This attribute can only\nbe specified at creation time.\n"
+    }
+  ],
+  "action_classes": [
+    {
+      "name": "Create a tag",
+      "url": "create"
+    },
+    {
+      "name": "Get a single tag",
+      "url": "get-single"
+    },
+    {
+      "name": "Update a tag",
+      "url": "update"
+    },
+    {
+      "name": "Query for tags",
+      "url": "query"
+    },
+    {
+      "name": "Get tasks with tag",
+      "url": "get-tasks"
     }
   ],
   "actions": [
     {
       "name": "create",
+      "class": "create",
       "method": "POST",
       "path": "/tags",
       "params": [
@@ -40,8 +115,9 @@ var resource = <Resource>{
     },
     {
       "name": "createInWorkspace",
+      "class": "create",
       "method": "POST",
-      "path": "/workspaces/%d/tags",
+      "path": "/workspaces/%s/tags",
       "params": [
         {
           "name": "workspace",
@@ -57,8 +133,9 @@ var resource = <Resource>{
     },
     {
       "name": "findById",
+      "class": "get-single",
       "method": "GET",
-      "path": "/tags/%d",
+      "path": "/tags/%s",
       "params": [
         {
           "name": "tag",
@@ -74,8 +151,9 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
-      "path": "/tags/%d",
+      "path": "/tags/%s",
       "params": [
         {
           "name": "tag",
@@ -91,8 +169,9 @@ var resource = <Resource>{
     },
     {
       "name": "delete",
+      "class": "delete",
       "method": "DELETE",
-      "path": "/tags/%d",
+      "path": "/tags/%s",
       "params": [
         {
           "name": "tag",
@@ -108,6 +187,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "query",
       "method": "GET",
       "path": "/tags",
       "collection": true,
@@ -141,8 +221,9 @@ var resource = <Resource>{
     },
     {
       "name": "findByWorkspace",
+      "class": "query",
       "method": "GET",
-      "path": "/workspaces/%d/tags",
+      "path": "/workspaces/%s/tags",
       "params": [
         {
           "name": "workspace",
@@ -156,6 +237,25 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact tag records for all tags in the workspace.\n"
+    },
+    {
+      "name": "getTasksWithTag",
+      "class": "get-tasks",
+      "method": "GET",
+      "path": "/tags/%s/tasks",
+      "params": [
+        {
+          "name": "tag",
+          "type": "Id",
+          "example_values": [
+            "11235"
+          ],
+          "comment": "The tag to fetch tasks from.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "Returns the compact task records for all tasks with the given tag.\nTasks can have more than one tag at a time.\n"
     }
   ]
 };

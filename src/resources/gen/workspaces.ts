@@ -6,6 +6,7 @@
  * errors that are just not worth fixing.
  */
 /* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "workspace",
   "comment": "A _workspace_ is the highest-level organizational unit in Asana. All projects\nand tasks have an associated workspace.\n\nAn _organization_ is a special kind of workspace that represents a company.\nIn an organization, you can group your projects into teams. You can read\nmore about how organizations work on the Asana Guide.\nTo tell if your workspace is an organization or not, check its\n`is_organization` property.\n\nOver time, we intend to migrate most workspaces into organizations and to\nrelease more organization-specific functionality. We may eventually deprecate\nusing workspace-based APIs for organizations. Currently, and until after\nsome reasonable grace period following any further announcements, you can\nstill reference organizations in any `workspace` parameter.\n",
@@ -16,14 +17,14 @@ var resource = <Resource>{
       "example_values": [
         "1234"
       ],
-      "read_only": true,
-      "comment": "Globally unique identifier for this object.\n"
+      "access": "Read-only",
+      "comment": "Globally unique ID of the workspace.\n"
     },
     {
       "name": "name",
       "type": "String",
       "example_values": [
-        "Apollo Moon Landing"
+        "'My Favorite Workspace'"
       ],
       "comment": "The name of the workspace.\n"
     },
@@ -33,14 +34,33 @@ var resource = <Resource>{
       "example_values": [
         "false"
       ],
-      "comment": "True iff the workspace is an _organization_.\n"
+      "comment": "Whether the workspace is an _organization_.\n"
+    }
+  ],
+  "action_classes": [
+    {
+      "name": "Get available workspaces",
+      "url": "get"
+    },
+    {
+      "name": "Update a workspace",
+      "url": "update"
+    },
+    {
+      "name": "Typeahead search",
+      "url": "typeahead"
+    },
+    {
+      "name": "User Managment",
+      "url": "user-mgmt"
     }
   ],
   "actions": [
     {
       "name": "findById",
+      "class": "get",
       "method": "GET",
-      "path": "/workspaces/%d",
+      "path": "/workspaces/%s",
       "params": [
         {
           "name": "workspace",
@@ -56,6 +76,7 @@ var resource = <Resource>{
     },
     {
       "name": "findAll",
+      "class": "get",
       "method": "GET",
       "path": "/workspaces",
       "collection": true,
@@ -63,8 +84,9 @@ var resource = <Resource>{
     },
     {
       "name": "update",
+      "class": "update",
       "method": "PUT",
-      "path": "/workspaces/%d",
+      "path": "/workspaces/%s",
       "params": [
         {
           "name": "workspace",
@@ -76,12 +98,13 @@ var resource = <Resource>{
           "required": true
         }
       ],
-      "comment": "Update properties on a workspace. Returns the complete, updated workspace record.\n"
+      "comment": "A specific, existing workspace can be updated by making a PUT request on\nthe URL for that workspace. Only the fields provided in the data block\nwill be updated; any unspecified fields will remain unchanged.\n\nCurrently the only field that can be modified for a workspace is its `name`.\n\nReturns the complete, updated workspace record.\n"
     },
     {
       "name": "typeahead",
+      "class": "typeahead",
       "method": "GET",
-      "path": "/workspaces/%d/typeahead",
+      "path": "/workspaces/%s/typeahead",
       "params": [
         {
           "name": "workspace",
@@ -95,6 +118,9 @@ var resource = <Resource>{
         {
           "name": "type",
           "type": "Enum",
+          "example_values": [
+            "user"
+          ],
           "values": [
             {
               "name": "task",
@@ -119,17 +145,81 @@ var resource = <Resource>{
         {
           "name": "query",
           "type": "String",
+          "example_values": [
+            "Greg"
+          ],
           "comment": "The string that will be used to search for relevant objects. If an\nempty string is passed in, the API will currently return an empty\nresult set.\n"
         },
         {
           "name": "count",
           "type": "Number",
+          "example_values": [
+            "10"
+          ],
           "comment": "The number of results to return. The default is `20` if this\nparameter is omitted, with a minimum of `1` and a maximum of `100`.\nIf there are fewer results found than requested, all will be returned.\n"
         }
       ],
       "collection": true,
       "collection_cannot_paginate": true,
       "comment": "Retrieves objects in the workspace based on an auto-completion/typeahead\nsearch algorithm. This feature is meant to provide results quickly, so do\nnot rely on this API to provide extremely accurate search results. The\nresult set is limited to a single page of results with a maximum size,\nso you won't be able to fetch large numbers of results.\n"
+    },
+    {
+      "name": "addUser",
+      "class": "user-mgmt",
+      "method": "POST",
+      "path": "/workspaces/%s/addUser",
+      "params": [
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace or organization to invite the user to.",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        }
+      ],
+      "comment": "The user can be referenced by their globally unique user ID or their email address.\nReturns the full user record for the invited user.\n"
+    },
+    {
+      "name": "removeUser",
+      "class": "user-mgmt",
+      "method": "POST",
+      "path": "/workspaces/%s/removeUser",
+      "params": [
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace or organization to invite the user to.",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        }
+      ],
+      "comment": "The user making this call must be an admin in the workspace.\nReturns an empty data record.\n"
     }
   ]
 };
