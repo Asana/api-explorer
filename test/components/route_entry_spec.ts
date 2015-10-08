@@ -69,9 +69,11 @@ describe("RouteEntryComponent", () => {
       var childItem = (<HTMLOptionElement>children.item(idx));
 
       // Replace any placeholders with their required param name.
+      // NB: We use replace rather than util.format in order to ignore
+      //     paths that do not contain a placeholder.
       var requiredParam = _.find(action.params, "required");
       var actionPath = requiredParam !== undefined ?
-        action.path.replace("%d", ":" + requiredParam.name) : action.path;
+        action.path.replace("%s", ":" + requiredParam.name) : action.path;
 
       assert.equal(childItem.value, action.name);
       assert.equal(childItem.text, action.method + " " + actionPath);

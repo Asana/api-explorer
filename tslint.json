@@ -12,7 +12,7 @@
       "check-uppercase"
     ],
     "curly": true,
-    "eofline": true,
+    "eofline": false,
     "forin": true,
     "indent": [
       true,
