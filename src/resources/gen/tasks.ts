@@ -206,6 +206,15 @@ var resource = <Resource>{
       ],
       "access": "Create-only",
       "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe `addProject` and `removeProject` endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
+    },
+    {
+      "name": "tags",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 59746, name: 'Grade A' }, ... ]"
+      ],
+      "access": "Create-only",
+      "comment": "Array of tags associated with this task. This property may be specified on\ncreation using just an array of tag IDs. In order to change tags on an\nexisting task use `addTag` and `removeTag`.\n"
     }
   ],
   "action_classes": [
