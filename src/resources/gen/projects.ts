@@ -10,6 +10,9 @@
 var resource = <Resource>{
   "name": "project",
   "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
+  "notes": [
+    "Followers of a project are a subset of the members of that project. Followers of a project will receive all updates\nincluding tasks created, added and removed from that project. Members of the project have access to and will receive\nstatus updates of the project. Adding followers to a project will add them as members if they are not already,\nremoving followers from a project will not affect membership.\n"
+  ],
   "properties": [
     {
       "name": "name",
@@ -106,7 +109,7 @@ var resource = <Resource>{
         "[ { id: 1123, name: 'Mittens' }, ... ]"
       ],
       "access": "Read-only",
-      "comment": "Array of users following this project. Followers are members who receive all notifcations for a project (default).\n"
+      "comment": "Array of users following this project. Followers are a subset of members who receive all notifcations for a\nproject, the default notification setting when adding members to a project in-product.\n"
     },
     {
       "name": "color",
@@ -416,6 +419,114 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact task records for all tasks within the given project,\nordered by their priority within the project. Tasks can exist in more than one project at a time.\n"
+    },
+    {
+      "name": "addFollowers",
+      "class": "followers",
+      "method": "POST",
+      "path": "/projects/%s/addFollowers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to add followers to.",
+          "required": true
+        },
+        {
+          "name": "followers",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of followers to add to the project."
+        }
+      ],
+      "comment": "Adds the specified list of users as followers to the project. Followers are a subset of members, therefore if\nthe users are not already members of the project they will also become members as a result of this operation.\nReturns the updated project record.\n"
+    },
+    {
+      "name": "removeFollowers",
+      "class": "followers",
+      "method": "POST",
+      "path": "/projects/%s/removeFollowers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to remove followers from.",
+          "required": true
+        },
+        {
+          "name": "followers",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of followers to remove from the project."
+        }
+      ],
+      "comment": "Removes the specified list of users from following the project, this will not affect project membership status.\nReturns the updated project record.\n"
+    },
+    {
+      "name": "addMembers",
+      "class": "members",
+      "method": "POST",
+      "path": "/projects/%s/addMembers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to add members to.",
+          "required": true
+        },
+        {
+          "name": "members",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of members to add to the project."
+        }
+      ],
+      "comment": "Adds the specified list of users as members of the project. Returns the updated project record.\n"
+    },
+    {
+      "name": "removeMembers",
+      "class": "members",
+      "method": "POST",
+      "path": "/projects/%s/removeMembers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to remove members from.",
+          "required": true
+        },
+        {
+          "name": "members",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of members to remove from the project."
+        }
+      ],
+      "comment": "Removes the specified list of members from the project. Returns the updated project record.\n"
     }
   ]
 };
