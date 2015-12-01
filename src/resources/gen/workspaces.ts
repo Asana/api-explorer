@@ -51,7 +51,7 @@ var resource = <Resource>{
       "url": "typeahead"
     },
     {
-      "name": "User Managment",
+      "name": "User Management",
       "url": "user-mgmt"
     }
   ],
