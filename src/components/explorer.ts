@@ -234,11 +234,13 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
       this.state.action : ResourcesHelpers.defaultActionFromResource(resource);
     var params = !hasChanged ? this.state.params : this.resetParams();
 
-    this.setState({
+    var newState = {
       action: action,
       params: params,
       resource: resource
-    });
+    };
+
+    this.setState(this.updateWorkspace(newState, this.state.workspace));
   };
 
   /**
@@ -252,10 +254,12 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
     // If the action has changed, also reset relevant parts of state.
     var params = !hasChanged ? this.state.params : this.resetParams();
 
-    this.setState({
+    var newState = {
       action: action,
       params: params
-    });
+    };
+
+    this.setState(this.updateWorkspace(newState, this.state.workspace));
   };
 
   /**
@@ -318,31 +322,19 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
    * @returns {function(React.FormEvent): void}
    */
   onChangeParameterState = (parameter: Parameter) => {
+    var me = this;
     return (event: React.FormEvent) => {
       var target = <HTMLInputElement>event.target;
+      var targetValue = target.value;
 
+      var newState = me.updateParameter(this.state, parameter, targetValue);
       if (_isWorkspaceParameter(parameter)) {
         var workspace = _.find(this.state.workspaces,
             workspace => workspace.id.toString() === target.value);
-
-        this.setState({
-          workspace: workspace
-        });
-      } else {
-        var paramType = parameter.required ?
-          "requiredParams" : "optionalParams";
-
-        // Update or remove the parameter accordingly.
-        this.setState(update(this.state, <any>{
-          params: _.object([paramType], [{
-            $set: target.value === "" ?
-              _.omit((<any>this.state.params)[paramType], parameter.name) :
-              _.extend(
-                (<any>this.state.params)[paramType],
-                _.object([parameter.name], [target.value]))
-          }])
-        }));
+        _.extend(newState, { workspace: workspace });
       }
+      // Update or remove the parameter accordingly.
+      this.setState(newState);
     };
   };
 
@@ -471,6 +463,32 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
           response: this.state.response
         })
       ]
+    });
+  }
+
+  /**
+   * Currently, only workspace might be set by default since it is a select box.
+   */
+  private updateWorkspace(oldState: Explorer.State, currentWorkspace: Asana.resources.Workspace): Explorer.State {
+    var workspace = _.find(oldState.action.params, _isWorkspaceParameter);
+    if (currentWorkspace && workspace) {
+      return this.updateParameter(oldState, workspace, currentWorkspace.id.toString());
+    } else {
+      return oldState;
+    }
+  }
+
+  private updateParameter(oldState: Explorer.State, parameter: Parameter, targetValue: String): Explorer.State {
+    var paramType = parameter.required ?
+      "requiredParams" : "optionalParams";
+    return update(oldState, <any>{
+      params: _.object([paramType], [{
+        $set: targetValue === "" ?
+          _.omit((<any>this.state.params)[paramType], parameter.name) :
+          _.extend(
+            (<any>this.state.params)[paramType],
+            _.object([parameter.name], [targetValue]))
+      }])
     });
   }
 

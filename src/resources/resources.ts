@@ -6,4 +6,5 @@ export import Tags = require("./gen/tags");
 export import Tasks = require("./gen/tasks");
 export import Teams = require("./gen/teams");
 export import Users = require("./gen/users");
+export import Webhooks = require("./gen/webhooks");
 export import Workspaces = require("./gen/workspaces");

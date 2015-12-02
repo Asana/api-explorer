@@ -147,6 +147,7 @@ var resource = <Resource>{
       "class": "get",
       "method": "GET",
       "path": "/webhooks",
+      "collection": true,
       "params": [
         {
           "name": "workspace",

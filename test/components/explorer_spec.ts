@@ -744,7 +744,8 @@ describe("ExplorerComponent", () => {
           });
           assert.equal(root.state.workspace, root.state.workspaces[1]);
 
-          // Ensure other params have not changed.
+          // Old params should be the same except for an update to workspace
+          oldParams.requiredParams.workspace = root.state.workspaces[1].id;
           assert.deepEqual(root.state.params, oldParams);
         });
 
