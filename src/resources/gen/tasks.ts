@@ -280,7 +280,7 @@ var resource = <Resource>{
           "comment": "The workspace to create a task in."
         }
       ],
-      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify a `project` or a `parent` task instead.\n"
+      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify `projects` or a `parent` task instead.\n\n`projects` can be a comma separated list of projects, or just a single\nproject the task should belong to.\n"
     },
     {
       "name": "createInWorkspace",
@@ -398,7 +398,7 @@ var resource = <Resource>{
       "method": "GET",
       "path": "/tasks",
       "collection": true,
-      "comment": "Returns the compact task records for some filtered set of tasks. Use one\nor more of the parameters provided to filter the tasks returned.\n",
+      "comment": "Returns the compact task records for some filtered set of tasks. Use one\nor more of the parameters provided to filter the tasks returned. You must\nspecify a `project` or `tag` if you do not specify `assignee` and `workspace`.\n",
       "params": [
         {
           "name": "assignee",
@@ -545,7 +545,7 @@ var resource = <Resource>{
           "required": true
         },
         {
-          "name": "insertAfter",
+          "name": "insert_after",
           "type": "Id",
           "example_values": [
             "124816",
@@ -554,7 +554,7 @@ var resource = <Resource>{
           "comment": "A task in the project to insert the task after, or `null` to\ninsert at the beginning of the list.\n"
         },
         {
-          "name": "insertBefore",
+          "name": "insert_before",
           "type": "Id",
           "example_values": [
             "124816",
