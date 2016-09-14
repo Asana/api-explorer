@@ -112,6 +112,15 @@ var resource = <Resource>{
       "comment": "Array of users following this project. Followers are a subset of members who receive all notifcations for a\nproject, the default notification setting when adding members to a project in-product.\n"
     },
     {
+      "name": "custom_field_settings",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 258147, custom_field: {id: 1646, name: 'Priority', type: 'enum'}, project: {id: 1331, name: 'Bugs'} }, ...]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of Custom Field Settings (in compact form).\n"
+    },
+    {
       "name": "color",
       "type": "Enum",
       "example_values": [
@@ -175,6 +184,10 @@ var resource = <Resource>{
       "name": "Get project sections",
       "url": "sections",
       "comment": "Sections are tasks whose names end with a colon character `:` . For instance\nsections will be included in query results for tasks and be represented with\nthe same fields. The `memberships` property of a task contains the project/section\npairs a task belongs to when applicable.\n\nSee [Task, Project, and Section Associations](/developers/api-reference/tasks#projects)\nfor more techniques on managing sections.\n"
+    },
+    {
+      "name": "Modify custom field settings",
+      "url": "custom-field-settings"
     }
   ],
   "actions": [
@@ -527,6 +540,83 @@ var resource = <Resource>{
         }
       ],
       "comment": "Removes the specified list of members from the project. Returns the updated project record.\n"
+    },
+    {
+      "name": "addCustomFieldSetting",
+      "class": "custom-field-settings",
+      "method": "POST",
+      "path": "/projects/%s/addCustomFieldSetting",
+      "comment": "Create a new custom field setting on the project.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        },
+        {
+          "name": "custom_field",
+          "type": "Id",
+          "example_values": [
+            "124578"
+          ],
+          "comment": "The id of the custom field to associate with this project.",
+          "required": true
+        },
+        {
+          "name": "is_important",
+          "type": "Boolean",
+          "example_values": [
+            "false"
+          ],
+          "comment": "Whether this field should be considered important to this project.\n"
+        },
+        {
+          "name": "insert_before",
+          "type": "Id",
+          "example_values": [
+            "258147"
+          ],
+          "comment": "An id of a Custom Field Settings on this project, before which the new Custom Field Settings will be added.\n`insert_before` and `insert_after` parameters cannot both be specified.\n"
+        },
+        {
+          "name": "insert_after",
+          "type": "Id",
+          "example_values": [
+            "258147"
+          ],
+          "comment": "An id of a Custom Field Settings on this project, after which the new Custom Field Settings will be added.\n`insert_before` and `insert_after` parameters cannot both be specified.\n"
+        }
+      ]
+    },
+    {
+      "name": "removeCustomFieldSetting",
+      "class": "custom-field-settings",
+      "method": "POST",
+      "path": "/projects/%s/removeCustomFieldSetting",
+      "comment": "Remove a custom field setting on the project.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        },
+        {
+          "name": "custom_field",
+          "type": "Id",
+          "example_values": [
+            "124578"
+          ],
+          "comment": "The id of the custom field to remove from this project."
+        }
+      ]
     }
   ]
 };

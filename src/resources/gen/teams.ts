@@ -78,6 +78,35 @@ var resource = <Resource>{
       "comment": "Returns the compact records for all teams in the organization visible to\nthe authorized user.\n"
     },
     {
+      "name": "findByUser",
+      "class": "get",
+      "method": "GET",
+      "path": "/users/%s/teams",
+      "collection": true,
+      "params": [
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "14641",
+            "me",
+            "sashimi@asana.com"
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        },
+        {
+          "name": "organization",
+          "type": "Id",
+          "example_values": [
+            "1331"
+          ],
+          "comment": "The workspace or organization to filter teams on."
+        }
+      ],
+      "comment": "Returns the compact records for all teams to which user is assigned.\n"
+    },
+    {
       "name": "users",
       "class": "users",
       "method": "GET",
