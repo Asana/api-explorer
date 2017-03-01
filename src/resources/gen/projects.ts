@@ -9,9 +9,9 @@
 /* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "project",
-  "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
+  "comment": "A _project_ represents a prioritized list of tasks in Asana or a board with\ncolumns of tasks represented as cards. It exists in a single workspace or\norganization and is accessible to a subset of users in that workspace or\norganization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a regular\nworkspace.\n",
   "notes": [
-    "Followers of a project are a subset of the members of that project. Followers of a project will receive all updates\nincluding tasks created, added and removed from that project. Members of the project have access to and will receive\nstatus updates of the project. Adding followers to a project will add them as members if they are not already,\nremoving followers from a project will not affect membership.\n"
+    "Followers of a project are a subset of the members of that project.\nFollowers of a project will receive all updates including tasks created,\nadded and removed from that project. Members of the project have access to\nand will receive status updates of the project. Adding followers to a\nproject will add them as members if they are not already, removing\nfollowers from a project will not affect membership.\n"
   ],
   "properties": [
     {
@@ -153,6 +153,16 @@ var resource = <Resource>{
       ],
       "access": "Create-only",
       "comment": "The team that this project is shared with. This field only exists for\nprojects in organizations.\n"
+    },
+    {
+      "name": "layout",
+      "type": "Enum",
+      "example_values": [
+        "'board'",
+        "'list'"
+      ],
+      "access": "Hidden unless specified",
+      "comment": "The layout (board or list view) of the project.\n"
     }
   ],
   "action_classes": [
@@ -181,9 +191,9 @@ var resource = <Resource>{
       "url": "get-tasks"
     },
     {
-      "name": "Get project sections",
+      "name": "Work with project sections",
       "url": "sections",
-      "comment": "Sections are tasks whose names end with a colon character `:` . For instance\nsections will be included in query results for tasks and be represented with\nthe same fields. The `memberships` property of a task contains the project/section\npairs a task belongs to when applicable.\n\nSee [Task, Project, and Section Associations](/developers/api-reference/tasks#projects)\nfor more techniques on managing sections.\n"
+      "comment": "Sections are list items that end with a colon character `:` or columns in\na board layout which divide the tasks in a project in some arbitrary way\ndetermined by users' preferences. The `memberships` property of a task\ncontains the project/section pairs to which a task belongs when applicable.\n\n**Deprecation warning**: At this time, sections in a list-layout project\nare manipulated as if they were tasks, i.e. reordering a section involves\nmoving the section (and all of its tasks if they are to remain in that\nsection) to a new location in a project.  (see [Task, Project, and\nSection Associations](/developers/api-reference/tasks#projects) for more\ninformation). This method of manipulating sections and their tasks will\nsoon be deprecated in favor of the methods described in the [Sections\nresource](/developers/api-reference/sections) which are already\nimplemented for board-layout projects.\n"
     },
     {
       "name": "Modify custom field settings",
@@ -394,25 +404,6 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact project records for all projects in the team.\n"
-    },
-    {
-      "name": "sections",
-      "class": "sections",
-      "method": "GET",
-      "path": "/projects/%s/sections",
-      "params": [
-        {
-          "name": "project",
-          "type": "Id",
-          "example_values": [
-            "13579"
-          ],
-          "comment": "The project to get sections from.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns compact records for all sections in the specified project.\n"
     },
     {
       "name": "tasks",

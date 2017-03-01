@@ -259,7 +259,7 @@ var resource = <Resource>{
     {
       "name": "Custom field value-specific data",
       "url": "custom_field_specific_data",
-      "comment": "Custom fields will return differing properties based on the custom field's type. \n\nCustom fields of type `text` will return a `text_value` property containing the string of text for the field.\nCustom fields of type `number` will return a `number_value` property containing the number for the field.\nCustom fields of type `enum` will return an `enum_value` property containing an object that represents the selection of the enum value.\n\n`enum_value` warrants special consideration: it represents a single entry from the `enum_options` array in the custom field metadata. It has these properties:\n\n**id**: the id of the selected entry.\n**name**: the display name of the selected entry.\n**enabled**: whether the selection is modifiable. (See the documentation on [disabled values](/developers/documentation/getting-started/custom-fields#disabled-values) for more information).\n"
+      "comment": "Custom fields will return differing properties based on the custom field's type.\n\nCustom fields of type `text` will return a `text_value` property containing the string of text for the field.\nCustom fields of type `number` will return a `number_value` property containing the number for the field.\nCustom fields of type `enum` will return an `enum_value` property containing an object that represents the selection of the enum value.\n\n`enum_value` warrants special consideration: it represents a single entry from the `enum_options` array in the custom field metadata. It has these properties:\n\n**id**: the id of the selected entry.\n**name**: the display name of the selected entry.\n**enabled**: whether the selection is modifiable. (See the documentation on [disabled values](/developers/documentation/getting-started/custom-fields#disabled-values) for more information).\n"
     },
     {
       "name": "Setting custom field values",
@@ -604,10 +604,10 @@ var resource = <Resource>{
           "example_values": [
             "124816"
           ],
-          "comment": "A section in the project to insert the task into. The task will be\ninserted at the top of the section.\n"
+          "comment": "A section in the project to insert the task into. The task will be\ninserted at the bottom of the section.\n"
         }
       ],
-      "comment": "Adds the task to the specified project, in the optional location\nspecified. If no location arguments are given, the task will be added to\nthe beginning of the project.\n\n`addProject` can also be used to reorder a task within a project that\nalready contains it.\n\nReturns an empty data block.\n"
+      "comment": "Adds the task to the specified project, in the optional location\nspecified. If no location arguments are given, the task will be added to\nthe end of the project.\n\n`addProject` can also be used to reorder a task within a project or section that\nalready contains it.\n\nAt most one of `insert_before`, `insert_after`, or `section` should be\nspecified. Inserting into a section in an non-order-dependent way can be\ndone by specifying `section`, otherwise, to insert within a section in a\nparticular place, specify `insert_before` or `insert_after` and a task\nwithin the section to anchor the position of this task.\n\nReturns an empty data block.\n"
     },
     {
       "name": "removeProject",
