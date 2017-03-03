@@ -161,7 +161,6 @@ var resource = <Resource>{
         "'board'",
         "'list'"
       ],
-      "access": "Hidden unless specified",
       "comment": "The layout (board or list view) of the project.\n"
     }
   ],
@@ -193,7 +192,7 @@ var resource = <Resource>{
     {
       "name": "Work with project sections",
       "url": "sections",
-      "comment": "Sections are list items that end with a colon character `:` or columns in\na board layout which divide the tasks in a project in some arbitrary way\ndetermined by users' preferences. The `memberships` property of a task\ncontains the project/section pairs to which a task belongs when applicable.\n\n**Deprecation warning**: At this time, sections in a list-layout project\nare manipulated as if they were tasks, i.e. reordering a section involves\nmoving the section (and all of its tasks if they are to remain in that\nsection) to a new location in a project.  (see [Task, Project, and\nSection Associations](/developers/api-reference/tasks#projects) for more\ninformation). This method of manipulating sections and their tasks will\nsoon be deprecated in favor of the methods described in the [Sections\nresource](/developers/api-reference/sections) which are already\nimplemented for board-layout projects.\n"
+      "comment": "Sections are list items that end with a colon character `:` or columns in\na board layout. The `memberships` property of a task contains the\nproject/section pairs to which a task belongs when applicable.\n\n**Deprecation warning**: At this time, sections in a list-layout project\nare manipulated as if they were tasks, i.e. reordering a section involves\nmoving the section (and all of its tasks if they are to remain in that\nsection) to a new location in a project.  (see [Task, Project, and\nSection Associations](/developers/api-reference/tasks#projects) for more\ninformation). This method of manipulating sections as if they are tasks will\nsoon be deprecated in favor of the methods described in the [Sections\nresource](/developers/api-reference/sections).\n"
     },
     {
       "name": "Modify custom field settings",

@@ -115,7 +115,10 @@ var resource = <Resource>{
   "action_classes": [
     {
       "name": "Get events on resource",
-      "url": "get-all"
+      "url": "get-all",
+      "example_keys": [
+        "get-event-on-project"
+      ]
     }
   ],
   "actions": [

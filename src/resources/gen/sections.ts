@@ -188,7 +188,7 @@ var resource = <Resource>{
           "example_values": [
             "13579"
           ],
-          "comment": "The project in which to reorder this section",
+          "comment": "The project in which to reorder the given section",
           "required": true
         },
         {
@@ -219,7 +219,7 @@ var resource = <Resource>{
           "required": false
         }
       ],
-      "comment": "Move sections relative to each other in a board view. One of\nbefore_section or after_section is required (or else the request will\nbehave as a no-op).\n\nAt this point in time, moving sections is not supported in list views.\n\nReturns an empty data block.\n"
+      "comment": "Move sections relative to each other in a board view. One of\n`before_section` or `after_section` is required.\n\nSections cannot be moved between projects.\n\nAt this point in time, moving sections is not supported in list views, only board views.\n\nReturns an empty data block.\n"
     }
   ]
 };

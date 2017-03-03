@@ -421,6 +421,25 @@ var resource = <Resource>{
       "comment": "Returns the compact task records for all tasks with the given tag.\n"
     },
     {
+      "name": "findBySection",
+      "class": "query",
+      "method": "GET",
+      "path": "/sections/%s/tasks",
+      "params": [
+        {
+          "name": "section",
+          "type": "Id",
+          "example_values": [
+            "97531"
+          ],
+          "comment": "The section in which to search for tasks.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "<b>Board view only:</b> Returns the compact section records for all tasks within the given section.\n"
+    },
+    {
       "name": "findAll",
       "class": "query",
       "method": "GET",
@@ -448,6 +467,17 @@ var resource = <Resource>{
             "13579"
           ],
           "comment": "The project to filter tasks on."
+        },
+        {
+          "name": "section",
+          "type": "Id",
+          "example_values": [
+            "97531"
+          ],
+          "comment": "The section to filter tasks on.",
+          "notes": [
+            "Currently, this is only supported in board views.\n"
+          ]
         },
         {
           "name": "workspace",
