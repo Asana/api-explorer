@@ -85,6 +85,14 @@ var resource = <Resource>{
       "comment": "The time at which this task was completed, or null if the task is incomplete.\n"
     },
     {
+      "name": "custom_fields",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1646, name: 'Priority', type: 'enum', enum_value: { id: 126, name: 'P1' } }, ...]"
+      ],
+      "comment": "Array of custom fields applied to the task. These custom fields represent\nthe values recorded on this task for a particular custom field. For\nexample, these fields will contain an `enum_value` property for custom\nfields of type `enum`, a `string_value` property for custom fields of\ntype `string`, and so on. Please note that the id returned on each custom\nfield value *is identical* to the id of the custom field, which allows\nreferencing the custom field metadata through the\n`/custom_fields/custom_field-id` endpoint.\n"
+    },
+    {
       "name": "due_on",
       "type": "String",
       "example_values": [
@@ -206,6 +214,15 @@ var resource = <Resource>{
       ],
       "access": "Create-only",
       "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe `addProject` and `removeProject` endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
+    },
+    {
+      "name": "tags",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 59746, name: 'Grade A' }, ... ]"
+      ],
+      "access": "Create-only",
+      "comment": "Array of tags associated with this task. This property may be specified on\ncreation using just an array of tag IDs. In order to change tags on an\nexisting task use `addTag` and `removeTag`.\n"
     }
   ],
   "action_classes": [
@@ -230,9 +247,29 @@ var resource = <Resource>{
       "url": "query"
     },
     {
+      "name": "Custom field values",
+      "url": "custom-field-values",
+      "comment": "Custom fields define user-specific information that can be used to configure tasks within a project to track information that is specific to one particular project. Be sure to reference the [Custom Fields](/developers/documentation/getting-started/custom-fields) guide to get an understanding for the concepts of custom fields and how they relate to resources within Asana.\n\nWhen a custom field is associated with a project, tasks in that project can carry additional _custom field values_ which represent the value of the field on that particular task - for instance, the selected item from an `enum` type custom field. These custom fields will appear as an array in a `custom_fields` property of the task, along with some basic information which can be used to associate the custom field value with the custom field metadata.\n",
+      "example_keys": [
+        "custom-field-value-text",
+        "custom-field-value-number",
+        "custom-field-value-enum"
+      ]
+    },
+    {
+      "name": "Custom field value-specific data",
+      "url": "custom_field_specific_data",
+      "comment": "Custom fields will return differing properties based on the custom field's type.\n\nCustom fields of type `text` will return a `text_value` property containing the string of text for the field.\nCustom fields of type `number` will return a `number_value` property containing the number for the field.\nCustom fields of type `enum` will return an `enum_value` property containing an object that represents the selection of the enum value.\n\n`enum_value` warrants special consideration: it represents a single entry from the `enum_options` array in the custom field metadata. It has these properties:\n\n**id**: the id of the selected entry.\n**name**: the display name of the selected entry.\n**enabled**: whether the selection is modifiable. (See the documentation on [disabled values](/developers/documentation/getting-started/custom-fields#disabled-values) for more information).\n"
+    },
+    {
+      "name": "Setting custom field values",
+      "url": "setting_custom_field_values",
+      "comment": "Custom fields are set with PUT requests similarly to setting other fields on tasks; the format of the request is to set the id to the new value. That is, `custom_fields:{custom_field_id:custom_field_value}`\n\nCustom fields of type `text` are set by passing in `custom_field_id:string`\nCustom fields of type `number` are set by passing in `custom_field_id:number`\nCustom fields of type `enum` are set by passing in `custom_field_id:enum_value_id`\n"
+    },
+    {
       "name": "Work with subtasks",
       "url": "subtasks",
-      "comment": "Creating a subtask is the same as a creating an normal task, but instead of specifying a workspace you must specify a\nparent task. Each task can only have a single parent and you can use the `setParent` endpoint to add or remove a parent from an existing task.\n\nCreated subtasks are added to the end of their parent's list of subtasks.\n\nYou can find all of the subtasks of a task via the `tasks/:ID/subtasks` endpoint.\n"
+      "comment": "Creating a subtask is the same as a creating an normal task, but instead of specifying a workspace you must specify a\nparent task. Each task can only have a single parent and you can use the `setParent` endpoint to add or remove a parent from an existing task.\n\nCreated subtasks are added to the beginning of their parent's list of subtasks.\n\nYou can find all of the subtasks of a task via the `tasks/:ID/subtasks` endpoint.\n"
     },
     {
       "name": "Task activity and comments",
@@ -271,7 +308,7 @@ var resource = <Resource>{
           "comment": "The workspace to create a task in."
         }
       ],
-      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify a `project` or a `parent` task instead.\n"
+      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify `projects` or a `parent` task instead.\n\n`projects` can be a comma separated list of projects, or just a single\nproject the task should belong to.\n"
     },
     {
       "name": "createInWorkspace",
@@ -384,12 +421,31 @@ var resource = <Resource>{
       "comment": "Returns the compact task records for all tasks with the given tag.\n"
     },
     {
+      "name": "findBySection",
+      "class": "query",
+      "method": "GET",
+      "path": "/sections/%s/tasks",
+      "params": [
+        {
+          "name": "section",
+          "type": "Id",
+          "example_values": [
+            "97531"
+          ],
+          "comment": "The section in which to search for tasks.",
+          "required": true
+        }
+      ],
+      "collection": true,
+      "comment": "<b>Board view only:</b> Returns the compact section records for all tasks within the given section.\n"
+    },
+    {
       "name": "findAll",
       "class": "query",
       "method": "GET",
       "path": "/tasks",
       "collection": true,
-      "comment": "Returns the compact task records for some filtered set of tasks. Use one\nor more of the parameters provided to filter the tasks returned.\n",
+      "comment": "Returns the compact task records for some filtered set of tasks. Use one\nor more of the parameters provided to filter the tasks returned. You must\nspecify a `project` or `tag` if you do not specify `assignee` and `workspace`.\n",
       "params": [
         {
           "name": "assignee",
@@ -402,6 +458,25 @@ var resource = <Resource>{
           "comment": "The assignee to filter tasks on.",
           "notes": [
             "If you specify `assignee`, you must also specify the `workspace` to filter on.\n"
+          ]
+        },
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to filter tasks on."
+        },
+        {
+          "name": "section",
+          "type": "Id",
+          "example_values": [
+            "97531"
+          ],
+          "comment": "The section to filter tasks on.",
+          "notes": [
+            "Currently, this is only supported in board views.\n"
           ]
         },
         {
@@ -536,7 +611,7 @@ var resource = <Resource>{
           "required": true
         },
         {
-          "name": "insertAfter",
+          "name": "insert_after",
           "type": "Id",
           "example_values": [
             "124816",
@@ -545,7 +620,7 @@ var resource = <Resource>{
           "comment": "A task in the project to insert the task after, or `null` to\ninsert at the beginning of the list.\n"
         },
         {
-          "name": "insertBefore",
+          "name": "insert_before",
           "type": "Id",
           "example_values": [
             "124816",
@@ -559,10 +634,10 @@ var resource = <Resource>{
           "example_values": [
             "124816"
           ],
-          "comment": "A section in the project to insert the task into. The task will be\ninserted at the top of the section.\n"
+          "comment": "A section in the project to insert the task into. The task will be\ninserted at the bottom of the section.\n"
         }
       ],
-      "comment": "Adds the task to the specified project, in the optional location\nspecified. If no location arguments are given, the task will be added to\nthe beginning of the project.\n\n`addProject` can also be used to reorder a task within a project that\nalready contains it.\n\nReturns an empty data block.\n"
+      "comment": "Adds the task to the specified project, in the optional location\nspecified. If no location arguments are given, the task will be added to\nthe end of the project.\n\n`addProject` can also be used to reorder a task within a project or section that\nalready contains it.\n\nAt most one of `insert_before`, `insert_after`, or `section` should be\nspecified. Inserting into a section in an non-order-dependent way can be\ndone by specifying `section`, otherwise, to insert within a section in a\nparticular place, specify `insert_before` or `insert_after` and a task\nwithin the section to anchor the position of this task.\n\nReturns an empty data block.\n"
     },
     {
       "name": "removeProject",

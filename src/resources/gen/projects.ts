@@ -9,7 +9,10 @@
 /* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "project",
-  "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
+  "comment": "A _project_ represents a prioritized list of tasks in Asana or a board with\ncolumns of tasks represented as cards. It exists in a single workspace or\norganization and is accessible to a subset of users in that workspace or\norganization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a regular\nworkspace.\n",
+  "notes": [
+    "Followers of a project are a subset of the members of that project.\nFollowers of a project will receive all updates including tasks created,\nadded and removed from that project. Members of the project have access to\nand will receive status updates of the project. Adding followers to a\nproject will add them as members if they are not already, removing\nfollowers from a project will not affect membership.\n"
+  ],
   "properties": [
     {
       "name": "name",
@@ -106,7 +109,16 @@ var resource = <Resource>{
         "[ { id: 1123, name: 'Mittens' }, ... ]"
       ],
       "access": "Read-only",
-      "comment": "Array of users following this project. Followers are members who receive all notifcations for a project (default).\n"
+      "comment": "Array of users following this project. Followers are a subset of members who receive all notifications for a\nproject, the default notification setting when adding members to a project in-product.\n"
+    },
+    {
+      "name": "custom_field_settings",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 258147, custom_field: {id: 1646, name: 'Priority', type: 'enum'}, project: {id: 1331, name: 'Bugs'} }, ...]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of Custom Field Settings (in compact form).\n"
     },
     {
       "name": "color",
@@ -141,6 +153,15 @@ var resource = <Resource>{
       ],
       "access": "Create-only",
       "comment": "The team that this project is shared with. This field only exists for\nprojects in organizations.\n"
+    },
+    {
+      "name": "layout",
+      "type": "Enum",
+      "example_values": [
+        "'board'",
+        "'list'"
+      ],
+      "comment": "The layout (board or list view) of the project.\n"
     }
   ],
   "action_classes": [
@@ -169,9 +190,13 @@ var resource = <Resource>{
       "url": "get-tasks"
     },
     {
-      "name": "Get project sections",
+      "name": "Work with project sections",
       "url": "sections",
-      "comment": "Sections are tasks whose names end with a colon character `:` . For instance\nsections will be included in query results for tasks and be represented with\nthe same fields. The `memberships` property of a task contains the project/section\npairs a task belongs to when applicable.\n\nSee [Task, Project, and Section Associations](/developers/api-reference/tasks#projects)\nfor more techniques on managing sections.\n"
+      "comment": "Sections are list items that end with a colon character `:` or columns in\na board layout. The `memberships` property of a task contains the\nproject/section pairs to which a task belongs when applicable.\n\n**Deprecation warning**: At this time, sections in a list-layout project\nare manipulated as if they were tasks, i.e. reordering a section involves\nmoving the section (and all of its tasks if they are to remain in that\nsection) to a new location in a project.  (see [Task, Project, and\nSection Associations](/developers/api-reference/tasks#projects) for more\ninformation). This method of manipulating sections as if they are tasks will\nsoon be deprecated in favor of the methods described in the [Sections\nresource](/developers/api-reference/sections).\n"
+    },
+    {
+      "name": "Modify custom field settings",
+      "url": "custom-field-settings"
     }
   ],
   "actions": [
@@ -380,25 +405,6 @@ var resource = <Resource>{
       "comment": "Returns the compact project records for all projects in the team.\n"
     },
     {
-      "name": "sections",
-      "class": "sections",
-      "method": "GET",
-      "path": "/projects/%s/sections",
-      "params": [
-        {
-          "name": "project",
-          "type": "Id",
-          "example_values": [
-            "13579"
-          ],
-          "comment": "The project to get sections from.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns compact records for all sections in the specified project.\n"
-    },
-    {
       "name": "tasks",
       "class": "get-tasks",
       "method": "GET",
@@ -416,6 +422,191 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact task records for all tasks within the given project,\nordered by their priority within the project. Tasks can exist in more than one project at a time.\n"
+    },
+    {
+      "name": "addFollowers",
+      "class": "followers",
+      "method": "POST",
+      "path": "/projects/%s/addFollowers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to add followers to.",
+          "required": true
+        },
+        {
+          "name": "followers",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of followers to add to the project."
+        }
+      ],
+      "comment": "Adds the specified list of users as followers to the project. Followers are a subset of members, therefore if\nthe users are not already members of the project they will also become members as a result of this operation.\nReturns the updated project record.\n"
+    },
+    {
+      "name": "removeFollowers",
+      "class": "followers",
+      "method": "POST",
+      "path": "/projects/%s/removeFollowers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to remove followers from.",
+          "required": true
+        },
+        {
+          "name": "followers",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of followers to remove from the project."
+        }
+      ],
+      "comment": "Removes the specified list of users from following the project, this will not affect project membership status.\nReturns the updated project record.\n"
+    },
+    {
+      "name": "addMembers",
+      "class": "members",
+      "method": "POST",
+      "path": "/projects/%s/addMembers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to add members to.",
+          "required": true
+        },
+        {
+          "name": "members",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of members to add to the project."
+        }
+      ],
+      "comment": "Adds the specified list of users as members of the project. Returns the updated project record.\n"
+    },
+    {
+      "name": "removeMembers",
+      "class": "members",
+      "method": "POST",
+      "path": "/projects/%s/removeMembers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to remove members from.",
+          "required": true
+        },
+        {
+          "name": "members",
+          "type": "Array",
+          "example_values": [
+            "[133713, 184253]"
+          ],
+          "required": true,
+          "comment": "An array of members to remove from the project."
+        }
+      ],
+      "comment": "Removes the specified list of members from the project. Returns the updated project record.\n"
+    },
+    {
+      "name": "addCustomFieldSetting",
+      "class": "custom-field-settings",
+      "method": "POST",
+      "path": "/projects/%s/addCustomFieldSetting",
+      "comment": "Create a new custom field setting on the project.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        },
+        {
+          "name": "custom_field",
+          "type": "Id",
+          "example_values": [
+            "124578"
+          ],
+          "comment": "The id of the custom field to associate with this project.",
+          "required": true
+        },
+        {
+          "name": "is_important",
+          "type": "Boolean",
+          "example_values": [
+            "false"
+          ],
+          "comment": "Whether this field should be considered important to this project.\n"
+        },
+        {
+          "name": "insert_before",
+          "type": "Id",
+          "example_values": [
+            "258147"
+          ],
+          "comment": "An id of a Custom Field Settings on this project, before which the new Custom Field Settings will be added.\n`insert_before` and `insert_after` parameters cannot both be specified.\n"
+        },
+        {
+          "name": "insert_after",
+          "type": "Id",
+          "example_values": [
+            "258147"
+          ],
+          "comment": "An id of a Custom Field Settings on this project, after which the new Custom Field Settings will be added.\n`insert_before` and `insert_after` parameters cannot both be specified.\n"
+        }
+      ]
+    },
+    {
+      "name": "removeCustomFieldSetting",
+      "class": "custom-field-settings",
+      "method": "POST",
+      "path": "/projects/%s/removeCustomFieldSetting",
+      "comment": "Remove a custom field setting on the project.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Id",
+          "example_values": [
+            "13579"
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        },
+        {
+          "name": "custom_field",
+          "type": "Id",
+          "example_values": [
+            "124578"
+          ],
+          "comment": "The id of the custom field to remove from this project."
+        }
+      ]
     }
   ]
 };

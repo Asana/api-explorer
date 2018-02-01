@@ -81,7 +81,7 @@ var resource = <Resource>{
       "access": "Create-only",
       "comment": "Human-readable text for the story or comment. This will not include the\nname of the creator.\n",
       "notes": [
-        "This is not guaranteed to be stable for a given type of story. For\nexample, text for a reassignment may not always say “assigned to …”.\nThe API currently does not provide a structured way of inspecting the\nmeaning of a story.\n"
+        "This is not guaranteed to be stable for a given type of story. For\nexample, text for a reassignment may not always say &ldquo;assigned to …&rdquo;.\nThe API currently does not provide a structured way of inspecting the\nmeaning of a story.\n"
       ]
     },
     {

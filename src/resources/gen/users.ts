@@ -26,7 +26,7 @@ var resource = <Resource>{
       "example_values": [
         "'Greg Sanchez'"
       ],
-      "access": "Read-only",
+      "access": "Read-only except when same user as requester",
       "comment": "The user's name.\n"
     },
     {

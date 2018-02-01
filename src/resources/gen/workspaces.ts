@@ -51,7 +51,7 @@ var resource = <Resource>{
       "url": "typeahead"
     },
     {
-      "name": "User Managment",
+      "name": "User Management",
       "url": "user-mgmt"
     }
   ],
@@ -123,24 +123,28 @@ var resource = <Resource>{
           ],
           "values": [
             {
-              "name": "task",
-              "comment": "A task."
+              "name": "custom_field",
+              "comment": "A custom field."
             },
             {
               "name": "project",
               "comment": "A project."
             },
             {
-              "name": "user",
-              "comment": "A user."
-            },
-            {
               "name": "tag",
               "comment": "A tag."
+            },
+            {
+              "name": "task",
+              "comment": "A task."
+            },
+            {
+              "name": "user",
+              "comment": "A user."
             }
           ],
           "required": true,
-          "comment": "The type of values the typeahead should return.\nNote that unlike in the names of endpoints, the types listed here are\nin singular form (e.g. `task`). Using multiple types is not yet supported.\n"
+          "comment": "The type of values the typeahead should return. You can choose from\none of the following: custom_field, project, tag, task, and user.\nNote that unlike in the names of endpoints, the types listed here are\nin singular form (e.g. `task`). Using multiple types is not yet supported.\n"
         },
         {
           "name": "query",
