@@ -8,6 +8,7 @@ cache:
 # Set up environment variables for tests
 env:
   global:
+    # Use a better mocha reporter for Travis
     - MOCHA_REPORTER=spec
 # Use the Travis Docker build system which is faster
 sudo: false
