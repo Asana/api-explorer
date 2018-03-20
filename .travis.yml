@@ -8,11 +8,6 @@ cache:
 # Set up environment variables for tests
 env:
   global:
-    # ASANA_GITHUB_TOKEN = ...
-    - secure: "DAwDB8TF1HEzqBzVHDR88kAOXOzcHx0AeFaazofh6OGDbxGuIbNWOgv8xXb4F1GScBX26KXwQPcskvP/qWJ49jW91iePcsTAIDtNLgg7UGj/L9eSeKyoHb93l7tah02zZzHjn4vCKjQfMeLAXdYbZf2VX5PM2cRdXlLx24WaqBY="
-    # TSD_GITHUB_TOKEN = ... (for higher tsd rate limits)
-    -  secure: "QdGHv/Z6Cd+GYLwv8C7AYBoM5gEwKR9KslWYSVN6oRZ8wUq+JBXBS1ItqGjNxprCjhISi9989Qnvzr4FYbuekqqSIsSHkIgQN35j2pRGahaQifR/riKDzdla2Y3WxNCUbO9HYCoJTzOmV7sFI6xQqAS6vklkF/Y/SvkpsYRDJSA="
-    # Use a better mocha reporter for Travis
     - MOCHA_REPORTER=spec
 # Use the Travis Docker build system which is faster
 sudo: false
