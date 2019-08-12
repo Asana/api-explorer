@@ -9,8 +9,44 @@
 /* tslint:disable:eofline */
 var resource = <Resource>{
   "name": "project",
-  "comment": "A _project_ represents a prioritized list of tasks in Asana. It exists in a\nsingle workspace or organization and is accessible to a subset of users in\nthat workspace or organization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a\nregular workspace.\n",
+  "comment": "A _project_ represents a prioritized list of tasks in Asana or a board with\ncolumns of tasks represented as cards. It exists in a single workspace or\norganization and is accessible to a subset of users in that workspace or\norganization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a regular\nworkspace.\n",
+  "notes": [
+    "Followers of a project are a subset of the members of that project.\nFollowers of a project will receive all updates including tasks created,\nadded and removed from that project. Members of the project have access to\nand will receive status updates of the project. Adding followers to a\nproject will add them as members if they are not already, removing\nfollowers from a project will not affect membership.\n"
+  ],
   "properties": [
+    {
+      "name": "id",
+      "type": "Id",
+      "example_values": [
+        "1234"
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the project.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+    },
+    {
+      "name": "gid",
+      "type": "Gid",
+      "example_values": [
+        "\"1234\""
+      ],
+      "access": "Read-only",
+      "comment": "Globally unique ID of the project.\n"
+    },
+    {
+      "name": "resource_type",
+      "type": "Enum",
+      "access": "Read-only",
+      "comment": "The resource type of this resource. The value for this resource is always `project`. To distinguish between board and list projects see the `layout` property.\n",
+      "example_values": [
+        "\"project\""
+      ],
+      "values": [
+        {
+          "name": "project",
+          "comment": "A project resource type."
+        }
+      ]
+    },
     {
       "name": "name",
       "type": "String",
@@ -20,19 +56,10 @@ var resource = <Resource>{
       "comment": "Name of the project. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
     },
     {
-      "name": "id",
-      "type": "Id",
-      "example_values": [
-        "1234"
-      ],
-      "access": "Read-only",
-      "comment": "Globally unique ID of the project.\n"
-    },
-    {
       "name": "owner",
       "type": "User",
       "example_values": [
-        "{ id: 12345, name: 'Tim Bizarro' }",
+        "{ id: 12345, gid: \"12345\", resource_type: \"user\", name: 'Tim Bizarro' }",
         "null"
       ],
       "comment": "The current owner of the project, may be null.\n"
@@ -41,9 +68,10 @@ var resource = <Resource>{
       "name": "current_status",
       "type": "Struct",
       "example_values": [
-        "{ 'color': green, 'text': 'All gravy!', 'author':{ ... } ... } "
+        "{ 'color': 'green', 'title': 'Status Update - Jun 15', ... } "
       ],
-      "comment": "A description of the project's status containing a color (must be either\n`null` or one of: `green`, `yellow`, `red`) and a short description.\n"
+      "access": "Read-only",
+      "comment": "The most recently created status update for the project, or `null` if no update exists. See also the\ndocumentation for [project status updates](/developers/api-reference/project_statuses).\n"
     },
     {
       "name": "due_date",
@@ -51,7 +79,23 @@ var resource = <Resource>{
       "example_values": [
         "'2012-03-26'"
       ],
+      "comment": "**Deprecated: new integrations should prefer the due_on field.**\nThe day on which this project is due. This takes a date with format YYYY-MM-DD.\n"
+    },
+    {
+      "name": "due_on",
+      "type": "String",
+      "example_values": [
+        "'2012-03-26'"
+      ],
       "comment": "The day on which this project is due. This takes a date with format YYYY-MM-DD.\n"
+    },
+    {
+      "name": "start_on",
+      "type": "String",
+      "example_values": [
+        "'2012-03-26'"
+      ],
+      "comment": "The day on which this project starts. This takes a date with format YYYY-MM-DD.\n"
     },
     {
       "name": "created_at",
@@ -94,7 +138,7 @@ var resource = <Resource>{
       "name": "members",
       "type": "Array",
       "example_values": [
-        "[ { id: 1123, name: 'Mittens' }, ... ]"
+        "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
       ],
       "access": "Read-only",
       "comment": "Array of users who are members of this project.\n"
@@ -103,10 +147,27 @@ var resource = <Resource>{
       "name": "followers",
       "type": "Array",
       "example_values": [
-        "[ { id: 1123, name: 'Mittens' }, ... ]"
+        "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
       ],
       "access": "Read-only",
-      "comment": "Array of users following this project. Followers are members who receive all notifcations for a project (default).\n"
+      "comment": "Array of users following this project. Followers are a subset of members who receive all notifications for a\nproject, the default notification setting when adding members to a project in-product.\n"
+    },
+    {
+      "name": "custom_fields",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 1646, gid: \"1646\", name: 'Priority', type: 'enum', enum_value: { id: 126, gid: \"126\", name: 'P1' } }, ...]"
+      ],
+      "comment": "Array of custom field values set on the project for a custom field applied to a parent portfolio. Take care to avoid confusing these custom field values with the custom field settings in the [custom_field_settings](#field-custom_field_settings) property. Please note that the `gid` returned on each custom field value is identical to the `gid` of the custom field, which allows referencing the custom field through the [/custom_fields/{custom_field_gid}](/developers/api-reference/custom_fields#get-single) endpoint.\n"
+    },
+    {
+      "name": "custom_field_settings",
+      "type": "Array",
+      "example_values": [
+        "[ { id: 258147, gid: \"258147\", custom_field: {id: 1646, gid: \"1646\", name: 'Priority', type: 'enum'}, project: {id: 13309, gid: \"13309\", name: 'Bugs'} }, ...]"
+      ],
+      "access": "Read-only",
+      "comment": "Array of custom field settings in compact form. These represent the association of custom fields with this project. Take care to avoid confusing these custom field settings with the custom field values in the [custom_fields](#field-custom_fields) property.\n"
     },
     {
       "name": "color",
@@ -125,10 +186,21 @@ var resource = <Resource>{
       "comment": "More detailed, free-form textual information associated with the project.\n"
     },
     {
+      "name": "html_notes",
+      "type": "String",
+      "example_values": [
+        "'&lt;body&gt;Get whatever &lt;a href='https://app.asana.com/0/1123/list'&gt;Sashimi&lt;/a&gt; has.&lt;/body&gt;'"
+      ],
+      "notes": [
+        "**This field is under active migration—please see our [blog post](/developers/news/new-rich-text) for more information.**"
+      ],
+      "comment": "[Opt In](https://asana.com/developers/documentation/getting-started/input-output-options). The notes of the project with formatting as HTML.\n"
+    },
+    {
       "name": "workspace",
       "type": "Workspace",
       "example_values": [
-        "{ id: 14916, name: 'My Workspace' }"
+        "{ id: 14916, gid: \"14916\", name: 'My Workspace' }"
       ],
       "access": "Create-only",
       "comment": "The workspace or organization this project is associated with. Once created,\nprojects cannot be moved to a different workspace. This attribute can only\nbe specified at creation time.\n"
@@ -137,10 +209,19 @@ var resource = <Resource>{
       "name": "team",
       "type": "Team",
       "example_values": [
-        "{ id: 692353, name: 'organization.com Marketing' }"
+        "{ id: 692353, gid: \"692353\", name: 'organization.com Marketing' }"
       ],
       "access": "Create-only",
       "comment": "The team that this project is shared with. This field only exists for\nprojects in organizations.\n"
+    },
+    {
+      "name": "layout",
+      "type": "Enum",
+      "example_values": [
+        "'board'",
+        "'list'"
+      ],
+      "comment": "The layout (board or list view) of the project.\n"
     }
   ],
   "action_classes": [
@@ -161,6 +242,10 @@ var resource = <Resource>{
       "url": "delete"
     },
     {
+      "name": "Duplicate a project",
+      "url": "duplicate"
+    },
+    {
       "name": "Query for projects",
       "url": "query"
     },
@@ -169,9 +254,21 @@ var resource = <Resource>{
       "url": "get-tasks"
     },
     {
-      "name": "Get project sections",
+      "name": "Work with project sections",
       "url": "sections",
-      "comment": "Sections are tasks whose names end with a colon character `:` . For instance\nsections will be included in query results for tasks and be represented with\nthe same fields. The `memberships` property of a task contains the project/section\npairs a task belongs to when applicable.\n\nSee [Task, Project, and Section Associations](/developers/api-reference/tasks#projects)\nfor more techniques on managing sections.\n"
+      "comment": "Sections are collections of tasks within a project. The `memberships` property\nof a task contains the project/section pairs to which a task belongs when applicable.\n\n**Deprecation warning**: At this time, sections in a list-layout project\nare manipulated as if they were tasks, i.e. reordering a section involves\nmoving the section (and all of its tasks if they are to remain in that\nsection) to a new location in a project.  (see [Task, Project, and\nSection Associations](/developers/api-reference/tasks#projects) for more\ninformation). This method of manipulating sections as if they are tasks will\nsoon be deprecated in favor of the methods described in the [Sections\nresource](/developers/api-reference/sections).\n"
+    },
+    {
+      "name": "Work with project memberships",
+      "url": "members"
+    },
+    {
+      "name": "Modify custom field settings",
+      "url": "custom-field-settings"
+    },
+    {
+      "name": "Get project's task counts",
+      "url": "get-task-counts"
     }
   ],
   "actions": [
@@ -183,18 +280,18 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to create the project in.",
           "required": true
         },
         {
           "name": "team",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "14916"
+            "\"14916\""
           ],
           "comment": "If creating in an organization, the specific team to create the\nproject in.\n"
         }
@@ -209,9 +306,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to create the project in.",
           "required": true
@@ -227,9 +324,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "team",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "14916"
+            "\"14916\""
           ],
           "comment": "The team to create the project in.",
           "required": true
@@ -245,9 +342,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "project",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "13579"
+            "\"13579\""
           ],
           "comment": "The project to get.",
           "required": true
@@ -263,9 +360,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "project",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "13579"
+            "\"13579\""
           ],
           "comment": "The project to update.",
           "required": true
@@ -281,15 +378,69 @@ var resource = <Resource>{
       "params": [
         {
           "name": "project",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "13579"
+            "\"13579\""
           ],
           "comment": "The project to delete.",
           "required": true
         }
       ],
       "comment": "A specific, existing project can be deleted by making a DELETE request\non the URL for that project.\n\nReturns an empty data record.\n"
+    },
+    {
+      "name": "duplicateProject",
+      "class": "duplicate",
+      "method": "POST",
+      "path": "/projects/%s/duplicate",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to duplicate.",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "example_values": [
+            "Things to Buy"
+          ],
+          "required": true,
+          "comment": "The name of the new project."
+        },
+        {
+          "name": "team",
+          "type": "Gid",
+          "example_values": [
+            "\"14916\""
+          ],
+          "comment": "Sets the team of the new project. If team is not defined, the new project\nwill be in the same team as the the original project.\n",
+          "required": false
+        },
+        {
+          "name": "include",
+          "type": "Array",
+          "example_values": [
+            "[ \"members\", \"notes\", \"task_notes\", \"task_assignee\", \"task_subtasks\", \"task_attachments\", \"task_dates\", \"task_dependencies\", \"task_followers\", \"task_tags\", \"task_projects\" ]"
+          ],
+          "required": false,
+          "comment": "The elements that will be duplicated to the new project.\nTasks are always included.\n"
+        },
+        {
+          "name": "schedule_dates",
+          "type": "String",
+          "example_values": [
+            "{ should_skip_weekends: true, due_on: '2019-05-21' }"
+          ],
+          "required": false,
+          "comment": "A dictionary of options to auto-shift dates.\n`task_dates` must be included to use this option.\nRequires either `start_on` or `due_on`, but not both.\n`start_on` will set the first start date of the new\nproject to the given date, while `due_on` will set the last due date\nto the given date. Both will offset the remaining dates by the same amount\nof the original project.\n"
+        }
+      ],
+      "comment": "Creates and returns a job that will asynchronously handle the duplication.\n"
     },
     {
       "name": "findAll",
@@ -301,19 +452,27 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to filter projects on."
         },
         {
           "name": "team",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "14916"
+            "\"14916\""
           ],
           "comment": "The team to filter projects on."
+        },
+        {
+          "name": "is_template",
+          "type": "Boolean",
+          "example_values": [
+            "false"
+          ],
+          "comment": "**Note: This parameter can only be included if a team is also defined, or the workspace is not an organization**\nFilters results to include only template projects.\n"
         },
         {
           "name": "archived",
@@ -333,12 +492,20 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to find projects in.",
           "required": true
+        },
+        {
+          "name": "is_template",
+          "type": "Boolean",
+          "example_values": [
+            "false"
+          ],
+          "comment": "**Note: This parameter can only be included if a team is also defined, or the workspace is not an organization**\nFilters results to include only template projects.\n"
         },
         {
           "name": "archived",
@@ -360,12 +527,20 @@ var resource = <Resource>{
       "params": [
         {
           "name": "team",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "14916"
+            "\"14916\""
           ],
           "comment": "The team to find projects in.",
           "required": true
+        },
+        {
+          "name": "is_template",
+          "type": "Boolean",
+          "example_values": [
+            "false"
+          ],
+          "comment": "Filters results to include only template projects.\n"
         },
         {
           "name": "archived",
@@ -380,25 +555,6 @@ var resource = <Resource>{
       "comment": "Returns the compact project records for all projects in the team.\n"
     },
     {
-      "name": "sections",
-      "class": "sections",
-      "method": "GET",
-      "path": "/projects/%s/sections",
-      "params": [
-        {
-          "name": "project",
-          "type": "Id",
-          "example_values": [
-            "13579"
-          ],
-          "comment": "The project to get sections from.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns compact records for all sections in the specified project.\n"
-    },
-    {
       "name": "tasks",
       "class": "get-tasks",
       "method": "GET",
@@ -406,9 +562,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "project",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "13579"
+            "\"13579\""
           ],
           "comment": "The project in which to search for tasks.",
           "required": true
@@ -416,6 +572,209 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact task records for all tasks within the given project,\nordered by their priority within the project. Tasks can exist in more than one project at a time.\n"
+    },
+    {
+      "name": "addFollowers",
+      "class": "followers",
+      "method": "POST",
+      "path": "/projects/%s/addFollowers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to add followers to.",
+          "required": true
+        },
+        {
+          "name": "followers",
+          "type": "Array",
+          "example_values": [
+            "[\"133713\", \"184253\"]"
+          ],
+          "required": true,
+          "comment": "An array of followers to add to the project."
+        }
+      ],
+      "comment": "Adds the specified list of users as followers to the project. Followers are a subset of members, therefore if\nthe users are not already members of the project they will also become members as a result of this operation.\nReturns the updated project record.\n"
+    },
+    {
+      "name": "removeFollowers",
+      "class": "followers",
+      "method": "POST",
+      "path": "/projects/%s/removeFollowers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to remove followers from.",
+          "required": true
+        },
+        {
+          "name": "followers",
+          "type": "Array",
+          "example_values": [
+            "[\"133713\", \"184253\"]"
+          ],
+          "required": true,
+          "comment": "An array of followers to remove from the project."
+        }
+      ],
+      "comment": "Removes the specified list of users from following the project, this will not affect project membership status.\nReturns the updated project record.\n"
+    },
+    {
+      "name": "addMembers",
+      "class": "members",
+      "method": "POST",
+      "path": "/projects/%s/addMembers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to add members to.",
+          "required": true
+        },
+        {
+          "name": "members",
+          "type": "Array",
+          "example_values": [
+            "[\"133713\", \"184253\"]"
+          ],
+          "required": true,
+          "comment": "An array of user ids."
+        }
+      ],
+      "comment": "Adds the specified list of users as members of the project. Returns the updated project record.\n"
+    },
+    {
+      "name": "removeMembers",
+      "class": "members",
+      "method": "POST",
+      "path": "/projects/%s/removeMembers",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to remove members from.",
+          "required": true
+        },
+        {
+          "name": "members",
+          "type": "Array",
+          "example_values": [
+            "[\"133713\", \"184253\"]"
+          ],
+          "required": true,
+          "comment": "An array of user ids."
+        }
+      ],
+      "comment": "Removes the specified list of members from the project. Returns the updated project record.\n"
+    },
+    {
+      "name": "addCustomFieldSetting",
+      "class": "custom-field-settings",
+      "method": "POST",
+      "path": "/projects/%s/addCustomFieldSetting",
+      "comment": "Create a new custom field setting on the project.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        },
+        {
+          "name": "custom_field",
+          "type": "Gid",
+          "example_values": [
+            "\"124578\""
+          ],
+          "comment": "The id of the custom field to associate with this project.",
+          "required": true
+        },
+        {
+          "name": "is_important",
+          "type": "Boolean",
+          "example_values": [
+            "false"
+          ],
+          "comment": "Whether this field should be considered important to this project.\n"
+        },
+        {
+          "name": "insert_before",
+          "type": "Gid",
+          "example_values": [
+            "\"258147\""
+          ],
+          "comment": "An id of a Custom Field Settings on this project, before which the new Custom Field Settings will be added.\n`insert_before` and `insert_after` parameters cannot both be specified.\n"
+        },
+        {
+          "name": "insert_after",
+          "type": "Gid",
+          "example_values": [
+            "\"258147\""
+          ],
+          "comment": "An id of a Custom Field Settings on this project, after which the new Custom Field Settings will be added.\n`insert_before` and `insert_after` parameters cannot both be specified.\n"
+        }
+      ]
+    },
+    {
+      "name": "removeCustomFieldSetting",
+      "class": "custom-field-settings",
+      "method": "POST",
+      "path": "/projects/%s/removeCustomFieldSetting",
+      "comment": "Remove a custom field setting on the project.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        },
+        {
+          "name": "custom_field",
+          "type": "Gid",
+          "example_values": [
+            "\"124578\""
+          ],
+          "comment": "The id of the custom field to remove from this project."
+        }
+      ]
+    },
+    {
+      "name": "getTaskCounts",
+      "class": "get-task-counts",
+      "method": "GET",
+      "path": "/projects/%s/task_counts",
+      "comment": "Get an object that holds task count fields. **All fields are excluded by default**. You must [opt in](https://asana.com/developers/documentation/getting-started/input-output-options)\nusing `opt_fields` to get any information from this endpoint.\n\nThis endpoint has an additional [rate limit](/developers/documentation/getting-started/rate-limits#standard)\nand each field counts especially high against our [cost limits](/developers/documentation/getting-started/rate-limits#cost).\n\nMilestones are just tasks, so they are included in the `num_tasks`, `num_incomplete_tasks`, and `num_completed_tasks` counts.\n",
+      "params": [
+        {
+          "name": "project",
+          "type": "Gid",
+          "example_values": [
+            "\"13579\""
+          ],
+          "comment": "The project to associate the custom field with",
+          "required": true
+        }
+      ]
     }
   ]
 };

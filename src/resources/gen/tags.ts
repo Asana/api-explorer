@@ -18,7 +18,31 @@ var resource = <Resource>{
         "1234"
       ],
       "access": "Read-only",
+      "comment": "Globally unique ID of the tag.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+    },
+    {
+      "name": "gid",
+      "type": "Gid",
+      "example_values": [
+        "\"1234\""
+      ],
+      "access": "Read-only",
       "comment": "Globally unique ID of the tag.\n"
+    },
+    {
+      "name": "resource_type",
+      "type": "Enum",
+      "access": "Read-only",
+      "comment": "The resource type of this resource. The value for this resource is always `tag`.\n",
+      "example_values": [
+        "\"tag\""
+      ],
+      "values": [
+        {
+          "name": "tag",
+          "comment": "A tag resource type."
+        }
+      ]
     },
     {
       "name": "created_at",
@@ -33,7 +57,7 @@ var resource = <Resource>{
       "name": "followers",
       "type": "Array",
       "example_values": [
-        "[ { id: 1123, name: 'Mittens' }, ... ]"
+        "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
       ],
       "access": "Read-only",
       "comment": "Array of users following this tag.\n"
@@ -52,21 +76,13 @@ var resource = <Resource>{
       "example_values": [
         "'dark-purple'"
       ],
-      "comment": "Color of the project. Must be either `null` or one of: `dark-pink`,\n`dark-green`, `dark-blue`, `dark-red`, `dark-teal`, `dark-brown`,\n`dark-orange`, `dark-purple`, `dark-warm-gray`, `light-pink`, `light-green`,\n`light-blue`, `light-red`, `light-teal`, `light-yellow`, `light-orange`,\n`light-purple`, `light-warm-gray`.\n"
-    },
-    {
-      "name": "notes",
-      "type": "String",
-      "example_values": [
-        "'These are things we need to purchase.'"
-      ],
-      "comment": "More detailed, free-form textual information associated with the tag.\n"
+      "comment": "Color of the tag. Must be either `null` or one of: `dark-pink`,\n`dark-green`, `dark-blue`, `dark-red`, `dark-teal`, `dark-brown`,\n`dark-orange`, `dark-purple`, `dark-warm-gray`, `light-pink`, `light-green`,\n`light-blue`, `light-red`, `light-teal`, `light-yellow`, `light-orange`,\n`light-purple`, `light-warm-gray`.\n"
     },
     {
       "name": "workspace",
       "type": "Workspace",
       "example_values": [
-        "{ id: 14916, name: 'My Workspace' }"
+        "{ id: 14916, gid: \"14916\", name: 'My Workspace' }"
       ],
       "access": "Create-only",
       "comment": "The workspace or organization this tag is associated with. Once created,\ntags cannot be moved to a different workspace. This attribute can only\nbe specified at creation time.\n"
@@ -103,9 +119,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to create the tag in.",
           "required": true
@@ -121,9 +137,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to create the tag in.",
           "required": true
@@ -139,9 +155,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "tag",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "11235"
+            "\"11235\""
           ],
           "comment": "The tag to get.",
           "required": true
@@ -157,9 +173,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "tag",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "11235"
+            "\"11235\""
           ],
           "comment": "The tag to update.",
           "required": true
@@ -175,9 +191,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "tag",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "11235"
+            "\"11235\""
           ],
           "comment": "The tag to delete.",
           "required": true
@@ -195,17 +211,17 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to filter tags on."
         },
         {
           "name": "team",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "14916"
+            "\"14916\""
           ],
           "comment": "The team to filter tags on."
         },
@@ -227,9 +243,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "workspace",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to find tags in.",
           "required": true
@@ -237,25 +253,6 @@ var resource = <Resource>{
       ],
       "collection": true,
       "comment": "Returns the compact tag records for all tags in the workspace.\n"
-    },
-    {
-      "name": "getTasksWithTag",
-      "class": "get-tasks",
-      "method": "GET",
-      "path": "/tags/%s/tasks",
-      "params": [
-        {
-          "name": "tag",
-          "type": "Id",
-          "example_values": [
-            "11235"
-          ],
-          "comment": "The tag to fetch tasks from.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns the compact task records for all tasks with the given tag.\nTasks can have more than one tag at a time.\n"
     }
   ]
 };

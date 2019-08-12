@@ -18,7 +18,31 @@ var resource = <Resource>{
         "1234"
       ],
       "access": "Read-only",
+      "comment": "Globally unique ID of the attachment.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+    },
+    {
+      "name": "gid",
+      "type": "Gid",
+      "example_values": [
+        "\"1234\""
+      ],
+      "access": "Read-only",
       "comment": "Globally unique ID of the attachment.\n"
+    },
+    {
+      "name": "resource_type",
+      "type": "Enum",
+      "access": "Read-only",
+      "comment": "The resource type of this resource. The value for this resource is always `attachment`.\n",
+      "example_values": [
+        "\"attachment\""
+      ],
+      "values": [
+        {
+          "name": "attachment",
+          "comment": "An attachment resource type."
+        }
+      ]
     },
     {
       "name": "created_at",
@@ -64,7 +88,7 @@ var resource = <Resource>{
       "name": "parent",
       "type": "Task",
       "example_values": [
-        "{ id: 1234, name: 'Bug task' }"
+        "{ id: 1234, gid: \"1234\", name: 'Bug task' }"
       ],
       "access": "Read-only",
       "comment": "The task this attachment is attached to.\n"
@@ -103,9 +127,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "attachment",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "12357"
+            "\"12357\""
           ],
           "comment": "Globally unique identifier for the attachment.\n",
           "required": true
@@ -122,9 +146,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "task",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "124816"
+            "\"124816\""
           ],
           "comment": "Globally unique identifier for the task.\n",
           "required": true
@@ -141,9 +165,9 @@ var resource = <Resource>{
       "params": [
         {
           "name": "task",
-          "type": "Id",
+          "type": "Gid",
           "example_values": [
-            "124816"
+            "\"124816\""
           ],
           "comment": "Globally unique identifier for the task.\n",
           "required": true
@@ -161,9 +185,9 @@ var resource = <Resource>{
           ]
         }
       ],
-      "comment": "This method uploads an attachment to a task and returns the compact\nrecords for all attachments on the task. It is not possible to attach\nfiles from third party services such as Dropbox, Box & Google Drive via\nthe API. You must download the file content first and then upload it as any\nother attachment.\n\nThe 100MB size limit on attachments in Asana is enforced on this endpoint.\n",
+      "comment": "This method uploads an attachment to a task and returns the compact\nrecord for the created attachment object. It is not possible to attach\nfiles from third party services such as Dropbox, Box & Google Drive via\nthe API. You must download the file content first and then upload it as any\nother attachment.\n\nThe 100MB size limit on attachments in Asana is enforced on this endpoint.\n",
       "notes": [
-        "This endpoint expects a multipart/form-data encoded request containing\nthe full contents of the file to be uploaded.\n\nBelow is an example of what a well formed multipart/form-data encoded\nrequest might look like.\n\n    Authorization: Basic <BASE64_ENCODED_API_KEY> \\\n    Content-Type: multipart/form-data; boundary=<UNIQUE_BOUNDARY> \\\n    User-Agent: Java/1.7.0_76 \\\n    Host: localhost \\\n    Accept: */* \\\n    Connection: keep-alive \\\n    Content-Length: 141\n\n    --<UNIQUE_BOUNDARY> \\\n    Content-Disposition: form-data; name=\"file\"; filename=\"example.txt\" \\\n    Content-Type: text/plain\n\n    <RAW_FILE_DATA>\n\n    --<UNIQUE_BOUNDARY>--\n\nRequests made should follow the HTTP/1.1 specification that line terminators are of the form `CRLF` or `\\r\\n`\noutlined [here](http://www.w3.org/Protocols/HTTP/1.1/draft-ietf-http-v11-spec-01#Basic-Rules) in order for the server\nto reliably and properly handle the request.\n"
+        "This endpoint expects a multipart/form-data encoded request containing\nthe full contents of the file to be uploaded.\n\nBelow is an example of what a well formed multipart/form-data encoded\nrequest might look like.\n\n    Authorization: Basic <BASE64_ENCODED_API_KEY>\\\n    Content-Type: multipart/form-data; boundary=<UNIQUE_BOUNDARY>\\\n    User-Agent: Java/1.7.0_76\\\n    Host: localhost\\\n    Accept: */*\\\n    Connection: keep-alive\\\n    Content-Length: 141\n\n    --<UNIQUE_BOUNDARY>\\\n    Content-Disposition: form-data; name=\"file\"; filename=\"example.txt\"\\\n    Content-Type: text/plain\n\n    <RAW_FILE_DATA>\n\n    --<UNIQUE_BOUNDARY>--\n\nRequests made should follow the HTTP/1.1 specification that line terminators are of the form `CRLF` or `\\r\\n`\noutlined [here](http://www.w3.org/Protocols/HTTP/1.1/draft-ietf-http-v11-spec-01#Basic-Rules) in order for the server\nto reliably and properly handle the request.\n"
       ]
     }
   ]

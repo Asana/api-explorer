@@ -18,7 +18,31 @@ var resource = <Resource>{
         "1234"
       ],
       "access": "Read-only",
+      "comment": "Globally unique ID of the user.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+    },
+    {
+      "name": "gid",
+      "type": "Gid",
+      "example_values": [
+        "\"1234\""
+      ],
+      "access": "Read-only",
       "comment": "Globally unique ID of the user.\n"
+    },
+    {
+      "name": "resource_type",
+      "type": "Enum",
+      "access": "Read-only",
+      "comment": "The resource type of this resource. The value for this resource is always `user`.\n",
+      "example_values": [
+        "\"user\""
+      ],
+      "values": [
+        {
+          "name": "user",
+          "comment": "A user resource type."
+        }
+      ]
     },
     {
       "name": "name",
@@ -26,7 +50,7 @@ var resource = <Resource>{
       "example_values": [
         "'Greg Sanchez'"
       ],
-      "access": "Read-only",
+      "access": "Read-only except when same user as requester",
       "comment": "The user's name.\n"
     },
     {
@@ -51,7 +75,7 @@ var resource = <Resource>{
       "name": "workspaces",
       "type": "Array",
       "example_values": [
-        "[ { id: 14916, name: 'My Workspace' }, ... ]"
+        "[ { id: 14916, gid:\"14916\" name: 'My Workspace' }, ... ]"
       ],
       "access": "Read-only",
       "comment": "Workspaces and organizations this user may access.\n",
@@ -68,6 +92,10 @@ var resource = <Resource>{
     {
       "name": "Get all users",
       "url": "get-all"
+    },
+    {
+      "name": "Get a user's favorites",
+      "url": "get-favorites"
     }
   ],
   "actions": [
@@ -88,15 +116,75 @@ var resource = <Resource>{
           "name": "user",
           "type": "String",
           "example_values": [
-            "14641",
-            "me",
-            "sashimi@asana.com"
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
           ],
           "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
         }
       ],
       "comment": "Returns the full user record for the single user with the provided ID.\n"
+    },
+    {
+      "name": "getUserFavorites",
+      "class": "get-favorites",
+      "method": "GET",
+      "path": "/users/%s/favorites",
+      "params": [
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        },
+        {
+          "name": "workspace",
+          "type": "Id",
+          "example_values": [
+            "\"1331\""
+          ],
+          "comment": "The workspace in which to get favorites.",
+          "required": true
+        },
+        {
+          "name": "resource_type",
+          "type": "Enum",
+          "example_values": [
+            "user"
+          ],
+          "values": [
+            {
+              "name": "portfolio",
+              "comment": "A portfolio."
+            },
+            {
+              "name": "project",
+              "comment": "A project."
+            },
+            {
+              "name": "tag",
+              "comment": "A tag."
+            },
+            {
+              "name": "task",
+              "comment": "A task."
+            },
+            {
+              "name": "user",
+              "comment": "A user."
+            }
+          ],
+          "required": true,
+          "comment": "The resource type of favorites to be returned."
+        }
+      ],
+      "comment": "Returns all of a user's favorites in the given workspace, of the given type.\nResults are given in order (The same order as Asana's sidebar).\n"
     },
     {
       "name": "findByWorkspace",
@@ -110,7 +198,7 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace in which to get users.",
           "required": true
@@ -132,7 +220,7 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to filter users on."
         }

@@ -18,7 +18,31 @@ var resource = <Resource>{
         "1234"
       ],
       "access": "Read-only",
+      "comment": "Globally unique ID of the team.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+    },
+    {
+      "name": "gid",
+      "type": "Gid",
+      "example_values": [
+        "\"1234\""
+      ],
+      "access": "Read-only",
       "comment": "Globally unique ID of the team.\n"
+    },
+    {
+      "name": "resource_type",
+      "type": "Enum",
+      "access": "Read-only",
+      "comment": "The resource type of this resource. The value for this resource is always `team`.\n",
+      "example_values": [
+        "\"team\""
+      ],
+      "values": [
+        {
+          "name": "team",
+          "comment": "A team resource type."
+        }
+      ]
     },
     {
       "name": "name",
@@ -27,6 +51,34 @@ var resource = <Resource>{
         "'Engineering'"
       ],
       "comment": "The name of the team.\n"
+    },
+    {
+      "name": "description",
+      "type": "String",
+      "example_values": [
+        "'All developers should be members of this team.'"
+      ],
+      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The description of the team.\n"
+    },
+    {
+      "name": "html_description",
+      "type": "String",
+      "example_values": [
+        "'&lt;body&gt;&lt;em&gt;All&lt;/em&gt; developers should be members of this team.&lt;/body&gt;'"
+      ],
+      "notes": [
+        "**This field is under active migration—please see our [blog post](/developers/news/new-rich-text) for more information.**"
+      ],
+      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The description of the team with formatting as HTML.\n"
+    },
+    {
+      "name": "organization",
+      "type": "Workspace",
+      "example_values": [
+        "{ id: 14916, gid: \"14916\", name: 'My Workspace' }"
+      ],
+      "access": "Create-only",
+      "comment": "The organization the team belongs to.\n"
     }
   ],
   "action_classes": [
@@ -69,13 +121,42 @@ var resource = <Resource>{
           "name": "organization",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "Globally unique identifier for the workspace or organization.\n",
           "required": true
         }
       ],
       "comment": "Returns the compact records for all teams in the organization visible to\nthe authorized user.\n"
+    },
+    {
+      "name": "findByUser",
+      "class": "get",
+      "method": "GET",
+      "path": "/users/%s/teams",
+      "collection": true,
+      "params": [
+        {
+          "name": "user",
+          "type": "String",
+          "example_values": [
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
+          ],
+          "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
+          "required": true
+        },
+        {
+          "name": "organization",
+          "type": "Id",
+          "example_values": [
+            "\"1331\""
+          ],
+          "comment": "The workspace or organization to filter teams on."
+        }
+      ],
+      "comment": "Returns the compact records for all teams to which user is assigned.\n"
     },
     {
       "name": "users",
@@ -116,9 +197,9 @@ var resource = <Resource>{
           "name": "user",
           "type": "String",
           "example_values": [
-            "14641",
-            "me",
-            "sashimi@asana.com"
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
           ],
           "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
@@ -145,9 +226,9 @@ var resource = <Resource>{
           "name": "user",
           "type": "String",
           "example_values": [
-            "14641",
-            "me",
-            "sashimi@asana.com"
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
           ],
           "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true

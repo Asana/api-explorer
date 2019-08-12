@@ -18,7 +18,31 @@ var resource = <Resource>{
         "1234"
       ],
       "access": "Read-only",
+      "comment": "Globally unique ID of the workspace.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+    },
+    {
+      "name": "gid",
+      "type": "Gid",
+      "example_values": [
+        "\"1234\""
+      ],
+      "access": "Read-only",
       "comment": "Globally unique ID of the workspace.\n"
+    },
+    {
+      "name": "resource_type",
+      "type": "Enum",
+      "access": "Read-only",
+      "comment": "The resource type of this resource. The value for this resource is always `workspace`.\n",
+      "example_values": [
+        "\"workspace\""
+      ],
+      "values": [
+        {
+          "name": "workspace",
+          "comment": "A workspace resource type."
+        }
+      ]
     },
     {
       "name": "name",
@@ -51,7 +75,7 @@ var resource = <Resource>{
       "url": "typeahead"
     },
     {
-      "name": "User Managment",
+      "name": "User Management",
       "url": "user-mgmt"
     }
   ],
@@ -66,7 +90,7 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "Globally unique identifier for the workspace or organization.\n",
           "required": true
@@ -92,7 +116,7 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace to update.",
           "required": true
@@ -110,10 +134,45 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace to fetch objects from.",
           "required": true
+        },
+        {
+          "name": "resource_type",
+          "type": "Enum",
+          "example_values": [
+            "user"
+          ],
+          "values": [
+            {
+              "name": "custom_field",
+              "comment": "A custom field."
+            },
+            {
+              "name": "portfolio",
+              "comment": "A portfolio."
+            },
+            {
+              "name": "project",
+              "comment": "A project."
+            },
+            {
+              "name": "tag",
+              "comment": "A tag."
+            },
+            {
+              "name": "task",
+              "comment": "A task."
+            },
+            {
+              "name": "user",
+              "comment": "A user."
+            }
+          ],
+          "required": true,
+          "comment": "The type of values the typeahead should return. You can choose from\none of the following: custom_field, project, tag, task, and user.\nNote that unlike in the names of endpoints, the types listed here are\nin singular form (e.g. `task`). Using multiple types is not yet supported.\n"
         },
         {
           "name": "type",
@@ -123,24 +182,32 @@ var resource = <Resource>{
           ],
           "values": [
             {
-              "name": "task",
-              "comment": "A task."
+              "name": "custom_field",
+              "comment": "A custom field."
+            },
+            {
+              "name": "portfolio",
+              "comment": "A portfolio."
             },
             {
               "name": "project",
               "comment": "A project."
             },
             {
-              "name": "user",
-              "comment": "A user."
-            },
-            {
               "name": "tag",
               "comment": "A tag."
+            },
+            {
+              "name": "task",
+              "comment": "A task."
+            },
+            {
+              "name": "user",
+              "comment": "A user."
             }
           ],
-          "required": true,
-          "comment": "The type of values the typeahead should return.\nNote that unlike in the names of endpoints, the types listed here are\nin singular form (e.g. `task`). Using multiple types is not yet supported.\n"
+          "required": false,
+          "comment": "**Deprecated: new integrations should prefer the resource_type field.**\n"
         },
         {
           "name": "query",
@@ -173,7 +240,7 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to invite the user to.",
           "required": true
@@ -182,9 +249,9 @@ var resource = <Resource>{
           "name": "user",
           "type": "String",
           "example_values": [
-            "14641",
-            "me",
-            "sashimi@asana.com"
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
           ],
           "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
@@ -202,7 +269,7 @@ var resource = <Resource>{
           "name": "workspace",
           "type": "Id",
           "example_values": [
-            "1331"
+            "\"1331\""
           ],
           "comment": "The workspace or organization to invite the user to.",
           "required": true
@@ -211,9 +278,9 @@ var resource = <Resource>{
           "name": "user",
           "type": "String",
           "example_values": [
-            "14641",
-            "me",
-            "sashimi@asana.com"
+            "\"14641\"",
+            "\"me\"",
+            "\"sashimi@asana.com\""
           ],
           "comment": "An identifier for the user. Can be one of an email address,\nthe globally unique identifier for the user, or the keyword `me`\nto indicate the current user making the request.\n",
           "required": true
