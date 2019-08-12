@@ -40,3 +40,6 @@ typings
 
 # TypeScript
 tsconfig.json
+
+# Intellij
+.idea
