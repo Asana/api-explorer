@@ -2,6 +2,7 @@
 import Asana = require("asana");
 
 var noop = () => { return; };
+var noopString = (val: string) => { return val; };
 
 /**
  * Creates credentials with a given expiry timestamp.
@@ -38,12 +39,28 @@ export function createOauthClient(credentials?: Asana.auth.Credentials): Asana.C
  */
 export function createFakeStorage(): Storage {
   return <Storage>{
-    getItem: noop,
-    setItem: noop,
-    removeItem: noop,
+    getItem: noopString,
+    setItem: noopString,
+    removeItem: noopString,
     clear: noop,
     length: null,
     key: null,
     remainingSpace: null
   };
+}
+
+/**
+ * Finds the react component for the given element
+ *
+ * @returns {Component}
+ */
+export function findReactComponent(el: Element) {
+    for (const key in el) {
+        if (key.startsWith("__reactInternalInstance$")) {
+            const fiberNode = (<any>el)[key];
+
+            return fiberNode && fiberNode.return && fiberNode.return.stateNode;
+        }
+    }
+    return null;
 }

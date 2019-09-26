@@ -1,9 +1,9 @@
 /// <reference path="../resources/interfaces.ts" />
-import React = require("react/addons");
+import React = require("react");
 import _ = require("lodash");
+import update from "immutability-helper";
 
-var r = React.DOM;
-var update = React.addons.update;
+var r = React.createElement;
 
 /**
  * The extra parameter input area
@@ -18,19 +18,31 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
     };
   }
 
+  render() {
+    return r("div", {
+        className: "parameter-entry",
+        children: [
+          this.props.text,
+          this.state.extraParams.map(this.renderExtraParameterInput),
+          this._renderAddNewExtraParameterLink()
+        ]
+      }
+    );
+  }
+
   private setStateAndPropagate = (newState: ExtraParameterEntry.State) => {
     this.setState(newState);
 
     // Pass new list of extra params to prop function, so we can propagate
-    // changes in the parent component.
+    // Changes in the parent component.
     this.props.syncExtraParameters(newState.extraParams);
-  };
+  }
 
   private _renderAddNewExtraParameterLink = () => {
-    return r.a({
+    return r("a", {
       className: "add-extra-param",
       href: "#",
-      onClick: (e) => {
+      onClick: (e: any) => {
         e.preventDefault();
         this.setState(update(this.state, <any>{
           extraParams: {
@@ -42,16 +54,16 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
         }));
       }
     }, "Add new parameter!");
-  };
+  }
 
   private renderExtraParameterInput = (extraParam: ExtraParameterEntry.ExtraParameter, idx: number) => {
     var idPrefix = "extra_param_" + idx;
 
-    return r.p({
+    return r("p", {
       key: idPrefix,
       className: "extra-param",
       children: [
-        r.input({
+        r("input", {
           placeholder: "Key",
           type: "text",
           id: idPrefix + "_key",
@@ -59,7 +71,7 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
           value: this.state.extraParams[idx].key,
           onChange: (event: React.FormEvent) => {
             this.setStateAndPropagate(update(this.state, <any>{
-              extraParams: _.object(
+              extraParams: _.zipObject(
                 [idx.toString()],
                 [{ key: { $set: (<any>event.target).value } }]
               )
@@ -67,7 +79,7 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
           }
         }),
         ":",
-        r.input({
+        r("input", {
           placeholder: "Value",
           type: "text",
           id: idPrefix + "_value",
@@ -75,14 +87,14 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
           value: this.state.extraParams[idx].value,
           onChange: (event: React.FormEvent) => {
             this.setStateAndPropagate(update(this.state, <any>{
-              extraParams: _.object(
+              extraParams: _.zipObject(
                 [idx.toString()],
                 [{ value: { $set: (<any>event.target).value } }]
               )
             }));
           }
         }),
-        r.span({
+        r("span", {
           className: "delete-extra-param",
           onClick: () => {
             this.setStateAndPropagate(update(this.state, <any> {
@@ -91,21 +103,9 @@ class ExtraParameterEntry extends React.Component<ExtraParameterEntry.Props, Ext
               }
             }));
           }
-        }, "×")
+        }, "\u2715")
       ]
     });
-  };
-
-  render() {
-    return r.div({
-        className: "parameter-entry",
-        children: [
-          this.props.text,
-          this.state.extraParams.map(this.renderExtraParameterInput),
-          this._renderAddNewExtraParameterLink()
-        ]
-      }
-    );
   }
 }
 
@@ -116,7 +116,7 @@ module ExtraParameterEntry {
   }
 
   export interface Props {
-    text: React.DOMElement<any>;
+    text: React.DOMElement<any, any>;
     syncExtraParameters: (parameters: ExtraParameter[]) => void;
   }
 

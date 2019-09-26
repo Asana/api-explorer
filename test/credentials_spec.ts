@@ -4,6 +4,7 @@ import sinon = require("sinon");
 import Credentials = require("../src/credentials");
 import constants = require("../src/constants");
 import helpers = require("./helpers");
+import {SinonSandbox} from "sinon";
 
 var assert = chai.assert;
 
@@ -26,7 +27,7 @@ describe("Credentials", () => {
 
   describe("#authStateFromClient", () => {
     it("should return AuthState.Unauthorized with null credentials", () => {
-      var client = helpers.createOauthClient(null);
+      var client = helpers.createOauthClient(undefined);
       assert.equal(
         Credentials.authStateFromClient(client),
         Credentials.AuthState.Unauthorized);
@@ -89,7 +90,7 @@ describe("Credentials", () => {
         assert.equal(Credentials.getFromLocalStorage(), null);
 
         sinon.assert.called(getItemStub);
-        sinon.assert.calledWith(parseStub, null);
+        sinon.assert.calledWith(parseStub, "null");
       });
 
       it("should fetch result when localStorage is not empty", () => {
@@ -106,7 +107,7 @@ describe("Credentials", () => {
 
     describe("#storeFromClient", () => {
       it("should throw when no credentials are in the client", () => {
-        var client = helpers.createOauthClient(null);
+        var client = helpers.createOauthClient(undefined);
 
         assert.throws(
           () => Credentials.storeFromClient(client),
@@ -142,4 +143,3 @@ describe("Credentials", () => {
     });
   });
 });
-

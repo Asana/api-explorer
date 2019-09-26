@@ -1,106 +1,100 @@
 import chai = require("chai");
-import React = require("react/addons");
+import React = require("react");
 import sinon = require("sinon");
 import _ = require("lodash");
 
 import PaginateEntry = require("../../src/components/paginate_entry");
+import * as ReactTestUtils from "react-dom/test-utils";
+import {SinonSandbox, SinonStub} from "sinon";
 
-var assert = chai.assert;
-var r = React.DOM;
-var testUtils = React.addons.TestUtils;
+const assert = chai.assert;
+const r = React.createElement;
+const testUtils = ReactTestUtils;
 
 describe("PaginateEntryComponent", () => {
-  var sand: SinonSandbox;
+    let sand: SinonSandbox;
 
-  var onPaginateChangeStub: SinonStub;
+    let onPaginateChangeStub: SinonStub;
 
-  var root: PaginateEntry;
-  var limitInput: React.HTMLComponent;
-  var offsetInput: React.HTMLComponent;
+    let root: PaginateEntry;
+    let limitInput: Element;
+    let offsetInput: Element;
 
-  beforeEach(() => {
-    sand = sinon.sandbox.create();
-
-    onPaginateChangeStub = sand.stub().returns(_.noop);
-  });
-
-  afterEach(() => {
-    sand.restore();
-  });
-
-  describe("when can paginate", () => {
     beforeEach(() => {
-      root = testUtils.renderIntoDocument<PaginateEntry>(
-        PaginateEntry.create({
-          canPaginate: true,
-          onPaginateChange: onPaginateChangeStub,
-          paginateParams: {
-            limit: 5,
-            offset: "initial value"
-          },
-          text: r.h3({ }, "this is a test")
-        })
-      );
-      limitInput = testUtils.findRenderedDOMComponentWithClass(
-        root,
-        "paginate-entry-limit"
-      );
-      offsetInput = testUtils.findRenderedDOMComponentWithClass(
-        root,
-        "paginate-entry-offset"
-      );
+        sand = sinon.sandbox.create();
+
+        onPaginateChangeStub = sand.stub().returns(_.noop);
     });
 
-    it("should set initial values of input fields from state", () => {
-      assert.equal(limitInput.props.value, 5);
-      assert.equal(offsetInput.props.value, "initial value");
+    afterEach(() => {
+        sand.restore();
     });
 
-    it("should trigger onChange property for limit/offset fields", () => {
-      testUtils.Simulate.change(limitInput, {
-        target: {
-          value: "1234"
-        }
-      });
-      sinon.assert.calledWith(onPaginateChangeStub, "limit");
-      assert(true);
+    describe("when can paginate", () => {
+        beforeEach(() => {
+            root = testUtils.renderIntoDocument(
+                PaginateEntry.create({
+                    canPaginate: true,
+                    onPaginateChange: onPaginateChangeStub,
+                    paginateParams: {
+                        limit: 5,
+                        offset: "initial value"
+                    },
+                    text: r("h3", {}, "this is a test")
+                })
+            );
+            limitInput = testUtils.findRenderedDOMComponentWithClass(
+                root,
+                "paginate-entry-limit"
+            );
+            offsetInput = testUtils.findRenderedDOMComponentWithClass(
+                root,
+                "paginate-entry-offset"
+            );
+        });
 
-      testUtils.Simulate.change(offsetInput, {
-        target: {
-          value: "abc123"
-        }
-      });
-      sinon.assert.calledWith(onPaginateChangeStub, "offset");
+        it("should set initial values of input fields from state", () => {
+            assert.equal((<HTMLInputElement>limitInput).value, "5");
+            assert.equal((<HTMLInputElement>offsetInput).value, "initial value");
+        });
+
+        it("should trigger onChange property for limit/offset fields", () => {
+            limitInput.dispatchEvent(new Event("change", {bubbles: true}));
+            sinon.assert.calledWith(onPaginateChangeStub, "limit");
+            assert(true);
+
+            offsetInput.dispatchEvent(new Event("change", {bubbles: true}));
+            sinon.assert.calledWith(onPaginateChangeStub, "offset");
+        });
     });
-  });
 
-  describe("when cannot paginate", () => {
-    beforeEach(() => {
-      root = testUtils.renderIntoDocument<PaginateEntry>(
-        PaginateEntry.create({
-          canPaginate: false,
-          onPaginateChange: onPaginateChangeStub,
-          paginateParams: {
-            limit: 5,
-            offset: "initial value"
-          },
-          text: r.h3({ }, "this is a test")
-        })
-      );
+    describe("when cannot paginate", () => {
+        beforeEach(() => {
+            root = testUtils.renderIntoDocument(
+                PaginateEntry.create({
+                    canPaginate: false,
+                    onPaginateChange: onPaginateChangeStub,
+                    paginateParams: {
+                        limit: 5,
+                        offset: "initial value"
+                    },
+                    text: r("h3", {}, "this is a test")
+                })
+            );
+        });
+
+        it("should hide pagination input fields", () => {
+            const limitInputs = testUtils.scryRenderedDOMComponentsWithClass(
+                root,
+                "paginate-entry-limit"
+            );
+            assert.lengthOf(limitInputs, 0);
+
+            const offsetInputs = testUtils.scryRenderedDOMComponentsWithClass(
+                root,
+                "paginate-entry-offset"
+            );
+            assert.lengthOf(offsetInputs, 0);
+        });
     });
-
-    it("should hide pagination input fields", () => {
-      var limitInputs = testUtils.scryRenderedDOMComponentsWithClass(
-        root,
-        "paginate-entry-limit"
-      );
-      assert.lengthOf(limitInputs, 0);
-
-      var offsetInputs = testUtils.scryRenderedDOMComponentsWithClass(
-        root,
-        "paginate-entry-offset"
-      );
-      assert.lengthOf(offsetInputs, 0);
-    });
-  });
 });

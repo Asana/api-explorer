@@ -1,8 +1,8 @@
 /// <reference path="../resources/interfaces.ts" />
 import cx = require("../class_names");
-import React = require("react/addons");
+import React = require("react");
 
-var r = React.DOM;
+const r = React.createElement;
 
 /**
  * The JSON response code block.
@@ -10,45 +10,45 @@ var r = React.DOM;
 class JsonResponse extends React.Component<JsonResponse.Props, {}> {
   static create = React.createFactory(JsonResponse);
 
-  private renderResponseHeaderInfo = () => {
-    var action = this.props.response.action;
-
-    return action === undefined ? null :
-      r.p({
-        className: "json-response-info",
-        children: [
-          action.method + " " + this.props.response.route,
-          action.method !== "GET" ? "" :
-            r.a({
-              className: "raw-route-link",
-              href: this.props.response.routeUrl,
-              target: "_blank"
-            }, r.small({ }, " (open raw response)"))
-        ]
-      });
-  };
-
   render() {
-    var rawResponse = this.props.response.rawResponse;
+      const rawResponse = this.props.response.rawResponse;
 
-    var jsonString = rawResponse === undefined ? null :
-      JSON.stringify(rawResponse, undefined, 2);
+      const jsonString = rawResponse === undefined ? null :
+          JSON.stringify(rawResponse, undefined, 2);
 
-    return r.div({ },
+      return r("div", { },
       this.renderResponseHeaderInfo(),
-      r.pre({
+      r("pre", {
         className: cx({
             "json-response-block": true,
             "json-error": this.props.response.error !== undefined,
-            "json-loading": this.props.response.isLoading
+            "json-loading": this.props.response.isLoading || false
           }),
         children: [
-          r.code({
+          r("code", {
             className: "json"
           }, jsonString)
         ]
       })
     );
+  }
+
+  private renderResponseHeaderInfo = () => {
+      const action = this.props.response.action;
+
+      return action === undefined ? null :
+      r("p", {
+        className: "json-response-info",
+        children: [
+          action.method + " " + this.props.response.route,
+          action.method !== "GET" ? "" :
+            r("a", {
+              className: "raw-route-link",
+              href: this.props.response.routeUrl,
+              target: "_blank"
+            }, r("small", { }, " (open raw response)"))
+        ]
+      });
   }
 }
 
@@ -58,12 +58,12 @@ module JsonResponse {
    * This is set after the user submits a query.
    */
   export interface ResponseData {
-    action: Action;
+    action?: Action;
     error?: any;
     isLoading?: boolean;
     rawResponse?: any;
-    route: string;
-    routeUrl: string;
+    route?: string;
+    routeUrl?: string;
   }
 
   export interface Props {

@@ -22,7 +22,7 @@ var localhostConstants: BaseConstants = {
 var production: BaseConstants = {
   LOCALSTORAGE_KEY: "api_explorer_credentials",
   CLIENT_ID: "38682966449842",
-  REDIRECT_URI: "https://asana.com/popup_receiver.php",
+  REDIRECT_URI: "https://asana.github.io/developer-docs/explorer/popup_receiver.html",
   INITIAL_PAGINATION_LIMIT: 10
 };
 

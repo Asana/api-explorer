@@ -1,14 +1,16 @@
 /// <reference path="../../src/resources/interfaces.ts" />
 import chai = require("chai");
-import React = require("react/addons");
 import sinon = require("sinon");
 import _ = require("lodash");
 
 import Resources = require("../../src/resources/resources");
 import RouteEntry = require("../../src/components/route_entry");
+import {SinonSandbox, SinonStub} from "sinon";
+import * as ReactTestUtils from "react-dom/test-utils";
+import * as ReactDOM from "react-dom";
 
 var assert = chai.assert;
-var testUtils = React.addons.TestUtils;
+var testUtils = ReactTestUtils;
 
 describe("RouteEntryComponent", () => {
   var sand: SinonSandbox;
@@ -19,7 +21,7 @@ describe("RouteEntryComponent", () => {
   var onActionChangeStub: SinonStub;
 
   var root: RouteEntry;
-  var selectRoute: React.HTMLComponent;
+  var selectRoute: Element;
 
   beforeEach(() => {
     sand = sinon.sandbox.create();
@@ -29,7 +31,7 @@ describe("RouteEntryComponent", () => {
 
     onActionChangeStub = sand.stub();
 
-    root = testUtils.renderIntoDocument<RouteEntry>(
+    root = testUtils.renderIntoDocument(
       RouteEntry.create({
         action: initialAction,
         currentRequestUrl: "URL_HERE",
@@ -48,21 +50,37 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should select the current route", () => {
-    assert.include(
-      React.findDOMNode<HTMLInputElement>(selectRoute).value,
-      initialAction.name
-    );
+      let selectRouteNode = ReactDOM.findDOMNode(selectRoute);
+      if (selectRouteNode === null) {
+          assert(false);
+          return;
+      }
+      assert.include(
+            selectRouteNode.nodeValue || "",
+          initialAction.name
+        );
   });
 
   it("should display the current route url", () => {
-    assert.include(
-      React.findDOMNode(root).textContent,
-      initialAction.method + " " + "URL_HERE"
+      let rootNode = ReactDOM.findDOMNode(root);
+      if (rootNode === null) {
+          assert(false);
+          return;
+      }
+      assert.include(
+          rootNode.textContent || "",
+          initialAction.method + " " + "URL_HERE"
     );
   });
 
   it("should contain dropdown with other routes", () => {
-    var children = React.findDOMNode(selectRoute).childNodes;
+    let selectRouteNode = ReactDOM.findDOMNode(selectRoute);
+
+    if (selectRouteNode === null) {
+        assert(false);
+        return;
+    }
+    var children = selectRouteNode.childNodes;
 
     assert.equal(children.length, initialResource.actions.length);
     initialResource.actions.forEach((action, idx) => {
@@ -70,7 +88,7 @@ describe("RouteEntryComponent", () => {
 
       // Replace any placeholders with their required param name.
       // NB: We use replace rather than util.format in order to ignore
-      //     paths that do not contain a placeholder.
+      //     Paths that do not contain a placeholder.
       var requiredParam = _.find(action.params, "required");
       var actionPath = requiredParam !== undefined ?
         action.path.replace("%s", ":" + requiredParam.name) : action.path;
@@ -81,11 +99,8 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should trigger onRouteChange property on route change", () => {
-    var otherAction = initialResource.actions[1];
+    selectRoute.dispatchEvent( new Event("change", {bubbles: true}));
 
-    testUtils.Simulate.change(selectRoute, {
-      target: { value: otherAction.name }
-    });
     sinon.assert.called(onActionChangeStub);
   });
 });

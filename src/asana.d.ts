@@ -49,7 +49,7 @@ declare module "asana" {
       data: T[];
     }
     interface Workspace {
-      id: number;
+      gid: string;
       name: string;
     }
 

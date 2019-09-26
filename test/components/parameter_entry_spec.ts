@@ -1,76 +1,76 @@
 /// <reference path="../../src/resources/interfaces.ts" />
 import chai = require("chai");
-import React = require("react/addons");
+import React = require("react");
 import sinon = require("sinon");
 import _ = require("lodash");
 
 import ParameterEntry = require("../../src/components/parameter_entry");
 import Resources = require("../../src/resources/resources");
+import * as ReactTestUtils from "react-dom/test-utils";
+import {SinonSandbox, SinonStub} from "sinon";
 
-var assert = chai.assert;
-var r = React.DOM;
-var testUtils = React.addons.TestUtils;
+const assert = chai.assert;
+const r = React.createElement;
+const testUtils = ReactTestUtils;
 
 describe("ParameterEntryComponent", () => {
-  var sand: SinonSandbox;
+    let sand: SinonSandbox;
 
-  var parameters: Parameter[];
+    let parameters: Parameter[];
 
-  var onParameterChangeStub: SinonStub;
+    let onParameterChangeStub: SinonStub;
 
-  var root: ParameterEntry;
-  var inputs: React.HTMLComponent[];
+    let root: ParameterEntry;
+    let inputs: Element[];
 
-  beforeEach(() => {
-    sand = sinon.sandbox.create();
+    beforeEach(() => {
+        sand = sinon.sandbox.create();
 
-    parameters = Resources.Events.actions[0].params;
+        parameters = Resources.Events.actions[0].params || [];
 
-    onParameterChangeStub = sand.stub();
+        onParameterChangeStub = sand.stub();
 
-    root = testUtils.renderIntoDocument<ParameterEntry>(
-      ParameterEntry.create({
-        text: r.h3({ }, "this is a test"),
-        parameters: parameters,
-        onParameterChange: onParameterChangeStub,
-        workspace: undefined,
-        workspaces: undefined
-      })
-    );
-    inputs = testUtils.scryRenderedDOMComponentsWithClass(
-      root,
-      "parameter-input"
-    );
-  });
-
-  afterEach(() => {
-    sand.restore();
-  });
-
-  it("should contain an input for each parameter", () => {
-    var parameterNames = _.pluck(parameters, "name");
-
-    // Filter out the extra-param for this test.
-    var parameterInputs = _.filter(
-      inputs, input => !_.contains(input.props.className, "extra-param"));
-
-    parameterInputs.forEach(input => {
-      assert.include(
-        parameterNames,
-        input.props.placeholder
-      );
-    });
-  });
-
-  it("should trigger onChange parameter when text is entered", () => {
-    inputs.forEach(input => {
-      testUtils.Simulate.change(input, {
-        value: "hello"
-      });
+        root = testUtils.renderIntoDocument(
+            ParameterEntry.create({
+                text: r("h3", {}, "this is a test"),
+                parameters: parameters,
+                onParameterChange: onParameterChangeStub,
+                workspace: undefined,
+                workspaces: undefined
+            })
+        );
+        inputs = testUtils.scryRenderedDOMComponentsWithClass(
+            root,
+            "parameter-input"
+        );
     });
 
-    parameters.forEach(parameter => {
-      sinon.assert.calledWith(onParameterChangeStub, parameter);
+    afterEach(() => {
+        sand.restore();
     });
-  });
+
+    it("should contain an input for each parameter", () => {
+        const parameterNames = _.map(parameters, "name");
+
+        // Filter out the extra-param for this test.
+        const parameterInputs = _.filter(
+            inputs, input => !_.includes(input.className, "extra-param"));
+
+        parameterInputs.forEach(input => {
+            assert.include(
+                parameterNames,
+                (<HTMLInputElement>input).placeholder
+            );
+        });
+    });
+
+    it("should trigger onChange parameter when text is entered", () => {
+        inputs.forEach(input => {
+            input.dispatchEvent(new Event("change", {bubbles: true}));
+        });
+
+        parameters.forEach(parameter => {
+            sinon.assert.calledWith(onParameterChangeStub, parameter);
+        });
+    });
 });

@@ -3,6 +3,7 @@ import Asana = require("asana");
 import sinon = require("sinon");
 
 import Receiver = require("../src/receiver");
+import {SinonSandbox} from "sinon";
 
 describe("Receiver", () => {
   var sand: SinonSandbox;

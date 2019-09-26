@@ -43,3 +43,6 @@ tsconfig.json
 
 # Intellij
 .idea
+
+# nyc
+.nyc_output
