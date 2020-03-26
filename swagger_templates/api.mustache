@@ -1,0 +1,27 @@
+{{#operations}}
+/// <reference path="../interfaces.ts" />
+
+/* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
+var resource = <Resource>{
+  "name": "{{classname}}",
+  "actions": [
+  {{#operation}}{{^formParams}}
+  {{#contents}}
+  {
+    "name": "{{operationId}}",
+    "method": "{{httpMethod}}",
+    "path": "{{path}}",
+    "params": [
+      {{#pathParams}}
+      {{{jsonSchema}}}
+      {{/pathParams}}
+    ],
+    "comment": "{{notes}}"
+  },
+  {{/contents}}
+  {{/formParams}}{{/operation}}
+  ]
+}
+{{/operations}}
+export = resource;
