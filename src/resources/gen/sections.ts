@@ -56,10 +56,10 @@ var resource = <Resource>{
       "comment": "The name of the section (i.e. the text displayed as the section header).\n"
     },
     {
-      "name": "project",
-      "type": "Project",
+      "name": "projects",
+      "type": "Array",
       "example_values": [
-        "{ id: 1234, gid: \"1234\", name: 'Bugs' }"
+        "[{ id: 1234, gid: \"1234\", name: 'Bugs' }]"
       ],
       "access": "Read-only",
       "comment": "The project which contains the section.\n"
