@@ -7,1306 +7,302 @@
  */
 /* tslint:disable:max-line-length */
 /* tslint:disable:eofline */
-var resource = <Resource>{
-  "name": "task",
-  "comment": "The _task_ is the basic object around which many operations in Asana are\ncentered. In the Asana application, multiple tasks populate the middle pane\naccording to some view parameters, and the set of selected tasks determines\nthe more detailed information presented in the details pane.\n",
-  "notes": [
-    "[Queries](#query) return a compact representation of each object which is typically the `id` and `name` fields.\nInterested in a specific set of fields or *all* of the fields?\nUse [field selectors](/developers/documentation/getting-started/input-output-options) to manipulate what data is included in a response.\n"
-  ],
-  "properties": [
-    {
-      "name": "id",
-      "type": "Id",
-      "example_values": [
-        "1234"
-      ],
-      "access": "Read-only",
-      "comment": "Globally unique ID of the task.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-    },
-    {
-      "name": "gid",
-      "type": "Gid",
-      "example_values": [
-        "\"1234\""
-      ],
-      "access": "Read-only",
-      "comment": "Globally unique ID of the task.\n"
-    },
-    {
-      "name": "resource_type",
-      "type": "Enum",
-      "access": "Read-only",
-      "comment": "The resource type of this resource. The value for this resource is always `task`.\n",
-      "example_values": [
-        "\"task\""
-      ],
-      "values": [
-        {
-          "name": "task",
-          "comment": "A task resource type."
-        }
-      ]
-    },
-    {
-      "name": "resource_subtype",
-      "type": "Enum",
-      "access": "Read-only",
-      "comment": "The type of task. Different subtypes of tasks retain many of the same fields and behavior, but may render differently in Asana or represent tasks with different semantic meaning.\n",
-      "example_values": [
-        "\"default_task\"",
-        "\"milestone\"",
-        "\"section\""
-      ],
-      "values": [
-        {
-          "name": "default_task",
-          "comment": "A normal task."
-        },
-        {
-          "name": "milestone",
-          "comment": "A task that represents a milestone. A milestone marks a specific point in time and cannot have a start_date.\n"
-        },
-        {
-          "name": "section",
-          "comment": "\"**This value is under active migration—please see our [forum post](https://forum.asana.com/t/sections-are-dead-long-live-sections) for more information.**\"\n\nA task which represents a section in list projects - a task that ends in a colon and renders with a different style to visually group tasks together.\n"
-        }
-      ]
-    },
-    {
-      "name": "assignee",
-      "type": "User",
-      "example_values": [
-        "{ id: 12345, gid: \"12345\", resource_type: \"user\", name: 'Tim Bizarro' }",
-        "null"
-      ],
-      "comment": "User to which this task is assigned, or `null` if the task is\nunassigned.\n"
-    },
-    {
-      "name": "assignee_status",
-      "type": "Enum",
-      "example_values": [
-        "\"inbox\"",
-        "\"today\"",
-        "\"upcoming\"",
-        "\"later\""
-      ],
-      "values": [
-        {
-          "name": "inbox",
-          "comment": "In the inbox."
-        },
-        {
-          "name": "later",
-          "comment": "Scheduled for _later_."
-        },
-        {
-          "name": "upcoming",
-          "comment": "Scheduled for _upcoming_."
-        },
-        {
-          "name": "today",
-          "comment": "Scheduled for _today_."
-        }
-      ],
-      "comment": "Scheduling status of this task for the user it is assigned to. This field\ncan only be set if `assignee` is non-null. If the task has an assignee\nand `assignee_status` is null or not present, Asana will set\n`assignee_status` to `inbox`.\n"
-    },
-    {
-      "name": "created_at",
-      "type": "String",
-      "example_values": [
-        "'2012-02-22T02:06:58.147Z'"
-      ],
-      "access": "Read-only",
-      "comment": "The time at which this task was created.\n"
-    },
-    {
-      "name": "completed",
-      "type": "Boolean",
-      "example_values": [
-        "false"
-      ],
-      "comment": "True if the task is currently marked complete, false if not.\n"
-    },
-    {
-      "name": "completed_at",
-      "type": "String",
-      "example_values": [
-        "'2012-02-22T02:06:58.147Z'"
-      ],
-      "access": "Read-only",
-      "comment": "The time at which this task was completed, or null if the task is incomplete.\n"
-    },
-    {
-      "name": "custom_fields",
-      "type": "Array",
-      "example_values": [
-        "[ { id: 1646, gid: \"1646\", name: 'Priority', type: 'enum', enum_value: { id: 126, gid: \"126\", name: 'P1' } }, ...]"
-      ],
-      "comment": "Array of custom fields applied to the task. These custom fields represent\nthe values recorded on this task for a particular custom field. For\nexample, these fields will contain an `enum_value` property for custom\nfields of type `enum`, a `string_value` property for custom fields of\ntype `string`, and so on. Please note that the id returned on each custom\nfield value *is identical* to the id of the custom field, which allows\nreferencing the custom field metadata through the\n`/custom_fields/custom_field-id` endpoint.\n"
-    },
-    {
-      "name": "dependencies",
-      "type": "Resource",
-      "example_values": [
-        "[ { id: 1234, gid: \"1234\" }, ... ]"
-      ],
-      "access": "Read-only",
-      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). Array of resources referencing tasks that this task depends on. The objects contain only the ID of the dependency.\n"
-    },
-    {
-      "name": "dependents",
-      "type": "Resource",
-      "example_values": [
-        "[ { id: 1234, gid: \"1234\" }, ... ]"
-      ],
-      "access": "Read-only",
-      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options).\nArray of resources referencing tasks that depend on this task. The objects\ncontain only the ID of the dependent.\n"
-    },
-    {
-      "name": "due_on",
-      "type": "String",
-      "example_values": [
-        "'2012-03-26'"
-      ],
-      "comment": "Date on which this task is due, or null if the task has no due date. This\ntakes a date with YYYY-MM-DD format and should not be used together with\n`due_at`.\n"
-    },
-    {
-      "name": "due_at",
-      "type": "String",
-      "example_values": [
-        "'2012-02-22T02:06:58.147Z'"
-      ],
-      "comment": "Date and time on which this task is due, or null if the task has no due\ntime. This takes a UTC timestamp and should not be used together with\n`due_on`.\n"
-    },
-    {
-      "name": "external",
-      "type": "Map",
-      "example_values": [
-        "{ id: 'my_id', data: 'A blob of information.' }"
-      ],
-      "access": "Oauth Required",
-      "comment": "This field is returned if external values are set or it is included by using\n[Opt In](/developers/documentation/getting-started/input-output-options).\nThe external field allows you to store app-specific metadata on tasks,\nincluding an id that can be used to retrieve tasks and a data blob that\ncan store app-specific character strings. Note that you will need to\nauthenticate with Oauth to access or modify this data. Once an external\nid is set, you can use the notation `external:custom_id` to reference your\nobject anywhere in the API where you may use the original object id.\nSee the page on Custom External Data for more details.\n"
-    },
-    {
-      "name": "followers",
-      "type": "Array",
-      "example_values": [
-        "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
-      ],
-      "comment": "Array of users following this task.\n"
-    },
-    {
-      "name": "is_rendered_as_separator",
-      "type": "Boolean",
-      "example_values": [
-        "false"
-      ],
-      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). In some contexts tasks can be rendered as a visual separator; for instance, subtasks can appear similar to [sections](/developers/api-reference/sections) without being true `section` objects. If a `task` object is rendered this way in any context it will have the property `is_rendered_as_separator` set to `true`.<br /><br />**Note:** Until the default behavior for our API changes integrations must [opt in to the `new_sections` change](https://forum.asana.com/t/sections-are-dead-long-live-sections/33951) to modify the `is_rendered_as_separator` property.\n"
-    },
-    {
-      "name": "liked",
-      "type": "Boolean",
-      "example_values": [
-        "false"
-      ],
-      "comment": "True if the task is liked by the authorized user, false if not.\n"
-    },
-    {
-      "name": "likes",
-      "type": "Array",
-      "example_values": [
-        "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
-      ],
-      "access": "Read-only",
-      "comment": "Array of users who have liked this task.\n"
-    },
-    {
-      "name": "memberships",
-      "type": "Array",
-      "example_values": [
-        "[ { project: { id: 1331, gid: \"1331\", name: 'Bugs' }, section: { id: 1123, gid: \"1123\", name: 'P1:' } }, ... ]"
-      ],
-      "access": "Create-only",
-      "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe `addProject` and `removeProject` endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
-    },
-    {
-      "name": "modified_at",
-      "type": "String",
-      "example_values": [
-        "'2012-02-22T02:06:58.147Z'"
-      ],
-      "access": "Read-only",
-      "comment": "The time at which this task was last modified.\n",
-      "notes": [
-        "This does not currently reflect any changes in associations such as\nprojects or comments that may have been added or removed from the task.\n"
-      ]
-    },
-    {
-      "name": "name",
-      "type": "String",
-      "example_values": [
-        "'Buy catnip'"
-      ],
-      "comment": "Name of the task. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
-    },
-    {
-      "name": "notes",
-      "type": "String",
-      "example_values": [
-        "'Mittens really likes the stuff from Humboldt.'"
-      ],
-      "comment": "More detailed, free-form textual information associated with the task.\n"
-    },
-    {
-      "name": "html_notes",
-      "type": "String",
-      "example_values": [
-        "'&lt;body&gt;Mittens &lt;em&gt;really&lt;/em&gt; likes the stuff from Humboldt.&lt;/body&gt;'"
-      ],
-      "notes": [
-        "**This field is under active migration—please see our [blog post](/developers/news/new-rich-text) for more information.**"
-      ],
-      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The notes of the text with formatting as HTML.\n"
-    },
-    {
-      "name": "num_likes",
-      "type": "Integer",
-      "example_values": [
-        "5"
-      ],
-      "access": "Read-only",
-      "comment": "The number of users who have liked this task.\n"
-    },
-    {
-      "name": "num_subtasks",
-      "type": "Integer",
-      "example_values": [
-        "5"
-      ],
-      "access": "Read-only",
-      "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The number of subtasks on this task.\n"
-    },
-    {
-      "name": "parent",
-      "type": "Task",
-      "example_values": [
-        "{ id: 1234, gid: \"1234\", name: 'Bug task' }"
-      ],
-      "access": "Read-only",
-      "comment": "The parent of this task, or `null` if this is not a subtask. This property\ncannot be modified using a PUT request but you can change it with the\n`setParent` endpoint. You can create subtasks by using the subtasks endpoint.\n"
-    },
-    {
-      "name": "projects",
-      "type": "Array",
-      "example_values": [
-        "[ { id: 1331, gid: \"1331\", name: 'Stuff to Buy' }, ... ]"
-      ],
-      "access": "Create-only",
-      "comment": "Array of projects this task is associated with. At task creation time,\nthis array can be used to add the task to many projects at once. After\ntask creation, these associations can be modified using the `addProject`\nand `removeProject` endpoints.\n"
-    },
-    {
-      "name": "start_on",
-      "type": "String",
-      "example_values": [
-        "'2012-03-26'"
-      ],
-      "comment": "Date on which this task is due, or null if the task has no start date. This\nfield takes a date with YYYY-MM-DD format.<br><br>**Note:** `due_on` or\n`due_at` must be present in the request when setting or unsetting the\n`start_on` parameter.\n"
-    },
-    {
-      "name": "workspace",
-      "type": "Workspace",
-      "example_values": [
-        "{ id: 14916, gid: \"14916\", name: 'My Workspace' }"
-      ],
-      "access": "Create-only",
-      "comment": "The workspace this task is associated with. Once created, task cannot be\nmoved to a different workspace. This attribute can only be specified at\ncreation time.\n"
-    },
-    {
-      "name": "tags",
-      "type": "Array",
-      "example_values": [
-        "[ { id: 59746, gid:\"59746\", name: 'Grade A' }, ... ]"
-      ],
-      "access": "Create-only",
-      "comment": "Array of tags associated with this task. This property may be specified on\ncreation using just an array of tag IDs. In order to change tags on an\nexisting task use `addTag` and `removeTag`.\n"
-    }
-  ],
-  "action_classes": [
-    {
-      "name": "Create a task",
-      "url": "create"
-    },
-    {
-      "name": "Get a task",
-      "url": "get"
-    },
-    {
-      "name": "Update a task",
-      "url": "update"
-    },
-    {
-      "name": "Delete a task",
-      "url": "delete"
-    },
-    {
-      "name": "Duplicate a task",
-      "url": "duplicate"
-    },
-    {
-      "name": "Query for tasks",
-      "url": "query"
-    },
-    {
-      "name": "Search for tasks in a workspace",
-      "url": "search"
-    },
-    {
-      "name": "Custom field values",
-      "url": "custom-field-values",
-      "comment": "Custom fields define user-specific information that can be used to configure tasks within a project to track information that is specific to one particular project. Be sure to reference the [Custom Fields](/developers/documentation/getting-started/custom-fields) guide to get an understanding for the concepts of custom fields and how they relate to resources within Asana.\n\nWhen a custom field is associated with a project, tasks in that project can carry additional _custom field values_ which represent the value of the field on that particular task - for instance, the selected item from an `enum` type custom field. These custom fields will appear as an array in a `custom_fields` property of the task, along with some basic information which can be used to associate the custom field value with the custom field metadata.\n",
-      "example_keys": [
-        "custom-field-value-text",
-        "custom-field-value-number",
-        "custom-field-value-enum"
-      ]
-    },
-    {
-      "name": "Custom field value-specific data",
-      "url": "custom_field_specific_data",
-      "comment": "Custom fields will return differing properties based on the custom field's type.\n\nCustom fields of type `text` will return a `text_value` property containing the string of text for the field.\nCustom fields of type `number` will return a `number_value` property containing the number for the field.\nCustom fields of type `enum` will return an `enum_value` property containing an object that represents the selection of the enum value.\n\n`enum_value` warrants special consideration: it represents a single entry from the `enum_options` array in the custom field metadata. It has these properties:\n\n**id**: the id of the selected entry.\n**name**: the display name of the selected entry.\n**enabled**: whether the selection is modifiable. (See the documentation on [disabled values](/developers/documentation/getting-started/custom-fields#disabled-values) for more information).\n"
-    },
-    {
-      "name": "Setting custom field values",
-      "url": "setting_custom_field_values",
-      "comment": "Custom fields are set with PUT requests similarly to setting other fields on tasks; the format of the request is to set the id to the new value. That is, `custom_fields:{custom_field_id:custom_field_value}`\n\nCustom fields of type `text` are set by passing in `custom_field_id:string`\nCustom fields of type `number` are set by passing in `custom_field_id:number`\nCustom fields of type `enum` are set by passing in `custom_field_id:enum_value_id`\n"
-    },
-    {
-      "name": "Work with subtasks",
-      "url": "subtasks",
-      "comment": "Creating a subtask is the same as a creating an normal task, but instead of specifying a workspace you must specify a\nparent task. Each task can only have a single parent and you can use the `setParent` endpoint to add or remove a parent from an existing task.\n\nCreated subtasks are added to the beginning of their parent's list of subtasks.\n\nYou can find all of the subtasks of a task via the `/tasks/task-id/subtasks` endpoint.\n"
-    },
-    {
-      "name": "Work with dependencies",
-      "url": "dependencies",
-      "comment": "You can mark that a task depends on another task by using the\n`/tasks/task-id/addDependencies` and `/tasks/task-id/addDependents`\nendpoints. These associations can be removed with the\n`/tasks/task-id/removeDependencies` and `/tasks/task-id/removeDependents`\nendpoints.\n\nA task cannot depend on itself, and a task cannot depend on another task\nthat already depends on it, e.g. task 1 cannot be made to depend on task\n2 if task 2 already depends on task 1.\n\nYou can find all of the dependencies of a task via the\n`/tasks/task-id/dependencies` endpoint, and all of its dependents via the\n`/tasks/task-id/dependents` endpoint.\n"
-    },
-    {
-      "name": "Task activity and comments",
-      "url": "stories",
-      "comment": "Tasks, like some other objects in the system, have a series of <a href=\"/developers/api-reference/stories\">stories</a>\nassociated with them. A story can be an indicator of some action taken on a task (such as completing it), or it could be a comment left by a user.\n\nSee the sections on <a href=\"/developers/api-reference/stories#get-all\">querying for all stories</a>\nand <a href=\"/developers/api-reference/stories#post-comment\">commenting on an object</a> for more information.\n"
-    },
-    {
-      "name": "Task, project, and section associations",
-      "url": "projects",
-      "comment": "Each task can be associated with zero or more <a href=\"/developers/api-reference/projects\">projects</a>.\n\nThe `projects` endpoint on a task will return a compact representation of each of the projects on the task specified.\n\nThe `addProject` or `removeProject` endpoints can be used to add and remove projects that a task is a member of by\nproviding the required `project` parameter.\n\nNote that a task may belong to many projects and a single section within each project.\n\nRequests to add/remove projects, if successful, will return success and an empty data block.\n"
-    },
-    {
-      "name": "Tags on tasks",
-      "url": "tags",
-      "comment": "Each task can be associated with zero or more <a href=\"/developers/api-reference/tags\">tags</a> in the system.\nThe API allows you to query and change those associations.\n\nYou can get the list of tags associated with a task by using the `tags` endpoint on a task, which will return a compact\nrepresentation of each of the tags on the task specified.\n\nYou can add or remove a tag using the `addTag` or `removeTag` endpoints, respectively, providing the parameters below.\n\nRequests to add/remove tags, if successful, will return success and an empty data block.\n"
-    },
-    {
-      "name": "Followers on tasks",
-      "url": "followers",
-      "comment": "Each task can be associated with zero or more followers in the system.\n\nYou can add or remove followers using the `addFollowers` or `removeFollowers` endpoints, respectively, providing the parameters below.\n\nRequests to add/remove followers, if successful, will return the complete updated task record, described above.\n"
-    },
-    {
-      "name": "Move a task in a user task list",
-      "url": "move_in_user_task_list"
-    }
-  ],
-  "actions": [
-    {
-      "name": "create",
-      "class": "create",
-      "method": "POST",
-      "path": "/tasks",
-      "params": [
-        {
-          "name": "workspace",
-          "type": "Gid",
-          "example_values": [
-            "\"1331\""
-          ],
-          "comment": "The workspace to create a task in."
-        }
-      ],
-      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify `projects` or a `parent` task instead.\n\n`projects` can be a comma separated list of projects, or just a single\nproject the task should belong to.\n"
-    },
-    {
-      "name": "createInWorkspace",
-      "class": "create",
-      "method": "POST",
-      "path": "/workspaces/%s/tasks",
-      "params": [
-        {
-          "name": "workspace",
-          "type": "Gid",
-          "example_values": [
-            "\"1331\""
-          ],
-          "comment": "The workspace to create a task in.",
-          "required": true
-        }
-      ],
-      "comment": "Creating a new task is as easy as POSTing to the `/tasks` endpoint\nwith a data block containing the fields you'd like to set on the task.\nAny unspecified fields will take on default values.\n\nEvery task is required to be created in a specific workspace, and this\nworkspace cannot be changed once set. The workspace need not be set\nexplicitly if you specify a `project` or a `parent` task instead.\n"
-    },
-    {
-      "name": "findById",
-      "class": "get",
-      "method": "GET",
-      "path": "/tasks/%s",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to get.",
-          "required": true
-        }
-      ],
-      "comment": "Returns the complete task record for a single task.\n"
-    },
-    {
-      "name": "update",
-      "class": "update",
-      "method": "PUT",
-      "path": "/tasks/%s",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to update.",
-          "required": true
-        }
-      ],
-      "comment": "A specific, existing task can be updated by making a PUT request on the\nURL for that task. Only the fields provided in the `data` block will be\nupdated; any unspecified fields will remain unchanged.\n\nWhen using this method, it is best to specify only those fields you wish\nto change, or else you may overwrite changes made by another user since\nyou last retrieved the task.\n\nReturns the complete updated task record.\n"
-    },
-    {
-      "name": "delete",
-      "class": "delete",
-      "method": "DELETE",
-      "path": "/tasks/%s",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to delete.",
-          "required": true
-        }
-      ],
-      "comment": "A specific, existing task can be deleted by making a DELETE request on the\nURL for that task. Deleted tasks go into the \"trash\" of the user making\nthe delete request. Tasks can be recovered from the trash within a period\nof 30 days; afterward they are completely removed from the system.\n\nReturns an empty data record.\n"
-    },
-    {
-      "name": "duplicateTask",
-      "class": "duplicate",
-      "method": "POST",
-      "path": "/tasks/%s/duplicate",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to duplicate.",
-          "required": true
-        },
-        {
-          "name": "name",
-          "type": "String",
-          "example_values": [
-            "New task name"
-          ],
-          "required": true,
-          "comment": "The name of the new task."
-        },
-        {
-          "name": "include",
-          "type": "Array",
-          "example_values": [
-            "[ \"notes\", \"assignee\", \"subtasks\", \"attachments\", \"tags\", \"followers\", \"projects\", \"dates\", \"dependencies\", \"parent\" ]"
-          ],
-          "required": false,
-          "comment": "The fields that will be duplicated to the new task.\n"
-        }
-      ],
-      "comment": "Creates and returns a job that will asynchronously handle the duplication.\n"
-    },
-    {
-      "name": "findByProject",
-      "class": "query",
-      "method": "GET",
-      "path": "/projects/%s/tasks",
-      "params": [
-        {
-          "name": "project",
-          "type": "Gid",
-          "example_values": [
-            "\"13579\""
-          ],
-          "comment": "The project in which to search for tasks.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns the compact task records for all tasks within the given project,\nordered by their priority within the project.\n"
-    },
-    {
-      "name": "findByTag",
-      "class": "query",
-      "method": "GET",
-      "path": "/tags/%s/tasks",
-      "params": [
-        {
-          "name": "tag",
-          "type": "Gid",
-          "example_values": [
-            "\"11235\""
-          ],
-          "comment": "The tag in which to search for tasks.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns the compact task records for all tasks with the given tag.\n"
-    },
-    {
-      "name": "findBySection",
-      "class": "query",
-      "method": "GET",
-      "path": "/sections/%s/tasks",
-      "params": [
-        {
-          "name": "section",
-          "type": "Gid",
-          "example_values": [
-            "\"97531\""
-          ],
-          "comment": "The section in which to search for tasks.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "<b>Board view only:</b> Returns the compact section records for all tasks within the given section.\n"
-    },
-    {
-      "name": "findByUserTaskList",
-      "class": "query",
-      "method": "GET",
-      "path": "/user_task_lists/%s/tasks",
-      "params": [
-        {
-          "name": "user_task_list",
-          "type": "Gid",
-          "example_values": [
-            "\"16284\""
-          ],
-          "comment": "The user task list in which to search for tasks.",
-          "required": true
-        },
-        {
-          "name": "completed_since",
-          "type": "String",
-          "example_values": [
-            "'2012-02-22T02:06:58.158Z'",
-            "now"
-          ],
-          "comment": "Only return tasks that are either incomplete or that have been\ncompleted since this time.\n"
-        }
-      ],
-      "collection": true,
-      "comment": "Returns the compact list of tasks in a user's My Tasks list. The returned\ntasks will be in order within each assignee status group of `Inbox`,\n`Today`, and `Upcoming`.\n\n**Note:** tasks in `Later` have a different ordering in the Asana web app\nthan the other assignee status groups; this endpoint will still return\nthem in list order in `Later` (differently than they show up in Asana,\nbut the same order as in Asana's mobile apps).\n\n**Note:** Access control is enforced for this endpoint as with all Asana\nAPI endpoints, meaning a user's private tasks will be filtered out if the\nAPI-authenticated user does not have access to them.\n\n**Note:** Both complete and incomplete tasks are returned by default\nunless they are filtered out (for example, setting `completed_since=now`\nwill return only incomplete tasks, which is the default view for \"My\nTasks\" in Asana.)\n"
-    },
-    {
-      "name": "findAll",
-      "class": "query",
-      "method": "GET",
-      "path": "/tasks",
-      "collection": true,
-      "comment": "Returns the compact task records for some filtered set of tasks. Use one\nor more of the parameters provided to filter the tasks returned. You must\nspecify a `project`, `section`, `tag`, or `user_task_list` if you do not\nspecify `assignee` and `workspace`.\n",
-      "params": [
-        {
-          "name": "assignee",
-          "type": "String",
-          "example_values": [
-            "\"14641\"",
-            "\"me\"",
-            "\"sashimi@asana.com\""
-          ],
-          "comment": "The assignee to filter tasks on.",
-          "notes": [
-            "If you specify `assignee`, you must also specify the `workspace` to filter on.\n"
-          ]
-        },
-        {
-          "name": "workspace",
-          "type": "Gid",
-          "example_values": [
-            "\"1331\""
-          ],
-          "comment": "The workspace or organization to filter tasks on.",
-          "notes": [
-            "If you specify `workspace`, you must also specify the `assignee` to filter on.\n"
-          ]
-        },
-        {
-          "name": "project",
-          "type": "Gid",
-          "example_values": [
-            "\"13579\""
-          ],
-          "comment": "The project to filter tasks on."
-        },
-        {
-          "name": "section",
-          "type": "Gid",
-          "example_values": [
-            "\"97531\""
-          ],
-          "comment": "The section to filter tasks on.",
-          "notes": [
-            "Currently, this is only supported in board views.\n"
-          ]
-        },
-        {
-          "name": "tag",
-          "type": "Gid",
-          "example_values": [
-            "\"11235\""
-          ],
-          "comment": "The tag to filter tasks on."
-        },
-        {
-          "name": "user_task_list",
-          "type": "Gid",
-          "example_values": [
-            "\"16284\""
-          ],
-          "comment": "The user task list to filter tasks on."
-        },
-        {
-          "name": "completed_since",
-          "type": "String",
-          "example_values": [
-            "'2012-02-22T02:06:58.158Z'",
-            "now"
-          ],
-          "comment": "Only return tasks that are either incomplete or that have been\ncompleted since this time.\n"
-        },
-        {
-          "name": "modified_since",
-          "type": "String",
-          "example_values": [
-            "'2012-02-22T02:06:58.158Z'",
-            "now"
-          ],
-          "comment": "Only return tasks that have been modified since the given time.\n",
-          "notes": [
-            "A task is considered \"modified\" if any of its properties change,\nor associations between it and other objects are modified (e.g.\na task being added to a project). A task is not considered modified\njust because another object it is associated with (e.g. a subtask)\nis modified. Actions that count as modifying the task include\nassigning, renaming, completing, and adding stories.\n"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "getTasksWithTag",
-      "class": "get-tasks",
-      "method": "GET",
-      "path": "/tags/%s/tasks",
-      "params": [
-        {
-          "name": "tag",
-          "type": "Id",
-          "example_values": [
-            "11235"
-          ],
-          "comment": "The tag to fetch tasks from.",
-          "required": true
-        }
-      ],
-      "collection": true,
-      "comment": "Returns the compact task records for all tasks with the given tag.\nTasks can have more than one tag at a time.\n"
-    },
-    {
-      "name": "searchInWorkspace",
-      "class": "search",
-      "method": "GET",
-      "path": "/workspaces/%s/tasks/search",
-      "collection": true,
-      "comment": "The search endpoint allows you to build complex queries to find and fetch exactly the data you need from Asana. For a more comprehensive description of all the query parameters and limitations of this endpoint, see our [long-form documentation](/developers/documentation/getting-started/search-api) for this feature.\n\nThis endpoint has an additional [rate limit](https://local.asana.com/developers/documentation/getting-started/rate-limits).\n",
-      "params": [
-        {
-          "name": "workspace",
-          "type": "Gid",
-          "example_values": [
-            "\"1331\""
-          ],
-          "comment": "The workspace or organization in which to search for tasks.",
-          "required": true
-        },
-        {
-          "name": "resource_subtype",
-          "type": "Enum",
-          "comment": "Filters results by the task's resource_subtype.\n",
-          "required": false,
-          "example_values": [
-            "\"default_task\"",
-            "\"milestone\""
-          ]
-        }
-      ]
-    },
-    {
-      "name": "dependencies",
-      "class": "dependencies",
-      "method": "GET",
-      "path": "/tasks/%s/dependencies",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to get dependencies on.",
-          "required": true
-        }
-      ],
-      "comment": "Returns the compact representations of all of the dependencies of a task.\n"
-    },
-    {
-      "name": "dependents",
-      "class": "dependencies",
-      "method": "GET",
-      "path": "/tasks/%s/dependents",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to get dependents on.",
-          "required": true
-        }
-      ],
-      "comment": "Returns the compact representations of all of the dependents of a task.\n"
-    },
-    {
-      "name": "addDependencies",
-      "class": "dependencies",
-      "method": "POST",
-      "path": "/tasks/%s/addDependencies",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to add dependencies to.",
-          "required": true
-        },
-        {
-          "name": "dependencies",
-          "type": "Array",
-          "example_values": [
-            "[\"133713\", \"184253\"]"
-          ],
-          "required": true,
-          "comment": "An array of task IDs that this task should depend on."
-        }
-      ],
-      "comment": "Marks a set of tasks as dependencies of this task, if they are not\nalready dependencies. *A task can have at most 15 dependencies.*\n"
-    },
-    {
-      "name": "addDependents",
-      "class": "dependencies",
-      "method": "POST",
-      "path": "/tasks/%s/addDependents",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to add dependents to.",
-          "required": true
-        },
-        {
-          "name": "dependents",
-          "type": "Array",
-          "example_values": [
-            "[\"133713\", \"184253\"]"
-          ],
-          "required": true,
-          "comment": "An array of task IDs that should depend on this task."
-        }
-      ],
-      "comment": "Marks a set of tasks as dependents of this task, if they are not already\ndependents. *A task can have at most 30 dependents.*\n"
-    },
-    {
-      "name": "removeDependencies",
-      "class": "dependencies",
-      "method": "POST",
-      "path": "/tasks/%s/removeDependencies",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to remove dependencies from.",
-          "required": true
-        },
-        {
-          "name": "dependencies",
-          "type": "Array",
-          "example_values": [
-            "[\"133713\", \"184253\"]"
-          ],
-          "required": true,
-          "comment": "An array of task IDs to remove as dependencies."
-        }
-      ],
-      "comment": "Unlinks a set of dependencies from this task.\n"
-    },
-    {
-      "name": "removeDependents",
-      "class": "dependencies",
-      "method": "POST",
-      "path": "/tasks/%s/removeDependents",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to remove dependents from.",
-          "required": true
-        },
-        {
-          "name": "dependents",
-          "type": "Array",
-          "example_values": [
-            "[\"133713\", \"184253\"]"
-          ],
-          "required": true,
-          "comment": "An array of task IDs to remove as dependents."
-        }
-      ],
-      "comment": "Unlinks a set of dependents from this task.\n"
-    },
-    {
-      "name": "addFollowers",
-      "class": "followers",
-      "method": "POST",
-      "path": "/tasks/%s/addFollowers",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to add followers to.",
-          "required": true
-        },
-        {
-          "name": "followers",
-          "type": "Array",
-          "example_values": [
-            "[\"133713\", \"184253\"]"
-          ],
-          "required": true,
-          "comment": "An array of followers to add to the task."
-        }
-      ],
-      "comment": "Adds each of the specified followers to the task, if they are not already\nfollowing. Returns the complete, updated record for the affected task.\n"
-    },
-    {
-      "name": "removeFollowers",
-      "class": "followers",
-      "method": "POST",
-      "path": "/tasks/%s/removeFollowers",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to remove followers from.",
-          "required": true
-        },
-        {
-          "name": "followers",
-          "type": "Array",
-          "example_values": [
-            "[\"133713\", \"184253\"]"
-          ],
-          "required": true,
-          "comment": "An array of followers to remove from the task."
-        }
-      ],
-      "comment": "Removes each of the specified followers from the task if they are\nfollowing. Returns the complete, updated record for the affected task.\n"
-    },
-    {
-      "name": "projects",
-      "class": "projects",
-      "method": "GET",
-      "path": "/tasks/%s/projects",
-      "collection": true,
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to get projects on.",
-          "required": true
-        }
-      ],
-      "comment": "Returns a compact representation of all of the projects the task is in.\n"
-    },
-    {
-      "name": "addProject",
-      "class": "projects",
-      "method": "POST",
-      "path": "/tasks/%s/addProject",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to add to a project.",
-          "required": true
-        },
-        {
-          "name": "project",
-          "type": "Gid",
-          "example_values": [
-            "\"13579\""
-          ],
-          "comment": "The project to add the task to.",
-          "required": true
-        },
-        {
-          "name": "insert_after",
-          "type": "Gid",
-          "example_values": [
-            "124816",
-            "null"
-          ],
-          "comment": "A task in the project to insert the task after, or `null` to\ninsert at the beginning of the list.\n"
-        },
-        {
-          "name": "insert_before",
-          "type": "Gid",
-          "example_values": [
-            "124816",
-            "null"
-          ],
-          "comment": "A task in the project to insert the task before, or `null` to\ninsert at the end of the list.\n"
-        },
-        {
-          "name": "section",
-          "type": "Gid",
-          "example_values": [
-            "124816"
-          ],
-          "comment": "A section in the project to insert the task into. The task will be\ninserted at the bottom of the section.\n"
-        }
-      ],
-      "comment": "Adds the task to the specified project, in the optional location\nspecified. If no location arguments are given, the task will be added to\nthe end of the project.\n\n`addProject` can also be used to reorder a task within a project or section that\nalready contains it.\n\nAt most one of `insert_before`, `insert_after`, or `section` should be\nspecified. Inserting into a section in an non-order-dependent way can be\ndone by specifying `section`, otherwise, to insert within a section in a\nparticular place, specify `insert_before` or `insert_after` and a task\nwithin the section to anchor the position of this task.\n\nReturns an empty data block.\n"
-    },
-    {
-      "name": "removeProject",
-      "class": "projects",
-      "method": "POST",
-      "path": "/tasks/%s/removeProject",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to remove from a project.",
-          "required": true
-        },
-        {
-          "name": "project",
-          "type": "Gid",
-          "example_values": [
-            "\"13579\""
-          ],
-          "comment": "The project to remove the task from.",
-          "required": true
-        }
-      ],
-      "comment": "Removes the task from the specified project. The task will still exist\nin the system, but it will not be in the project anymore.\n\nReturns an empty data block.\n"
-    },
-    {
-      "name": "tags",
-      "class": "tags",
-      "method": "GET",
-      "path": "/tasks/%s/tags",
-      "collection": true,
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to get tags on.",
-          "required": true
-        }
-      ],
-      "comment": "Returns a compact representation of all of the tags the task has.\n"
-    },
-    {
-      "name": "addTag",
-      "class": "tags",
-      "method": "POST",
-      "path": "/tasks/%s/addTag",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to add a tag to.",
-          "required": true
-        },
-        {
-          "name": "tag",
-          "type": "Gid",
-          "example_values": [
-            "\"11235\""
-          ],
-          "comment": "The tag to add to the task.",
-          "required": true
-        }
-      ],
-      "comment": "Adds a tag to a task. Returns an empty data block.\n"
-    },
-    {
-      "name": "removeTag",
-      "class": "tags",
-      "method": "POST",
-      "path": "/tasks/%s/removeTag",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to remove a tag from.",
-          "required": true
-        },
-        {
-          "name": "tag",
-          "type": "Gid",
-          "example_values": [
-            "\"11235\""
-          ],
-          "comment": "The tag to remove from the task.",
-          "required": true
-        }
-      ],
-      "comment": "Removes a tag from the task. Returns an empty data block.\n"
-    },
-    {
-      "name": "subtasks",
-      "class": "subtasks",
-      "method": "GET",
-      "path": "/tasks/%s/subtasks",
-      "collection": true,
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to get the subtasks of.",
-          "required": true
-        }
-      ],
-      "comment": "Returns a compact representation of all of the subtasks of a task.\n"
-    },
-    {
-      "name": "addSubtask",
-      "class": "subtasks",
-      "method": "POST",
-      "path": "/tasks/%s/subtasks",
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to add a subtask to.",
-          "required": true
-        }
-      ],
-      "comment": "Creates a new subtask and adds it to the parent task. Returns the full record\nfor the newly created subtask.\n"
-    },
-    {
-      "name": "setParent",
-      "class": "subtasks",
-      "method": "POST",
-      "path": "/tasks/%s/setParent",
-      "no_code": true,
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task to change the parent of.",
-          "required": true
-        },
-        {
-          "name": "parent",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The new parent of the task, or `null` for no parent.",
-          "required": true,
-          "explicit": true
-        },
-        {
-          "name": "insert_after",
-          "type": "Gid",
-          "example_values": [
-            "124816",
-            "null"
-          ],
-          "comment": "A subtask of the parent to insert the task after, or `null` to\ninsert at the beginning of the list.\n"
-        },
-        {
-          "name": "insert_before",
-          "type": "Gid",
-          "example_values": [
-            "124816",
-            "null"
-          ],
-          "comment": "A subtask of the parent to insert the task before, or `null` to\ninsert at the end of the list.\n"
-        }
-      ],
-      "comment": "Changes the parent of a task. Each task may only be a subtask of a single\nparent, or no parent task at all. Returns an empty data block. When using `insert_before` and `insert_after`,\nat most one of those two options can be specified, and they must already be subtasks\nof the parent.\n"
-    },
-    {
-      "name": "stories",
-      "class": "stories",
-      "method": "GET",
-      "path": "/tasks/%s/stories",
-      "collection": true,
-      "params": [
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "The task containing the stories to get.",
-          "required": true
-        }
-      ],
-      "comment": "Returns a compact representation of all of the stories on the task.\n"
-    },
-    {
-      "name": "addComment",
-      "class": "stories",
-      "method": "POST",
-      "path": "/tasks/%s/stories",
-      "params": [
-        {
-          "name": "task",
-          "type": "Id",
-          "example_values": [
-            "124816"
-          ],
-          "comment": "Globally unique identifier for the task.\n",
-          "required": true
-        },
-        {
-          "name": "text",
-          "type": "String",
-          "example_values": [
-            "'This is a comment.'"
-          ],
-          "required": true,
-          "comment": "The plain text of the comment to add."
-        }
-      ],
-      "comment": "Adds a comment to a task. The comment will be authored by the\ncurrently authenticated user, and timestamped when the server receives\nthe request.\n\nReturns the full record for the new story added to the task.\n"
-    },
-    {
-      "name": "insertInUserTaskList",
-      "class": "move_in_user_task_list",
-      "method": "POST",
-      "path": "/user_task_lists/%s/tasks/insert",
-      "params": [
-        {
-          "name": "user_task_list",
-          "type": "Gid",
-          "example_values": [
-            "\"16284\""
-          ],
-          "comment": "Globally unique identifier for the user task list.\n",
-          "required": true
-        },
-        {
-          "name": "task",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "Globally unique identifier for the task.\n",
-          "required": true
-        },
-        {
-          "name": "insert_before",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "Insert the task before the task specified by this field. The inserted\ntask will inherit the `assignee_status` of this task. `insert_before`\nand `insert_after` parameters cannot both be specified.\n"
-        },
-        {
-          "name": "insert_after",
-          "type": "Gid",
-          "example_values": [
-            "\"124816\""
-          ],
-          "comment": "Insert the task after the task specified by this field. The inserted\ntask will inherit the `assignee_status` of this task. `insert_before`\nand `insert_after` parameters cannot both be specified.\n"
-        }
-      ],
-      "comment": "Insert or reorder tasks in a user's My Tasks list. If the task was not\nassigned to the owner of the user task list it will be reassigned when\nthis endpoint is called. If neither `insert_before` nor `insert_after`\nare provided the task will be inserted at the top of the assignee's\ninbox.\n\nReturns an empty data block.\n"
-    }
-  ]
-};
+import resourceBase = require("../../../resources/gen/tasks_base");
+let resource = resourceBase;
+resource.comment = "The _task_ is the basic object around which many operations in Asana are\ncentered. In the Asana application, multiple tasks populate the middle pane\naccording to some view parameters, and the set of selected tasks determines\nthe more detailed information presented in the details pane.\n";
+resource.properties = [
+  {
+    "name": "id",
+    "type": "Id",
+    "example_values": [
+      "1234"
+    ],
+    "comment": "Globally unique ID of the task.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
+  },
+  {
+    "name": "gid",
+    "type": "Gid",
+    "example_values": [
+      "\"1234\""
+    ],
+    "comment": "Globally unique ID of the task.\n"
+  },
+  {
+    "name": "resource_type",
+    "type": "Enum",
+    "comment": "The resource type of this resource. The value for this resource is always `task`.\n",
+    "example_values": [
+      "\"task\""
+    ],
+    "values": [
+      {
+        "name": "task",
+        "comment": "A task resource type."
+      }
+    ]
+  },
+  {
+    "name": "resource_subtype",
+    "type": "Enum",
+    "comment": "The type of task. Different subtypes of tasks retain many of the same fields and behavior, but may render differently in Asana or represent tasks with different semantic meaning.\n",
+    "example_values": [
+      "\"default_task\"",
+      "\"milestone\"",
+      "\"section\""
+    ],
+    "values": [
+      {
+        "name": "default_task",
+        "comment": "A normal task."
+      },
+      {
+        "name": "milestone",
+        "comment": "A task that represents a milestone. A milestone marks a specific point in time and cannot have a start_date.\n"
+      },
+      {
+        "name": "section",
+        "comment": "\"**This value is under active migration—please see our [forum post](https://forum.asana.com/t/sections-are-dead-long-live-sections) for more information.**\"\n\nA task which represents a section in list projects - a task that ends in a colon and renders with a different style to visually group tasks together.\n"
+      }
+    ]
+  },
+  {
+    "name": "assignee",
+    "type": "User",
+    "example_values": [
+      "{ id: 12345, gid: \"12345\", resource_type: \"user\", name: 'Tim Bizarro' }",
+      "null"
+    ],
+    "comment": "User to which this task is assigned, or `null` if the task is\nunassigned.\n"
+  },
+  {
+    "name": "assignee_status",
+    "type": "Enum",
+    "example_values": [
+      "\"inbox\"",
+      "\"today\"",
+      "\"upcoming\"",
+      "\"later\""
+    ],
+    "values": [
+      {
+        "name": "inbox",
+        "comment": "In the inbox."
+      },
+      {
+        "name": "later",
+        "comment": "Scheduled for _later_."
+      },
+      {
+        "name": "upcoming",
+        "comment": "Scheduled for _upcoming_."
+      },
+      {
+        "name": "today",
+        "comment": "Scheduled for _today_."
+      }
+    ],
+    "comment": "Scheduling status of this task for the user it is assigned to. This field\ncan only be set if `assignee` is non-null. If the task has an assignee\nand `assignee_status` is null or not present, Asana will set\n`assignee_status` to `inbox`.\n"
+  },
+  {
+    "name": "created_at",
+    "type": "String",
+    "example_values": [
+      "'2012-02-22T02:06:58.147Z'"
+    ],
+    "comment": "The time at which this task was created.\n"
+  },
+  {
+    "name": "completed",
+    "type": "Boolean",
+    "example_values": [
+      "false"
+    ],
+    "comment": "True if the task is currently marked complete, false if not.\n"
+  },
+  {
+    "name": "completed_at",
+    "type": "String",
+    "example_values": [
+      "'2012-02-22T02:06:58.147Z'"
+    ],
+    "comment": "The time at which this task was completed, or null if the task is incomplete.\n"
+  },
+  {
+    "name": "custom_fields",
+    "type": "Array",
+    "example_values": [
+      "[ { id: 1646, gid: \"1646\", name: 'Priority', type: 'enum', enum_value: { id: 126, gid: \"126\", name: 'P1' } }, ...]"
+    ],
+    "comment": "Array of custom fields applied to the task. These custom fields represent\nthe values recorded on this task for a particular custom field. For\nexample, these fields will contain an `enum_value` property for custom\nfields of type `enum`, a `string_value` property for custom fields of\ntype `string`, and so on. Please note that the id returned on each custom\nfield value *is identical* to the id of the custom field, which allows\nreferencing the custom field metadata through the\n`/custom_fields/custom_field-id` endpoint.\n"
+  },
+  {
+    "name": "dependencies",
+    "type": "Resource",
+    "example_values": [
+      "[ { id: 1234, gid: \"1234\" }, ... ]"
+    ],
+    "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). Array of resources referencing tasks that this task depends on. The objects contain only the ID of the dependency.\n"
+  },
+  {
+    "name": "dependents",
+    "type": "Resource",
+    "example_values": [
+      "[ { id: 1234, gid: \"1234\" }, ... ]"
+    ],
+    "comment": "[Opt In](/developers/documentation/getting-started/input-output-options).\nArray of resources referencing tasks that depend on this task. The objects\ncontain only the ID of the dependent.\n"
+  },
+  {
+    "name": "due_on",
+    "type": "String",
+    "example_values": [
+      "'2012-03-26'"
+    ],
+    "comment": "Date on which this task is due, or null if the task has no due date. This\ntakes a date with YYYY-MM-DD format and should not be used together with\n`due_at`.\n"
+  },
+  {
+    "name": "due_at",
+    "type": "String",
+    "example_values": [
+      "'2012-02-22T02:06:58.147Z'"
+    ],
+    "comment": "Date and time on which this task is due, or null if the task has no due\ntime. This takes a UTC timestamp and should not be used together with\n`due_on`.\n"
+  },
+  {
+    "name": "external",
+    "type": "Map",
+    "example_values": [
+      "{ id: 'my_id', data: 'A blob of information.' }"
+    ],
+    "comment": "*OAuth Required*. *Conditional*. This field is returned only if external values are set or included by using [Opt In] (#input-output-options). The external field allows you to store app-specific metadata on tasks, including a gid that can be used to retrieve tasks and a data blob that can store app-specific character strings. Note that you will need to authenticate with Oauth to access or modify this data. Once an external gid is set, you can use the notation `external:custom_gid` to reference your object anywhere in the API where you may use the original object gid. See the page on Custom External Data for more details."
+  },
+  {
+    "name": "followers",
+    "type": "Array",
+    "example_values": [
+      "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
+    ],
+    "comment": "Array of users following this task.\n"
+  },
+  {
+    "name": "is_rendered_as_separator",
+    "type": "Boolean",
+    "example_values": [
+      "false"
+    ],
+    "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). In some contexts tasks can be rendered as a visual separator; for instance, subtasks can appear similar to [sections](/developers/api-reference/sections) without being true `section` objects. If a `task` object is rendered this way in any context it will have the property `is_rendered_as_separator` set to `true`.<br /><br />**Note:** Until the default behavior for our API changes integrations must [opt in to the `new_sections` change](https://forum.asana.com/t/sections-are-dead-long-live-sections/33951) to modify the `is_rendered_as_separator` property.\n"
+  },
+  {
+    "name": "liked",
+    "type": "Boolean",
+    "example_values": [
+      "false"
+    ],
+    "comment": "True if the task is liked by the authorized user, false if not.\n"
+  },
+  {
+    "name": "likes",
+    "type": "Array",
+    "example_values": [
+      "[ { id: 1123, gid: \"1123\", resource_type: \"user\", name: 'Mittens' }, ... ]"
+    ],
+    "comment": "Array of users who have liked this task.\n"
+  },
+  {
+    "name": "memberships",
+    "type": "Array",
+    "example_values": [
+      "[ { project: { id: 1331, gid: \"1331\", name: 'Bugs' }, section: { id: 1123, gid: \"1123\", name: 'P1:' } }, ... ]"
+    ],
+    "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe `addProject` and `removeProject` endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
+  },
+  {
+    "name": "modified_at",
+    "type": "String",
+    "example_values": [
+      "'2012-02-22T02:06:58.147Z'"
+    ],
+    "comment": "The time at which this task was last modified.\n",
+  },
+  {
+    "name": "name",
+    "type": "String",
+    "example_values": [
+      "'Buy catnip'"
+    ],
+    "comment": "Name of the task. This is generally a short sentence fragment that fits\non a line in the UI for maximum readability. However, it can be longer.\n"
+  },
+  {
+    "name": "notes",
+    "type": "String",
+    "example_values": [
+      "'Mittens really likes the stuff from Humboldt.'"
+    ],
+    "comment": "More detailed, free-form textual information associated with the task.\n"
+  },
+  {
+    "name": "html_notes",
+    "type": "String",
+    "example_values": [
+      "'&lt;body&gt;Mittens &lt;em&gt;really&lt;/em&gt; likes the stuff from Humboldt.&lt;/body&gt;'"
+    ],
+    "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The notes of the text with formatting as HTML.\n"
+  },
+  {
+    "name": "num_likes",
+    "type": "Integer",
+    "example_values": [
+      "5"
+    ],
+    "comment": "The number of users who have liked this task.\n"
+  },
+  {
+    "name": "num_subtasks",
+    "type": "Integer",
+    "example_values": [
+      "5"
+    ],
+    "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The number of subtasks on this task.\n"
+  },
+  {
+    "name": "parent",
+    "type": "Task",
+    "example_values": [
+      "{ id: 1234, gid: \"1234\", name: 'Bug task' }"
+    ],
+    "comment": "The parent of this task, or `null` if this is not a subtask. This property\ncannot be modified using a PUT request but you can change it with the\n`setParent` endpoint. You can create subtasks by using the subtasks endpoint.\n"
+  },
+  {
+    "name": "projects",
+    "type": "Array",
+    "example_values": [
+      "[ { id: 1331, gid: \"1331\", name: 'Stuff to Buy' }, ... ]"
+    ],
+    "comment": "Array of projects this task is associated with. At task creation time,\nthis array can be used to add the task to many projects at once. After\ntask creation, these associations can be modified using the `addProject`\nand `removeProject` endpoints.\n"
+  },
+  {
+    "name": "start_on",
+    "type": "String",
+    "example_values": [
+      "'2012-03-26'"
+    ],
+    "comment": "Date on which this task is due, or null if the task has no start date. This\nfield takes a date with YYYY-MM-DD format.<br><br>**Note:** `due_on` or\n`due_at` must be present in the request when setting or unsetting the\n`start_on` parameter.\n"
+  },
+  {
+    "name": "workspace",
+    "type": "Workspace",
+    "example_values": [
+      "{ id: 14916, gid: \"14916\", name: 'My Workspace' }"
+    ],
+    "comment": "The workspace this task is associated with. Once created, task cannot be\nmoved to a different workspace. This attribute can only be specified at\ncreation time.\n"
+  },
+  {
+    "name": "tags",
+    "type": "Array",
+    "example_values": [
+      "[ { id: 59746, gid:\"59746\", name: 'Grade A' }, ... ]"
+    ],
+    "comment": "Array of tags associated with this task. This property may be specified on\ncreation using just an array of tag IDs. In order to change tags on an\nexisting task use `addTag` and `removeTag`.\n"
+  }
+]
+
 export = resource;

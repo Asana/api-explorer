@@ -1,10 +1,12 @@
 {{#operations}}
-/// <reference path="../interfaces.ts" />
+/// <reference path="../../src/resources/interfaces.ts" />
 
 /* tslint:disable:max-line-length */
 /* tslint:disable:eofline */
-var resource = <Resource>{
-  "name": "{{classname}}",
+var resourceBase = <Resource>{
+  "name": "{{toSnakeCase pathPrefix}}",
+  "comment": "",
+  "properties":[],
   "actions": [
   {{#operation}}{{^formParams}}
   {{#contents}}
@@ -14,7 +16,13 @@ var resource = <Resource>{
     "path": "{{path}}",
     "params": [
       {{#pathParams}}
-      {{{jsonSchema}}}
+      {
+      "name": "{{baseName}}",
+      "type": "{{dataType}}",
+      "example_values": [""],
+      "comment": "{{description}}",
+      "required": {{required}}
+      }
       {{/pathParams}}
     ],
     "comment": "{{notes}}"
@@ -24,4 +32,4 @@ var resource = <Resource>{
   ]
 }
 {{/operations}}
-export = resource;
+export = resourceBase;
