@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "deleteAttachment",
-    "method": "delete",
-    "path": "/attachments/${encodeURIComponent(String(attachmentGid))}",
+    "method": "DELETE",
+    "path": "/attachments/%s",
     "params": [
       {
       "name": "attachment_gid",

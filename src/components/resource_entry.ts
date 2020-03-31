@@ -41,7 +41,7 @@ class ResourceEntry extends React.Component<ResourceEntry.Props, {}> {
       r("div", { },
         r("h3", { }, "Resource description"),
         r("div", { dangerouslySetInnerHTML: {
-          __html: marked(resource.comment, { sanitize: true }) }
+          __html: marked(resource.comment) }
         })
       )
     );
