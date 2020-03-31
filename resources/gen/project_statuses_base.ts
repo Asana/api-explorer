@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "createProjectStatusForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/project_statuses",
+    "method": "POST",
+    "path": "/projects/%s/project_statuses",
     "params": [
       {
       "name": "project_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deleteProjectStatus",
-    "method": "delete",
-    "path": "/project_statuses/${encodeURIComponent(String(projectStatusGid))}",
+    "method": "DELETE",
+    "path": "/project_statuses/%s",
     "params": [
       {
       "name": "project_status_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjectStatus",
-    "method": "get",
-    "path": "/project_statuses/${encodeURIComponent(String(projectStatusGid))}",
+    "method": "GET",
+    "path": "/project_statuses/%s",
     "params": [
       {
       "name": "project_status_gid",
@@ -54,8 +54,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjectStatusesForProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/project_statuses",
+    "method": "GET",
+    "path": "/projects/%s/project_statuses",
     "params": [
       {
       "name": "project_gid",

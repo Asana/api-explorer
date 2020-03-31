@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getUserTaskList",
-    "method": "get",
-    "path": "/user_task_lists/${encodeURIComponent(String(userTaskListGid))}",
+    "method": "GET",
+    "path": "/user_task_lists/%s",
     "params": [
       {
       "name": "user_task_list_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getUserTaskListForUser",
-    "method": "get",
-    "path": "/users/${encodeURIComponent(String(userGid))}/user_task_list",
+    "method": "GET",
+    "path": "/users/%s/user_task_list",
     "params": [
       {
       "name": "user_gid",

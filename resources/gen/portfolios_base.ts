@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "addCustomFieldSettingForPortfolio",
-    "method": "post",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/addCustomFieldSetting",
+    "method": "POST",
+    "path": "/portfolios/%s/addCustomFieldSetting",
     "params": [
       {
       "name": "portfolio_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addItemForPortfolio",
-    "method": "post",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/addItem",
+    "method": "POST",
+    "path": "/portfolios/%s/addItem",
     "params": [
       {
       "name": "portfolio_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addMembersForPortfolio",
-    "method": "post",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/addMembers",
+    "method": "POST",
+    "path": "/portfolios/%s/addMembers",
     "params": [
       {
       "name": "portfolio_gid",
@@ -54,7 +54,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createPortfolio",
-    "method": "post",
+    "method": "POST",
     "path": "/portfolios",
     "params": [
     ],
@@ -62,8 +62,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deletePortfolio",
-    "method": "delete",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}",
+    "method": "DELETE",
+    "path": "/portfolios/%s",
     "params": [
       {
       "name": "portfolio_gid",
@@ -77,8 +77,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getItemsForPortfolio",
-    "method": "get",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/items",
+    "method": "GET",
+    "path": "/portfolios/%s/items",
     "params": [
       {
       "name": "portfolio_gid",
@@ -92,8 +92,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getPortfolio",
-    "method": "get",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}",
+    "method": "GET",
+    "path": "/portfolios/%s",
     "params": [
       {
       "name": "portfolio_gid",
@@ -107,7 +107,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getPortfolios",
-    "method": "get",
+    "method": "GET",
     "path": "/portfolios",
     "params": [
     ],
@@ -115,8 +115,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeCustomFieldSettingForPortfolio",
-    "method": "post",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/removeCustomFieldSetting",
+    "method": "POST",
+    "path": "/portfolios/%s/removeCustomFieldSetting",
     "params": [
       {
       "name": "portfolio_gid",
@@ -130,8 +130,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeItemForPortfolio",
-    "method": "post",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/removeItem",
+    "method": "POST",
+    "path": "/portfolios/%s/removeItem",
     "params": [
       {
       "name": "portfolio_gid",
@@ -145,8 +145,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeMembersForPortfolio",
-    "method": "post",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/removeMembers",
+    "method": "POST",
+    "path": "/portfolios/%s/removeMembers",
     "params": [
       {
       "name": "portfolio_gid",
@@ -160,8 +160,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updatePortfolio",
-    "method": "put",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}",
+    "method": "PUT",
+    "path": "/portfolios/%s",
     "params": [
       {
       "name": "portfolio_gid",

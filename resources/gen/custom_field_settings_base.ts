@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getCustomFieldSettingsForPortfolio",
-    "method": "get",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/custom_field_settings",
+    "method": "GET",
+    "path": "/portfolios/%s/custom_field_settings",
     "params": [
       {
       "name": "portfolio_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getCustomFieldSettingsForProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/custom_field_settings",
+    "method": "GET",
+    "path": "/projects/%s/custom_field_settings",
     "params": [
       {
       "name": "project_gid",

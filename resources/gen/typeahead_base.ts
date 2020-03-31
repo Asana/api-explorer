@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "typeaheadForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/typeahead",
+    "method": "GET",
+    "path": "/workspaces/%s/typeahead",
     "params": [
       {
       "name": "workspace_gid",

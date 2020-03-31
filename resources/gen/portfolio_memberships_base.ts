@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getPortfolioMembership",
-    "method": "get",
-    "path": "/portfolio_memberships/${encodeURIComponent(String(portfolioMembershipGid))}",
+    "method": "GET",
+    "path": "/portfolio_memberships/%s",
     "params": [
       {
       "name": "portfolio_membership_gid",
@@ -24,7 +24,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getPortfolioMemberships",
-    "method": "get",
+    "method": "GET",
     "path": "/portfolio_memberships",
     "params": [
     ],
@@ -32,8 +32,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getPortfolioMembershipsForPortfolio",
-    "method": "get",
-    "path": "/portfolios/${encodeURIComponent(String(portfolioGid))}/portfolio_memberships",
+    "method": "GET",
+    "path": "/portfolios/%s/portfolio_memberships",
     "params": [
       {
       "name": "portfolio_gid",

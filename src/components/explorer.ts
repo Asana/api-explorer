@@ -678,24 +678,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
                                     isPropertyChecked: this.onChangePropertyChecked("includeFields")
                                 })
                             ),
-
-                            r("div", {
-                                    className: "column-6"
-                                },
-                                PropertyEntry.create({
-                                    classSuffix: "expand",
-                                    text: r("h3", {}, "Expand Fields"),
-                                    properties: this.state.resource.properties,
-                                    useProperty: property => {
-                                        if (!this.state.params) {
-                                            return false;
-                                        }
-
-                                        return _.includes(this.state.params.expandFields, property);
-                                    },
-                                    isPropertyChecked: this.onChangePropertyChecked("expandFields")
-                                })
-                            )
                         ),
 
                     r("div", {

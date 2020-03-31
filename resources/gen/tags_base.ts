@@ -9,7 +9,7 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "createTag",
-    "method": "post",
+    "method": "POST",
     "path": "/tags",
     "params": [
     ],
@@ -17,8 +17,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createTagForWorkspace",
-    "method": "post",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/tags",
+    "method": "POST",
+    "path": "/workspaces/%s/tags",
     "params": [
       {
       "name": "workspace_gid",
@@ -32,8 +32,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTag",
-    "method": "get",
-    "path": "/tags/${encodeURIComponent(String(tagGid))}",
+    "method": "GET",
+    "path": "/tags/%s",
     "params": [
       {
       "name": "tag_gid",
@@ -47,7 +47,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTags",
-    "method": "get",
+    "method": "GET",
     "path": "/tags",
     "params": [
     ],
@@ -55,8 +55,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTagsForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/tags",
+    "method": "GET",
+    "path": "/tasks/%s/tags",
     "params": [
       {
       "name": "task_gid",
@@ -70,8 +70,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTagsForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/tags",
+    "method": "GET",
+    "path": "/workspaces/%s/tags",
     "params": [
       {
       "name": "workspace_gid",
@@ -85,8 +85,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateTag",
-    "method": "put",
-    "path": "/tags/${encodeURIComponent(String(tagGid))}",
+    "method": "PUT",
+    "path": "/tags/%s",
     "params": [
       {
       "name": "tag_gid",

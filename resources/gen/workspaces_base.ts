@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "addUserForWorkspace",
-    "method": "post",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/addUser",
+    "method": "POST",
+    "path": "/workspaces/%s/addUser",
     "params": [
       {
       "name": "workspace_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}",
+    "method": "GET",
+    "path": "/workspaces/%s",
     "params": [
       {
       "name": "workspace_gid",
@@ -39,7 +39,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getWorkspaces",
-    "method": "get",
+    "method": "GET",
     "path": "/workspaces",
     "params": [
     ],
@@ -47,8 +47,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeUserForWorkspace",
-    "method": "post",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/removeUser",
+    "method": "POST",
+    "path": "/workspaces/%s/removeUser",
     "params": [
       {
       "name": "workspace_gid",
@@ -62,8 +62,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateWorkspace",
-    "method": "put",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}",
+    "method": "PUT",
+    "path": "/workspaces/%s",
     "params": [
       {
       "name": "workspace_gid",

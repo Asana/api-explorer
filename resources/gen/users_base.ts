@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getFavoritesForUser",
-    "method": "get",
-    "path": "/users/${encodeURIComponent(String(userGid))}/favorites",
+    "method": "GET",
+    "path": "/users/%s/favorites",
     "params": [
       {
       "name": "user_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getUser",
-    "method": "get",
-    "path": "/users/${encodeURIComponent(String(userGid))}",
+    "method": "GET",
+    "path": "/users/%s",
     "params": [
       {
       "name": "user_gid",
@@ -39,7 +39,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getUsers",
-    "method": "get",
+    "method": "GET",
     "path": "/users",
     "params": [
     ],
@@ -47,8 +47,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getUsersForTeam",
-    "method": "get",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}/users",
+    "method": "GET",
+    "path": "/teams/%s/users",
     "params": [
       {
       "name": "team_gid",
@@ -62,8 +62,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getUsersForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/users",
+    "method": "GET",
+    "path": "/workspaces/%s/users",
     "params": [
       {
       "name": "workspace_gid",

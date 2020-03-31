@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "addCustomFieldSettingForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/addCustomFieldSetting",
+    "method": "POST",
+    "path": "/projects/%s/addCustomFieldSetting",
     "params": [
       {
       "name": "project_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addFollowersForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/addFollowers",
+    "method": "POST",
+    "path": "/projects/%s/addFollowers",
     "params": [
       {
       "name": "project_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addMembersForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/addMembers",
+    "method": "POST",
+    "path": "/projects/%s/addMembers",
     "params": [
       {
       "name": "project_gid",
@@ -54,7 +54,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createProject",
-    "method": "post",
+    "method": "POST",
     "path": "/projects",
     "params": [
     ],
@@ -62,8 +62,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createProjectForTeam",
-    "method": "post",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}/projects",
+    "method": "POST",
+    "path": "/teams/%s/projects",
     "params": [
       {
       "name": "team_gid",
@@ -77,8 +77,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createProjectForWorkspace",
-    "method": "post",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/projects",
+    "method": "POST",
+    "path": "/workspaces/%s/projects",
     "params": [
       {
       "name": "workspace_gid",
@@ -92,8 +92,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deleteProject",
-    "method": "delete",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}",
+    "method": "DELETE",
+    "path": "/projects/%s",
     "params": [
       {
       "name": "project_gid",
@@ -107,8 +107,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "duplicateProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/duplicate",
+    "method": "POST",
+    "path": "/projects/%s/duplicate",
     "params": [
       {
       "name": "project_gid",
@@ -122,8 +122,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}",
+    "method": "GET",
+    "path": "/projects/%s",
     "params": [
       {
       "name": "project_gid",
@@ -137,7 +137,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjects",
-    "method": "get",
+    "method": "GET",
     "path": "/projects",
     "params": [
     ],
@@ -145,8 +145,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjectsForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/projects",
+    "method": "GET",
+    "path": "/tasks/%s/projects",
     "params": [
       {
       "name": "task_gid",
@@ -160,8 +160,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjectsForTeam",
-    "method": "get",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}/projects",
+    "method": "GET",
+    "path": "/teams/%s/projects",
     "params": [
       {
       "name": "team_gid",
@@ -175,8 +175,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjectsForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/projects",
+    "method": "GET",
+    "path": "/workspaces/%s/projects",
     "params": [
       {
       "name": "workspace_gid",
@@ -190,8 +190,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTaskCountsForProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/task_counts",
+    "method": "GET",
+    "path": "/projects/%s/task_counts",
     "params": [
       {
       "name": "project_gid",
@@ -205,8 +205,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeCustomFieldSettingForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/removeCustomFieldSetting",
+    "method": "POST",
+    "path": "/projects/%s/removeCustomFieldSetting",
     "params": [
       {
       "name": "project_gid",
@@ -220,8 +220,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeFollowersForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/removeFollowers",
+    "method": "POST",
+    "path": "/projects/%s/removeFollowers",
     "params": [
       {
       "name": "project_gid",
@@ -235,8 +235,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeMembersForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/removeMembers",
+    "method": "POST",
+    "path": "/projects/%s/removeMembers",
     "params": [
       {
       "name": "project_gid",
@@ -250,8 +250,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateProject",
-    "method": "put",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}",
+    "method": "PUT",
+    "path": "/projects/%s",
     "params": [
       {
       "name": "project_gid",

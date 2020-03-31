@@ -9,7 +9,7 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "createOrganizationExport",
-    "method": "post",
+    "method": "POST",
     "path": "/organization_exports",
     "params": [
     ],
@@ -17,8 +17,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getOrganizationExport",
-    "method": "get",
-    "path": "/organization_exports/${encodeURIComponent(String(organizationExportGid))}",
+    "method": "GET",
+    "path": "/organization_exports/%s",
     "params": [
       {
       "name": "organization_export_gid",

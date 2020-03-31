@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getTeamMembership",
-    "method": "get",
-    "path": "/team_memberships/${encodeURIComponent(String(teamMembershipGid))}",
+    "method": "GET",
+    "path": "/team_memberships/%s",
     "params": [
       {
       "name": "team_membership_gid",
@@ -24,7 +24,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTeamMemberships",
-    "method": "get",
+    "method": "GET",
     "path": "/team_memberships",
     "params": [
     ],
@@ -32,8 +32,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTeamMembershipsForTeam",
-    "method": "get",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}/team_memberships",
+    "method": "GET",
+    "path": "/teams/%s/team_memberships",
     "params": [
       {
       "name": "team_gid",
@@ -47,8 +47,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTeamMembershipsForUser",
-    "method": "get",
-    "path": "/users/${encodeURIComponent(String(userGid))}/team_memberships",
+    "method": "GET",
+    "path": "/users/%s/team_memberships",
     "params": [
       {
       "name": "user_gid",

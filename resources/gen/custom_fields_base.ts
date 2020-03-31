@@ -9,7 +9,7 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "createCustomField",
-    "method": "post",
+    "method": "POST",
     "path": "/custom_fields",
     "params": [
     ],
@@ -17,8 +17,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createEnumOptionForCustomField",
-    "method": "post",
-    "path": "/custom_fields/${encodeURIComponent(String(customFieldGid))}/enum_options",
+    "method": "POST",
+    "path": "/custom_fields/%s/enum_options",
     "params": [
       {
       "name": "custom_field_gid",
@@ -32,8 +32,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deleteCustomField",
-    "method": "delete",
-    "path": "/custom_fields/${encodeURIComponent(String(customFieldGid))}",
+    "method": "DELETE",
+    "path": "/custom_fields/%s",
     "params": [
       {
       "name": "custom_field_gid",
@@ -47,8 +47,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getCustomField",
-    "method": "get",
-    "path": "/custom_fields/${encodeURIComponent(String(customFieldGid))}",
+    "method": "GET",
+    "path": "/custom_fields/%s",
     "params": [
       {
       "name": "custom_field_gid",
@@ -62,8 +62,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getCustomFieldsForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/custom_fields",
+    "method": "GET",
+    "path": "/workspaces/%s/custom_fields",
     "params": [
       {
       "name": "workspace_gid",
@@ -77,8 +77,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "insertEnumOptionForCustomField",
-    "method": "post",
-    "path": "/custom_fields/${encodeURIComponent(String(customFieldGid))}/enum_options/insert",
+    "method": "POST",
+    "path": "/custom_fields/%s/enum_options/insert",
     "params": [
       {
       "name": "custom_field_gid",
@@ -92,8 +92,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateCustomField",
-    "method": "put",
-    "path": "/custom_fields/${encodeURIComponent(String(customFieldGid))}",
+    "method": "PUT",
+    "path": "/custom_fields/%s",
     "params": [
       {
       "name": "custom_field_gid",
@@ -107,8 +107,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateEnumOption",
-    "method": "put",
-    "path": "/enum_options/${encodeURIComponent(String(enumOptionGid))}",
+    "method": "PUT",
+    "path": "/enum_options/%s",
     "params": [
       {
       "name": "enum_option_gid",

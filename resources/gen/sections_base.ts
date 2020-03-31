@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "addTaskForSection",
-    "method": "post",
-    "path": "/sections/${encodeURIComponent(String(sectionGid))}/addTask",
+    "method": "POST",
+    "path": "/sections/%s/addTask",
     "params": [
       {
       "name": "section_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createSectionForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/sections",
+    "method": "POST",
+    "path": "/projects/%s/sections",
     "params": [
       {
       "name": "project_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deleteSection",
-    "method": "delete",
-    "path": "/sections/${encodeURIComponent(String(sectionGid))}",
+    "method": "DELETE",
+    "path": "/sections/%s",
     "params": [
       {
       "name": "section_gid",
@@ -54,8 +54,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getSection",
-    "method": "get",
-    "path": "/sections/${encodeURIComponent(String(sectionGid))}",
+    "method": "GET",
+    "path": "/sections/%s",
     "params": [
       {
       "name": "section_gid",
@@ -69,8 +69,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getSectionsForProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/sections",
+    "method": "GET",
+    "path": "/projects/%s/sections",
     "params": [
       {
       "name": "project_gid",
@@ -84,8 +84,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "insertSectionForProject",
-    "method": "post",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/sections/insert",
+    "method": "POST",
+    "path": "/projects/%s/sections/insert",
     "params": [
       {
       "name": "project_gid",
@@ -99,8 +99,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateSection",
-    "method": "put",
-    "path": "/sections/${encodeURIComponent(String(sectionGid))}",
+    "method": "PUT",
+    "path": "/sections/%s",
     "params": [
       {
       "name": "section_gid",

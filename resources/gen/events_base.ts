@@ -9,7 +9,7 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getEvents",
-    "method": "get",
+    "method": "GET",
     "path": "/events",
     "params": [
     ],

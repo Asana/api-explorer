@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getJob",
-    "method": "get",
-    "path": "/jobs/${encodeURIComponent(String(jobGid))}",
+    "method": "GET",
+    "path": "/jobs/%s",
     "params": [
       {
       "name": "job_gid",

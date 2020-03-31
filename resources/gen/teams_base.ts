@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "addUserForTeam",
-    "method": "post",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}/addUser",
+    "method": "POST",
+    "path": "/teams/%s/addUser",
     "params": [
       {
       "name": "team_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTeam",
-    "method": "get",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}",
+    "method": "GET",
+    "path": "/teams/%s",
     "params": [
       {
       "name": "team_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTeamsForOrganization",
-    "method": "get",
-    "path": "/organizations/${encodeURIComponent(String(workspaceGid))}/teams",
+    "method": "GET",
+    "path": "/organizations/%s/teams",
     "params": [
       {
       "name": "workspace_gid",
@@ -54,8 +54,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTeamsForUser",
-    "method": "get",
-    "path": "/users/${encodeURIComponent(String(userGid))}/teams",
+    "method": "GET",
+    "path": "/users/%s/teams",
     "params": [
       {
       "name": "user_gid",
@@ -69,8 +69,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeUserForTeam",
-    "method": "post",
-    "path": "/teams/${encodeURIComponent(String(teamGid))}/removeUser",
+    "method": "POST",
+    "path": "/teams/%s/removeUser",
     "params": [
       {
       "name": "team_gid",

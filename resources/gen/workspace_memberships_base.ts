@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getWorkspaceMembership",
-    "method": "get",
-    "path": "/workspace_memberships/${encodeURIComponent(String(workspaceMembershipGid))}",
+    "method": "GET",
+    "path": "/workspace_memberships/%s",
     "params": [
       {
       "name": "workspace_membership_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getWorkspaceMembershipsForUser",
-    "method": "get",
-    "path": "/users/${encodeURIComponent(String(userGid))}/workspace_memberships",
+    "method": "GET",
+    "path": "/users/%s/workspace_memberships",
     "params": [
       {
       "name": "user_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getWorkspaceMembershipsForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/workspace_memberships",
+    "method": "GET",
+    "path": "/workspaces/%s/workspace_memberships",
     "params": [
       {
       "name": "workspace_gid",

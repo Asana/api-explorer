@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "createStoryForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/stories",
+    "method": "POST",
+    "path": "/tasks/%s/stories",
     "params": [
       {
       "name": "task_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deleteStory",
-    "method": "delete",
-    "path": "/stories/${encodeURIComponent(String(storyGid))}",
+    "method": "DELETE",
+    "path": "/stories/%s",
     "params": [
       {
       "name": "story_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getStoriesForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/stories",
+    "method": "GET",
+    "path": "/tasks/%s/stories",
     "params": [
       {
       "name": "task_gid",
@@ -54,8 +54,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getStory",
-    "method": "get",
-    "path": "/stories/${encodeURIComponent(String(storyGid))}",
+    "method": "GET",
+    "path": "/stories/%s",
     "params": [
       {
       "name": "story_gid",
@@ -69,8 +69,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateStory",
-    "method": "put",
-    "path": "/stories/${encodeURIComponent(String(storyGid))}",
+    "method": "PUT",
+    "path": "/stories/%s",
     "params": [
       {
       "name": "story_gid",

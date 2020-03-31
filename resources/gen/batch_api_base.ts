@@ -9,7 +9,7 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "createBatchRequest",
-    "method": "post",
+    "method": "POST",
     "path": "/batch",
     "params": [
     ],

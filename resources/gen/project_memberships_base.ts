@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "getProjectMembership",
-    "method": "get",
-    "path": "/project_memberships/${encodeURIComponent(String(projectMembershipGid))}",
+    "method": "GET",
+    "path": "/project_memberships/%s",
     "params": [
       {
       "name": "project_membership_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getProjectMembershipsForProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/project_memberships",
+    "method": "GET",
+    "path": "/projects/%s/project_memberships",
     "params": [
       {
       "name": "project_gid",

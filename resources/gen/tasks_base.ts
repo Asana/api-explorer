@@ -9,8 +9,8 @@ var resourceBase = <Resource>{
   "actions": [
   {
     "name": "addDependenciesForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/addDependencies",
+    "method": "POST",
+    "path": "/tasks/%s/addDependencies",
     "params": [
       {
       "name": "task_gid",
@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addDependentsForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/addDependents",
+    "method": "POST",
+    "path": "/tasks/%s/addDependents",
     "params": [
       {
       "name": "task_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addFollowersForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/addFollowers",
+    "method": "POST",
+    "path": "/tasks/%s/addFollowers",
     "params": [
       {
       "name": "task_gid",
@@ -54,8 +54,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addProjectForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/addProject",
+    "method": "POST",
+    "path": "/tasks/%s/addProject",
     "params": [
       {
       "name": "task_gid",
@@ -69,8 +69,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "addTagForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/addTag",
+    "method": "POST",
+    "path": "/tasks/%s/addTag",
     "params": [
       {
       "name": "task_gid",
@@ -84,8 +84,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createSubtaskForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/subtasks",
+    "method": "POST",
+    "path": "/tasks/%s/subtasks",
     "params": [
       {
       "name": "task_gid",
@@ -99,7 +99,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "createTask",
-    "method": "post",
+    "method": "POST",
     "path": "/tasks",
     "params": [
     ],
@@ -107,8 +107,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "deleteTask",
-    "method": "delete",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}",
+    "method": "DELETE",
+    "path": "/tasks/%s",
     "params": [
       {
       "name": "task_gid",
@@ -122,8 +122,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "duplicateTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/duplicate",
+    "method": "POST",
+    "path": "/tasks/%s/duplicate",
     "params": [
       {
       "name": "task_gid",
@@ -137,8 +137,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getDependenciesForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/dependencies",
+    "method": "GET",
+    "path": "/tasks/%s/dependencies",
     "params": [
       {
       "name": "task_gid",
@@ -152,8 +152,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getDependentsForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/dependents",
+    "method": "GET",
+    "path": "/tasks/%s/dependents",
     "params": [
       {
       "name": "task_gid",
@@ -167,8 +167,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getSubtasksForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/subtasks",
+    "method": "GET",
+    "path": "/tasks/%s/subtasks",
     "params": [
       {
       "name": "task_gid",
@@ -182,8 +182,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}",
+    "method": "GET",
+    "path": "/tasks/%s",
     "params": [
       {
       "name": "task_gid",
@@ -197,7 +197,7 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTasks",
-    "method": "get",
+    "method": "GET",
     "path": "/tasks",
     "params": [
     ],
@@ -205,8 +205,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTasksForProject",
-    "method": "get",
-    "path": "/projects/${encodeURIComponent(String(projectGid))}/tasks",
+    "method": "GET",
+    "path": "/projects/%s/tasks",
     "params": [
       {
       "name": "project_gid",
@@ -220,8 +220,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTasksForSection",
-    "method": "get",
-    "path": "/sections/${encodeURIComponent(String(sectionGid))}/tasks",
+    "method": "GET",
+    "path": "/sections/%s/tasks",
     "params": [
       {
       "name": "section_gid",
@@ -235,8 +235,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTasksForTag",
-    "method": "get",
-    "path": "/tags/${encodeURIComponent(String(tagGid))}/tasks",
+    "method": "GET",
+    "path": "/tags/%s/tasks",
     "params": [
       {
       "name": "tag_gid",
@@ -250,8 +250,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getTasksForUserTaskList",
-    "method": "get",
-    "path": "/user_task_lists/${encodeURIComponent(String(userTaskListGid))}/tasks",
+    "method": "GET",
+    "path": "/user_task_lists/%s/tasks",
     "params": [
       {
       "name": "user_task_list_gid",
@@ -265,8 +265,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeDependenciesForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/removeDependencies",
+    "method": "POST",
+    "path": "/tasks/%s/removeDependencies",
     "params": [
       {
       "name": "task_gid",
@@ -280,8 +280,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeDependentsForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/removeDependents",
+    "method": "POST",
+    "path": "/tasks/%s/removeDependents",
     "params": [
       {
       "name": "task_gid",
@@ -295,8 +295,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeFollowerForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/removeFollowers",
+    "method": "POST",
+    "path": "/tasks/%s/removeFollowers",
     "params": [
       {
       "name": "task_gid",
@@ -310,8 +310,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeProjectForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/removeProject",
+    "method": "POST",
+    "path": "/tasks/%s/removeProject",
     "params": [
       {
       "name": "task_gid",
@@ -325,8 +325,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "removeTagForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/removeTag",
+    "method": "POST",
+    "path": "/tasks/%s/removeTag",
     "params": [
       {
       "name": "task_gid",
@@ -340,8 +340,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "searchTasksForWorkspace",
-    "method": "get",
-    "path": "/workspaces/${encodeURIComponent(String(workspaceGid))}/tasks/search",
+    "method": "GET",
+    "path": "/workspaces/%s/tasks/search",
     "params": [
       {
       "name": "workspace_gid",
@@ -355,8 +355,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "setParentForTask",
-    "method": "post",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/setParent",
+    "method": "POST",
+    "path": "/tasks/%s/setParent",
     "params": [
       {
       "name": "task_gid",
@@ -370,8 +370,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "updateTask",
-    "method": "put",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}",
+    "method": "PUT",
+    "path": "/tasks/%s",
     "params": [
       {
       "name": "task_gid",

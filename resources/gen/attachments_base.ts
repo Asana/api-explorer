@@ -24,8 +24,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getAttachment",
-    "method": "get",
-    "path": "/attachments/${encodeURIComponent(String(attachmentGid))}",
+    "method": "GET",
+    "path": "/attachments/%s",
     "params": [
       {
       "name": "attachment_gid",
@@ -39,8 +39,8 @@ var resourceBase = <Resource>{
   },
   {
     "name": "getAttachmentsForTask",
-    "method": "get",
-    "path": "/tasks/${encodeURIComponent(String(taskGid))}/attachments",
+    "method": "GET",
+    "path": "/tasks/%s/attachments",
     "params": [
       {
       "name": "task_gid",

@@ -12,8 +12,8 @@ var resourceBase = <Resource>{
   {{#contents}}
   {
     "name": "{{operationId}}",
-    "method": "{{& httpMethod}}",
-    "path": "{{path}}",
+    "method": "{{capitalize httpMethod}}",
+    "path": "{{parsePath path}}",
     "params": [
       {{#pathParams}}
       {
