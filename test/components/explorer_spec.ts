@@ -10,7 +10,7 @@ import * as ReactDOM from "react-dom";
 import constants = require("../../src/constants");
 import Credentials = require("../../src/credentials");
 import Explorer = require("../../src/components/explorer");
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
 import {SinonSandbox, SinonStub} from "sinon";
 import * as ReactTestUtils from "react-dom/test-utils";

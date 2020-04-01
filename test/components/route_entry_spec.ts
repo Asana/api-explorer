@@ -3,7 +3,7 @@ import chai = require("chai");
 import sinon = require("sinon");
 import _ = require("lodash");
 
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import RouteEntry = require("../../src/components/route_entry");
 import {SinonSandbox, SinonStub} from "sinon";
 import * as ReactTestUtils from "react-dom/test-utils";

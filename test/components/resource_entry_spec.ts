@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom";
 import sinon = require("sinon");
 
 import ResourceEntry = require("../../src/components/resource_entry");
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import * as ReactTestUtils from "react-dom/test-utils";
 import ResourcesHelpers = require("../../src/resources/helpers");
 import {SinonSandbox, SinonStub} from "sinon";

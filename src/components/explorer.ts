@@ -13,7 +13,7 @@ import PaginateEntry = require("./paginate_entry");
 import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
-import Resources = require("../resources/resources");
+import Resources = require("../resources");
 import RouteEntry = require("./route_entry");
 import update from "immutability-helper";
 

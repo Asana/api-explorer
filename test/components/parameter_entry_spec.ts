@@ -5,7 +5,7 @@ import sinon = require("sinon");
 import _ = require("lodash");
 
 import ParameterEntry = require("../../src/components/parameter_entry");
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import * as ReactTestUtils from "react-dom/test-utils";
 import {SinonSandbox, SinonStub} from "sinon";
 

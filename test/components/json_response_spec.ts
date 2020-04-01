@@ -2,7 +2,7 @@ import chai = require("chai");
 import sinon = require("sinon");
 
 import JsonResponse = require("../../src/components/json_response");
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import {SinonSandbox, SinonSpy} from "sinon";
 import * as ReactTestUtils from "react-dom/test-utils";
 import * as ReactDOM from "react-dom";
