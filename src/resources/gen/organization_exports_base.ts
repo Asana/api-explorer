@@ -13,7 +13,7 @@ var resourceBase = <Resource>{
     "path": "/organization_exports",
     "params": [
     ],
-    "comment": "This method creates a request to export an Organization. Asana will complete the export at some point after you create the request."
+    "comment": "Create an organization export request"
   },
   {
     "name": "getOrganizationExport",
@@ -28,7 +28,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns details of a previously-requested Organization export."
+    "comment": "Get details on an org export request"
   },
   ]
 }

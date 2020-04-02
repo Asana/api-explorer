@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the full record for a user task list."
+    "comment": "Get a user task list"
   },
   {
     "name": "getUserTaskListForUser",
@@ -42,7 +42,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the full record for a user&#x27;s task list."
+    "comment": "Get a user&#x27;s task list"
   },
   ]
 }

@@ -34,7 +34,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns all of a user&#x27;s favorites in the given workspace, of the given type. Results are given in order (The same order as Asana&#x27;s sidebar)."
+    "comment": "Get a user&#x27;s favorites"
   },
   {
     "name": "getUser",
@@ -49,7 +49,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the full user record for the single user with the provided ID. Results are sorted by user ID."
+    "comment": "Get a user"
   },
   {
     "name": "getUsers",
@@ -64,7 +64,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the user records for all users in all workspaces and organizations accessible to the authenticated user. Accepts an optional workspace ID parameter. Results are sorted by user ID."
+    "comment": "Get multiple users"
   },
   {
     "name": "getUsersForTeam",
@@ -79,7 +79,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact records for all users that are members of the team."
+    "comment": "Get users in a team"
   },
   {
     "name": "getUsersForWorkspace",
@@ -94,7 +94,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the user records for all users in the specified workspace or organization. Results are sorted alphabetically by user names."
+    "comment": "Get users in a workspace or organization"
   },
   ]
 }

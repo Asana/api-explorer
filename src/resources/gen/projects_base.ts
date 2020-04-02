@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Custom fields are associated with projects by way of custom field settings.  This method creates a setting for the project."
+    "comment": "Add a custom field to a project"
   },
   {
     "name": "addFollowersForProject",
@@ -35,7 +35,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Adds the specified list of users as followers to the project. Followers are a subset of members, therefore if the users are not already members of the project they will also become members as a result of this operation. Returns the updated project record."
+    "comment": "Add followers to a project"
   },
   {
     "name": "addMembersForProject",
@@ -50,7 +50,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Adds the specified list of users as members of the project. Returns the updated project record."
+    "comment": "Add users to a project"
   },
   {
     "name": "createProject",
@@ -58,7 +58,7 @@ var resourceBase = <Resource>{
     "path": "/projects",
     "params": [
     ],
-    "comment": "Create a new project in a workspace or team.  Every project is required to be created in a specific workspace or organization, and this cannot be changed once set. Note that you can use the &#x60;workspace&#x60; parameter regardless of whether or not it is an organization.  If the workspace for your project is an organization, you must also supply a &#x60;team&#x60; to share the project with.  Returns the full record of the newly created project."
+    "comment": "Create a project"
   },
   {
     "name": "createProjectForTeam",
@@ -73,7 +73,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Creates a project shared with the given team.  Returns the full record of the newly created project."
+    "comment": "Create a project in a team"
   },
   {
     "name": "createProjectForWorkspace",
@@ -88,7 +88,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact project records for all projects in the workspace.  If the workspace for your project is an organization, you must also supply a team to share the project with.  Returns the full record of the newly created project."
+    "comment": "Create a project in a workspace"
   },
   {
     "name": "deleteProject",
@@ -103,7 +103,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "A specific, existing project can be deleted by making a DELETE request on the URL for that project.  Returns an empty data record."
+    "comment": "Delete a project"
   },
   {
     "name": "duplicateProject",
@@ -118,7 +118,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Creates and returns a job that will asynchronously handle the duplication."
+    "comment": "Duplicate a project"
   },
   {
     "name": "getProject",
@@ -133,7 +133,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete project record for a single project."
+    "comment": "Get a project"
   },
   {
     "name": "getProjects",
@@ -162,7 +162,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact project records for some filtered set of projects. Use one or more of the parameters provided to filter the projects returned."
+    "comment": "Get multiple projects"
   },
   {
     "name": "getProjectsForTask",
@@ -177,7 +177,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns a compact representation of all of the projects the task is in."
+    "comment": "Get projects a task is in"
   },
   {
     "name": "getProjectsForTeam",
@@ -199,7 +199,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact project records for all projects in the team."
+    "comment": "Get a team&#x27;s projects"
   },
   {
     "name": "getProjectsForWorkspace",
@@ -221,7 +221,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact project records for all projects in the workspace."
+    "comment": "Get all projects in a workspace"
   },
   {
     "name": "getTaskCountsForProject",
@@ -236,7 +236,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Get an object that holds task count fields. **All fields are excluded by default**. You must [opt in](#input-output-options) using &#x60;opt_fields&#x60; to get any information from this endpoint.  This endpoint has an additional [rate limit](#standard-rate-limits) and each field counts especially high against our [cost limits](#cost-limits).  Milestones are just tasks, so they are included in the &#x60;num_tasks&#x60;, &#x60;num_incomplete_tasks&#x60;, and &#x60;num_completed_tasks&#x60; counts."
+    "comment": "Get task count of a project"
   },
   {
     "name": "removeCustomFieldSettingForProject",
@@ -251,7 +251,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Removes a custom field setting from a project."
+    "comment": "Remove a custom field from a project"
   },
   {
     "name": "removeFollowersForProject",
@@ -266,7 +266,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Removes the specified list of users from following the project, this will not affect project membership status. Returns the updated project record."
+    "comment": "Remove followers from a project"
   },
   {
     "name": "removeMembersForProject",
@@ -281,7 +281,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Removes the specified list of users from members of the project. Returns the updated project record."
+    "comment": "Remove users from a project"
   },
   {
     "name": "updateProject",
@@ -296,7 +296,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "A specific, existing project can be updated by making a PUT request on the URL for that project. Only the fields provided in the &#x60;data&#x60; block will be updated; any unspecified fields will remain unchanged.  When using this method, it is best to specify only those fields you wish to change, or else you may overwrite changes made by another user since you last retrieved the task.  Returns the complete updated project record."
+    "comment": "Update a project"
   },
   ]
 }

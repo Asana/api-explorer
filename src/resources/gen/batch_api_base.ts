@@ -13,7 +13,7 @@ var resourceBase = <Resource>{
     "path": "/batch",
     "params": [
     ],
-    "comment": "Make multiple requests in parallel to Asana&#x27;s API."
+    "comment": "Submit parallel requests"
   },
   ]
 }

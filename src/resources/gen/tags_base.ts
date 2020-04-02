@@ -13,7 +13,7 @@ var resourceBase = <Resource>{
     "path": "/tags",
     "params": [
     ],
-    "comment": "Creates a new tag in a workspace or organization.  Every tag is required to be created in a specific workspace or organization, and this cannot be changed once set. Note that you can use the workspace parameter regardless of whether or not it is an organization.  Returns the full record of the newly created tag."
+    "comment": "Create a tag"
   },
   {
     "name": "createTagForWorkspace",
@@ -28,7 +28,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Creates a new tag in a workspace or organization.  Every tag is required to be created in a specific workspace or organization, and this cannot be changed once set. Note that you can use the workspace parameter regardless of whether or not it is an organization.  Returns the full record of the newly created tag."
+    "comment": "Create a tag in a workspace"
   },
   {
     "name": "getTag",
@@ -43,7 +43,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete tag record for a single tag."
+    "comment": "Get a tag"
   },
   {
     "name": "getTags",
@@ -58,7 +58,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact tag records for some filtered set of tags. Use one or more of the parameters provided to filter the tags returned."
+    "comment": "Get multiple tags"
   },
   {
     "name": "getTagsForTask",
@@ -73,7 +73,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Get a compact representation of all of the tags the task has."
+    "comment": "Get a task&#x27;s tags"
   },
   {
     "name": "getTagsForWorkspace",
@@ -88,7 +88,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact tag records for some filtered set of tags. Use one or more of the parameters provided to filter the tags returned."
+    "comment": "Get tags in a workspace"
   },
   {
     "name": "updateTag",
@@ -103,7 +103,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Updates the properties of a tag. Only the fields provided in the &#x60;data&#x60; block will be updated; any unspecified fields will remain unchanged.  When using this method, it is best to specify only those fields you wish to change, or else you may overwrite changes made by another user since you last retrieved the task.  Returns the complete updated tag record."
+    "comment": "Update a tag"
   },
   ]
 }

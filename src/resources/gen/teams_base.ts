@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "The user making this call must be a member of the team in order to add others. The user being added must exist in the same organization as the team."
+    "comment": "Add a user to a team"
   },
   {
     "name": "getTeam",
@@ -35,7 +35,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the full record for a single team."
+    "comment": "Get a team"
   },
   {
     "name": "getTeamsForOrganization",
@@ -50,7 +50,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact records for all teams in the organization visible to the authorized user."
+    "comment": "Get teams in an organization"
   },
   {
     "name": "getTeamsForUser",
@@ -72,7 +72,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact records for all teams to which the given user is assigned."
+    "comment": "Get teams for a user"
   },
   {
     "name": "removeUserForTeam",
@@ -87,7 +87,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "The user making this call must be a member of the team in order to remove themselves or others."
+    "comment": "Remove a user from a team"
   },
   ]
 }

@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete portfolio record for a single portfolio membership."
+    "comment": "Get a portfolio membership"
   },
   {
     "name": "getPortfolioMemberships",
@@ -49,7 +49,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns a list of portfolio memberships in compact representation. You must specify &#x60;portfolio&#x60;, &#x60;portfolio&#x60; and &#x60;user&#x60;, or &#x60;workspace&#x60; and &#x60;user&#x60;."
+    "comment": "Get multiple portfolio memberships"
   },
   {
     "name": "getPortfolioMembershipsForPortfolio",
@@ -71,7 +71,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact portfolio membership records for the portfolio."
+    "comment": "Get memberships from a portfolio"
   },
   ]
 }

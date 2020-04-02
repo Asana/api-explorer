@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Custom fields are associated with portfolios by way of custom field settings.  This method creates a setting for the portfolio."
+    "comment": "Add a custom field to a portfolio"
   },
   {
     "name": "addItemForPortfolio",
@@ -35,7 +35,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Add an item to a portfolio. Returns an empty data block."
+    "comment": "Add a portfolio item"
   },
   {
     "name": "addMembersForPortfolio",
@@ -50,7 +50,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Adds the specified list of users as members of the portfolio. Returns the updated portfolio record."
+    "comment": "Add users to a portfolio"
   },
   {
     "name": "createPortfolio",
@@ -58,7 +58,7 @@ var resourceBase = <Resource>{
     "path": "/portfolios",
     "params": [
     ],
-    "comment": "Creates a new portfolio in the given workspace with the supplied name.  Note that portfolios created in the Asana UI may have some state (like the “Priority” custom field) which is automatically added to the portfolio when it is created. Portfolios created via our API will *not* be created with the same initial state to allow integrations to create their own starting state on a portfolio."
+    "comment": "Create a portfolio"
   },
   {
     "name": "deletePortfolio",
@@ -73,7 +73,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "An existing portfolio can be deleted by making a DELETE request on the URL for that portfolio.  Returns an empty data record."
+    "comment": "Delete a portfolio"
   },
   {
     "name": "getItemsForPortfolio",
@@ -88,7 +88,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Get a list of the items in compact form in a portfolio."
+    "comment": "Get portfolio items"
   },
   {
     "name": "getPortfolio",
@@ -103,7 +103,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete portfolio record for a single portfolio."
+    "comment": "Get a portfolio"
   },
   {
     "name": "getPortfolios",
@@ -125,7 +125,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns a list of the portfolios in compact representation that are owned by the current API user."
+    "comment": "Get multiple portfolios"
   },
   {
     "name": "removeCustomFieldSettingForPortfolio",
@@ -140,7 +140,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Removes a custom field setting from a portfolio."
+    "comment": "Remove a custom field from a portfolio"
   },
   {
     "name": "removeItemForPortfolio",
@@ -155,7 +155,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Remove an item from a portfolio. Returns an empty data block."
+    "comment": "Remove a portfolio item"
   },
   {
     "name": "removeMembersForPortfolio",
@@ -170,7 +170,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Removes the specified list of users from members of the portfolio. Returns the updated portfolio record."
+    "comment": "Remove users from a portfolio"
   },
   {
     "name": "updatePortfolio",
@@ -185,7 +185,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "An existing portfolio can be updated by making a PUT request on the URL for that portfolio. Only the fields provided in the &#x60;data&#x60; block will be updated; any unspecified fields will remain unchanged.  Returns the complete updated portfolio record."
+    "comment": "Update a portfolio"
   },
   ]
 }

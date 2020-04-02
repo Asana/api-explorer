@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete project record for a single project membership."
+    "comment": "Get a project membership"
   },
   {
     "name": "getProjectMembershipsForProject",
@@ -42,7 +42,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact project membership records for the project."
+    "comment": "Get memberships from a project"
   },
   ]
 }

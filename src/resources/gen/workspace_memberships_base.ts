@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete workspace record for a single workspace membership."
+    "comment": "Get a workspace membership"
   },
   {
     "name": "getWorkspaceMembershipsForUser",
@@ -35,7 +35,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact workspace membership records for the user."
+    "comment": "Get workspace memberships for a user"
   },
   {
     "name": "getWorkspaceMembershipsForWorkspace",
@@ -57,7 +57,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns the compact workspace membership records for the workspace."
+    "comment": "Get the workspace memberships for a workspace"
   },
   ]
 }

@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the complete team membership record for a single team membership."
+    "comment": "Get a team membership"
   },
   {
     "name": "getTeamMemberships",
@@ -49,7 +49,7 @@ var resourceBase = <Resource>{
       "required": false
       },
     ],
-    "comment": "Returns compact team membership records."
+    "comment": "Get team memberships"
   },
   {
     "name": "getTeamMembershipsForTeam",
@@ -64,7 +64,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact team memberships for the team."
+    "comment": "Get memberships from a team"
   },
   {
     "name": "getTeamMembershipsForUser",
@@ -86,7 +86,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact team membership records for the user."
+    "comment": "Get memberships from a user"
   },
   ]
 }

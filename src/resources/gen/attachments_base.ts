@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Deletes a specific, existing attachment.  Returns an empty data record."
+    "comment": "Delete an attachment"
   },
   {
     "name": "getAttachment",
@@ -35,7 +35,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Get the full record for a single attachment."
+    "comment": "Get an attachment"
   },
   {
     "name": "getAttachmentsForTask",
@@ -50,7 +50,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the compact records for all attachments on the task."
+    "comment": "Get attachments for a task"
   },
   ]
 }

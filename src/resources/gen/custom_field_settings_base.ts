@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns a list of all of the custom fields settings on a portfolio, in compact form."
+    "comment": "Get a portfolio&#x27;s custom fields"
   },
   {
     "name": "getCustomFieldSettingsForProject",
@@ -35,7 +35,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns a list of all of the custom fields settings on a project, in compact form. Note that, as in all queries to collections which return compact representation, &#x60;opt_fields&#x60; can be used to include more data than is returned in the compact representation. See the [getting started guide on input/output options](https://developers.asana.com/docs/#input-output-options) for more information."
+    "comment": "Get a project&#x27;s custom fields"
   },
   ]
 }

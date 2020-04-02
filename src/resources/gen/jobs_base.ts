@@ -20,7 +20,7 @@ var resourceBase = <Resource>{
       "required": true
       },
     ],
-    "comment": "Returns the full record for a job."
+    "comment": "Get a job by id"
   },
   ]
 }
