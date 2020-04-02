@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "story_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["35678"],
       "comment": "Globally unique identifier for the story.",
       "required": true
       }
@@ -45,7 +45,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -60,7 +60,7 @@ var resourceBase = <Resource>{
       {
       "name": "story_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["35678"],
       "comment": "Globally unique identifier for the story.",
       "required": true
       }
@@ -75,7 +75,7 @@ var resourceBase = <Resource>{
       {
       "name": "story_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["35678"],
       "comment": "Globally unique identifier for the story.",
       "required": true
       }

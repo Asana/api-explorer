@@ -23,7 +23,7 @@ var resourceBase = <Resource>{
       {
       "name": "workspace_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
       }
@@ -38,7 +38,7 @@ var resourceBase = <Resource>{
       {
       "name": "tag_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["11235"],
       "comment": "Globally unique identifier for the tag.",
       "required": true
       }
@@ -61,7 +61,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -76,7 +76,7 @@ var resourceBase = <Resource>{
       {
       "name": "workspace_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
       }
@@ -91,7 +91,7 @@ var resourceBase = <Resource>{
       {
       "name": "tag_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["11235"],
       "comment": "Globally unique identifier for the tag.",
       "required": true
       }

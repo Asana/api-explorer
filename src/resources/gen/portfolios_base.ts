@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -45,7 +45,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -68,7 +68,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -83,7 +83,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -98,7 +98,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -121,7 +121,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -136,7 +136,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -151,7 +151,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -166,7 +166,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }

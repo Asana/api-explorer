@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "portfolio_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "project_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
       }

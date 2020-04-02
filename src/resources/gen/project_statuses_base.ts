@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "project_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "project_status_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The project status update to get.",
       "required": true
       }
@@ -45,7 +45,7 @@ var resourceBase = <Resource>{
       {
       "name": "project_status_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The project status update to get.",
       "required": true
       }
@@ -60,7 +60,7 @@ var resourceBase = <Resource>{
       {
       "name": "project_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
       }

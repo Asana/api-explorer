@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -45,7 +45,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -60,7 +60,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -75,7 +75,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -90,7 +90,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -113,7 +113,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -128,7 +128,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -143,7 +143,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -158,7 +158,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -173,7 +173,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -188,7 +188,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -211,7 +211,7 @@ var resourceBase = <Resource>{
       {
       "name": "project_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
       }
@@ -226,7 +226,7 @@ var resourceBase = <Resource>{
       {
       "name": "section_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The globally unique identifier for the section.",
       "required": true
       }
@@ -241,7 +241,7 @@ var resourceBase = <Resource>{
       {
       "name": "tag_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["11235"],
       "comment": "Globally unique identifier for the tag.",
       "required": true
       }
@@ -256,7 +256,7 @@ var resourceBase = <Resource>{
       {
       "name": "user_task_list_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the user task list.",
       "required": true
       }
@@ -271,7 +271,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -286,7 +286,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -301,7 +301,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -316,7 +316,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -331,7 +331,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -346,7 +346,7 @@ var resourceBase = <Resource>{
       {
       "name": "workspace_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
       }
@@ -361,7 +361,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }
@@ -376,7 +376,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }

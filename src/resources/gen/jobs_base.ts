@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "job_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the job.",
       "required": true
       }

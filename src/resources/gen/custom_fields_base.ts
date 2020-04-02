@@ -23,7 +23,7 @@ var resourceBase = <Resource>{
       {
       "name": "custom_field_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the custom field.",
       "required": true
       }
@@ -38,7 +38,7 @@ var resourceBase = <Resource>{
       {
       "name": "custom_field_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the custom field.",
       "required": true
       }
@@ -53,7 +53,7 @@ var resourceBase = <Resource>{
       {
       "name": "custom_field_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the custom field.",
       "required": true
       }
@@ -68,7 +68,7 @@ var resourceBase = <Resource>{
       {
       "name": "workspace_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
       }
@@ -83,7 +83,7 @@ var resourceBase = <Resource>{
       {
       "name": "custom_field_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the custom field.",
       "required": true
       }
@@ -98,7 +98,7 @@ var resourceBase = <Resource>{
       {
       "name": "custom_field_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the custom field.",
       "required": true
       }
@@ -113,7 +113,7 @@ var resourceBase = <Resource>{
       {
       "name": "enum_option_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["124578"],
       "comment": "Globally unique identifier for the enum option.",
       "required": true
       }

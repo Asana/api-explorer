@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "team_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "team_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
       }
@@ -45,7 +45,7 @@ var resourceBase = <Resource>{
       {
       "name": "workspace_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
       }
@@ -60,7 +60,7 @@ var resourceBase = <Resource>{
       {
       "name": "user_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["me"],
       "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
       "required": true
       }
@@ -75,7 +75,7 @@ var resourceBase = <Resource>{
       {
       "name": "team_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
       }

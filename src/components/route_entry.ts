@@ -29,6 +29,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
         className: "select-route",
         onChange: this.props.onActionChange,
         value: this.props.action.name,
+        // Only include read paths in route select
         children: this.props.resource.actions.filter((action) => {return action.method === "GET"}).map(
             action => {
             return r("option", {

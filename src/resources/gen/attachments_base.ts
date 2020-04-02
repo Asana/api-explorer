@@ -15,7 +15,7 @@ var resourceBase = <Resource>{
       {
       "name": "attachment_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the attachment.",
       "required": true
       }
@@ -30,7 +30,7 @@ var resourceBase = <Resource>{
       {
       "name": "attachment_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the attachment.",
       "required": true
       }
@@ -45,7 +45,7 @@ var resourceBase = <Resource>{
       {
       "name": "task_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
       }

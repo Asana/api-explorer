@@ -23,7 +23,7 @@ var resourceBase = <Resource>{
       {
       "name": "organization_export_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the organization export.",
       "required": true
       }

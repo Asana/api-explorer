@@ -23,7 +23,7 @@ var resourceBase = <Resource>{
       {
       "name": "webhook_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the webhook.",
       "required": true
       }
@@ -38,7 +38,7 @@ var resourceBase = <Resource>{
       {
       "name": "webhook_gid",
       "type": "string",
-      "example_values": [""],
+      "example_values": ["12345"],
       "comment": "Globally unique identifier for the webhook.",
       "required": true
       }
