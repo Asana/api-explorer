@@ -26,7 +26,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the webhook.",
       "required": true
-      }
+      },
     ],
     "comment": "This method *permanently* removes a webhook. Note that it may be possible to receive a request that was already in flight after deleting the webhook, but no further requests will be issued."
   },
@@ -41,7 +41,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the webhook.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the full record for the given webhook."
   },
@@ -50,6 +50,20 @@ var resourceBase = <Resource>{
     "method": "GET",
     "path": "/webhooks",
     "params": [
+      {
+      "name": "resource",
+      "type": "string",
+      "example_values": ["51648"],
+      "comment": "Only return webhooks for the given resource.",
+      "required": false
+      },
+      {
+      "name": "workspace",
+      "type": "string",
+      "example_values": ["1331"],
+      "comment": "The workspace to query for webhooks in.",
+      "required": true
+      },
     ],
     "comment": "Get the compact representation of all webhooks your app has registered for the authenticated user in the given workspace."
   },

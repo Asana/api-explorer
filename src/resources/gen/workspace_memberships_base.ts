@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the complete workspace record for a single workspace membership."
   },
@@ -33,7 +33,7 @@ var resourceBase = <Resource>{
       "example_values": ["me"],
       "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the compact workspace membership records for the user."
   },
@@ -48,7 +48,14 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
-      }
+      },
+      {
+      "name": "user",
+      "type": "string",
+      "example_values": ["me"],
+      "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
+      "required": false
+      },
     ],
     "comment": "Returns the compact workspace membership records for the workspace."
   },

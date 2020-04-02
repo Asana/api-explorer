@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Custom fields are associated with projects by way of custom field settings.  This method creates a setting for the project."
   },
@@ -33,7 +33,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Adds the specified list of users as followers to the project. Followers are a subset of members, therefore if the users are not already members of the project they will also become members as a result of this operation. Returns the updated project record."
   },
@@ -48,7 +48,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Adds the specified list of users as members of the project. Returns the updated project record."
   },
@@ -71,7 +71,7 @@ var resourceBase = <Resource>{
       "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
-      }
+      },
     ],
     "comment": "Creates a project shared with the given team.  Returns the full record of the newly created project."
   },
@@ -86,7 +86,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the compact project records for all projects in the workspace.  If the workspace for your project is an organization, you must also supply a team to share the project with.  Returns the full record of the newly created project."
   },
@@ -101,7 +101,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "A specific, existing project can be deleted by making a DELETE request on the URL for that project.  Returns an empty data record."
   },
@@ -116,7 +116,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Creates and returns a job that will asynchronously handle the duplication."
   },
@@ -131,7 +131,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the complete project record for a single project."
   },
@@ -140,6 +140,27 @@ var resourceBase = <Resource>{
     "method": "GET",
     "path": "/projects",
     "params": [
+      {
+      "name": "archived",
+      "type": "boolean",
+      "example_values": [false],
+      "comment": "Only return projects whose &#x60;archived&#x60; field takes on the value of this parameter.",
+      "required": false
+      },
+      {
+      "name": "team",
+      "type": "string",
+      "example_values": ["14916"],
+      "comment": "The team to filter projects on.",
+      "required": false
+      },
+      {
+      "name": "workspace",
+      "type": "string",
+      "example_values": ["1331"],
+      "comment": "The workspace or organization to filter projects on.",
+      "required": false
+      },
     ],
     "comment": "Returns the compact project records for some filtered set of projects. Use one or more of the parameters provided to filter the projects returned."
   },
@@ -154,7 +175,7 @@ var resourceBase = <Resource>{
       "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns a compact representation of all of the projects the task is in."
   },
@@ -169,7 +190,14 @@ var resourceBase = <Resource>{
       "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
-      }
+      },
+      {
+      "name": "archived",
+      "type": "boolean",
+      "example_values": [false],
+      "comment": "Only return projects whose &#x60;archived&#x60; field takes on the value of this parameter.",
+      "required": false
+      },
     ],
     "comment": "Returns the compact project records for all projects in the team."
   },
@@ -184,7 +212,14 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
-      }
+      },
+      {
+      "name": "archived",
+      "type": "boolean",
+      "example_values": [false],
+      "comment": "Only return projects whose &#x60;archived&#x60; field takes on the value of this parameter.",
+      "required": false
+      },
     ],
     "comment": "Returns the compact project records for all projects in the workspace."
   },
@@ -199,7 +234,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Get an object that holds task count fields. **All fields are excluded by default**. You must [opt in](#input-output-options) using &#x60;opt_fields&#x60; to get any information from this endpoint.  This endpoint has an additional [rate limit](#standard-rate-limits) and each field counts especially high against our [cost limits](#cost-limits).  Milestones are just tasks, so they are included in the &#x60;num_tasks&#x60;, &#x60;num_incomplete_tasks&#x60;, and &#x60;num_completed_tasks&#x60; counts."
   },
@@ -214,7 +249,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Removes a custom field setting from a project."
   },
@@ -229,7 +264,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Removes the specified list of users from following the project, this will not affect project membership status. Returns the updated project record."
   },
@@ -244,7 +279,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "Removes the specified list of users from members of the project. Returns the updated project record."
   },
@@ -259,7 +294,7 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
-      }
+      },
     ],
     "comment": "A specific, existing project can be updated by making a PUT request on the URL for that project. Only the fields provided in the &#x60;data&#x60; block will be updated; any unspecified fields will remain unchanged.  When using this method, it is best to specify only those fields you wish to change, or else you may overwrite changes made by another user since you last retrieved the task.  Returns the complete updated project record."
   },

@@ -15,15 +15,24 @@ var resourceBase = <Resource>{
     "method": "{{capitalize httpMethod}}",
     "path": "{{parsePath path}}",
     "params": [
-      {{#pathParams}}
+      {{#pathParams}} 
       {
       "name": "{{baseName}}",
       "type": "{{dataType}}",
       "example_values": [{{&jsonParser jsonSchema}}],
       "comment": "{{description}}",
       "required": {{required}}
-      }
+      },
       {{/pathParams}}
+      {{#queryParams}}
+      {
+      "name": "{{baseName}}",
+      "type": "{{dataType}}",
+      "example_values": [{{&jsonParser jsonSchema}}],
+      "comment": "{{description}}",
+      "required": {{required}}
+      },
+      {{/queryParams}}
     ],
     "comment": "{{notes}}"
   },

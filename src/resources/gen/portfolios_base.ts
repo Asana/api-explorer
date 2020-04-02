@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Custom fields are associated with portfolios by way of custom field settings.  This method creates a setting for the portfolio."
   },
@@ -33,7 +33,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Add an item to a portfolio. Returns an empty data block."
   },
@@ -48,7 +48,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Adds the specified list of users as members of the portfolio. Returns the updated portfolio record."
   },
@@ -71,7 +71,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "An existing portfolio can be deleted by making a DELETE request on the URL for that portfolio.  Returns an empty data record."
   },
@@ -86,7 +86,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Get a list of the items in compact form in a portfolio."
   },
@@ -101,7 +101,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the complete portfolio record for a single portfolio."
   },
@@ -110,6 +110,20 @@ var resourceBase = <Resource>{
     "method": "GET",
     "path": "/portfolios",
     "params": [
+      {
+      "name": "owner",
+      "type": "string",
+      "example_values": ["14916"],
+      "comment": "The user who owns the portfolio. Currently, API users can only get a list of portfolios that they themselves own.",
+      "required": true
+      },
+      {
+      "name": "workspace",
+      "type": "string",
+      "example_values": ["1331"],
+      "comment": "The workspace or organization to filter portfolios on.",
+      "required": true
+      },
     ],
     "comment": "Returns a list of the portfolios in compact representation that are owned by the current API user."
   },
@@ -124,7 +138,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Removes a custom field setting from a portfolio."
   },
@@ -139,7 +153,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Remove an item from a portfolio. Returns an empty data block."
   },
@@ -154,7 +168,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "Removes the specified list of users from members of the portfolio. Returns the updated portfolio record."
   },
@@ -169,7 +183,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the portfolio.",
       "required": true
-      }
+      },
     ],
     "comment": "An existing portfolio can be updated by making a PUT request on the URL for that portfolio. Only the fields provided in the &#x60;data&#x60; block will be updated; any unspecified fields will remain unchanged.  Returns the complete updated portfolio record."
   },

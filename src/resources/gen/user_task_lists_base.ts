@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the user task list.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the full record for a user task list."
   },
@@ -33,7 +33,14 @@ var resourceBase = <Resource>{
       "example_values": ["me"],
       "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
       "required": true
-      }
+      },
+      {
+      "name": "workspace",
+      "type": "string",
+      "example_values": ["1234"],
+      "comment": "The workspace in which to get the user task list.",
+      "required": true
+      },
     ],
     "comment": "Returns the full record for a user&#x27;s task list."
   },

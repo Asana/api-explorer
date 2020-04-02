@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the attachment.",
       "required": true
-      }
+      },
     ],
     "comment": "Deletes a specific, existing attachment.  Returns an empty data record."
   },
@@ -33,7 +33,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the attachment.",
       "required": true
-      }
+      },
     ],
     "comment": "Get the full record for a single attachment."
   },
@@ -48,7 +48,7 @@ var resourceBase = <Resource>{
       "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the compact records for all attachments on the task."
   },

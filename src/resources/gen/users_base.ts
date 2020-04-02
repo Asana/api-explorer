@@ -18,7 +18,21 @@ var resourceBase = <Resource>{
       "example_values": ["me"],
       "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
       "required": true
-      }
+      },
+      {
+      "name": "workspace",
+      "type": "string",
+      "example_values": ["1234"],
+      "comment": "The workspace in which to get favorites.",
+      "required": true
+      },
+      {
+      "name": "resource_type",
+      "type": "string",
+      "example_values": [],
+      "comment": "The resource type of favorites to be returned.",
+      "required": true
+      },
     ],
     "comment": "Returns all of a user&#x27;s favorites in the given workspace, of the given type. Results are given in order (The same order as Asana&#x27;s sidebar)."
   },
@@ -33,7 +47,7 @@ var resourceBase = <Resource>{
       "example_values": ["me"],
       "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the full user record for the single user with the provided ID. Results are sorted by user ID."
   },
@@ -42,6 +56,13 @@ var resourceBase = <Resource>{
     "method": "GET",
     "path": "/users",
     "params": [
+      {
+      "name": "workspace",
+      "type": "string",
+      "example_values": ["1331"],
+      "comment": "The workspace or organization ID to filter users on.",
+      "required": false
+      },
     ],
     "comment": "Returns the user records for all users in all workspaces and organizations accessible to the authenticated user. Accepts an optional workspace ID parameter. Results are sorted by user ID."
   },
@@ -56,7 +77,7 @@ var resourceBase = <Resource>{
       "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the compact records for all users that are members of the team."
   },
@@ -71,7 +92,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the user records for all users in the specified workspace or organization. Results are sorted alphabetically by user names."
   },

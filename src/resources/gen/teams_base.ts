@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
-      }
+      },
     ],
     "comment": "The user making this call must be a member of the team in order to add others. The user being added must exist in the same organization as the team."
   },
@@ -33,7 +33,7 @@ var resourceBase = <Resource>{
       "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the full record for a single team."
   },
@@ -48,7 +48,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the workspace or organization.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the compact records for all teams in the organization visible to the authorized user."
   },
@@ -63,7 +63,14 @@ var resourceBase = <Resource>{
       "example_values": ["me"],
       "comment": "A string identifying a user. This can either be the string \&quot;me\&quot;, an email, or the gid of a user.",
       "required": true
-      }
+      },
+      {
+      "name": "organization",
+      "type": "string",
+      "example_values": ["1331"],
+      "comment": "The workspace or organization to filter teams on.",
+      "required": true
+      },
     ],
     "comment": "Returns the compact records for all teams to which the given user is assigned."
   },
@@ -78,7 +85,7 @@ var resourceBase = <Resource>{
       "example_values": ["159874"],
       "comment": "Globally unique identifier for the team.",
       "required": true
-      }
+      },
     ],
     "comment": "The user making this call must be a member of the team in order to remove themselves or others."
   },

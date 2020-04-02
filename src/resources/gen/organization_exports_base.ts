@@ -26,7 +26,7 @@ var resourceBase = <Resource>{
       "example_values": ["12345"],
       "comment": "Globally unique identifier for the organization export.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns details of a previously-requested Organization export."
   },

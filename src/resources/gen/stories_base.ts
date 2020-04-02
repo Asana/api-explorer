@@ -18,7 +18,7 @@ var resourceBase = <Resource>{
       "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
-      }
+      },
     ],
     "comment": "Adds a story to a task. This endpoint currently only allows for comment stories to be created. The comment will be authored by the currently authenticated user, and timestamped when the server receives the request.  Returns the full record for the new story added to the task."
   },
@@ -33,7 +33,7 @@ var resourceBase = <Resource>{
       "example_values": ["35678"],
       "comment": "Globally unique identifier for the story.",
       "required": true
-      }
+      },
     ],
     "comment": "Deletes a story. A user can only delete stories they have created.  Returns an empty data record."
   },
@@ -48,7 +48,7 @@ var resourceBase = <Resource>{
       "example_values": ["321654"],
       "comment": "The task to operate on.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the compact records for all stories on the task."
   },
@@ -63,7 +63,7 @@ var resourceBase = <Resource>{
       "example_values": ["35678"],
       "comment": "Globally unique identifier for the story.",
       "required": true
-      }
+      },
     ],
     "comment": "Returns the full record for a single story."
   },
@@ -78,7 +78,7 @@ var resourceBase = <Resource>{
       "example_values": ["35678"],
       "comment": "Globally unique identifier for the story.",
       "required": true
-      }
+      },
     ],
     "comment": "Updates the story and returns the full record for the updated story. Only comment stories can have their text updated, and only comment stories and attachment stories can be pinned. Only one of &#x60;text&#x60; and &#x60;html_text&#x60; can be specified."
   },
