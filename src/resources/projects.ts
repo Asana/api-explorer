@@ -1,5 +1,5 @@
 import resourceBase = require("./gen/projects_base");
-let resource = resourceBase
+resourceBase.comment = "A _project_ represents a prioritized list of tasks in Asana or a board with\ncolumns of tasks represented as cards. It exists in a single workspace or\norganization and is accessible to a subset of users in that workspace or\norganization, depending on its permissions.\n\nProjects in organizations are shared with a single team. You cannot currently\nchange the team of a project via the API. Non-organization workspaces do not\nhave teams and so you should not specify the team of project in a regular\nworkspace.\n";
 resourceBase.properties = [
   {
     "name": "id",
