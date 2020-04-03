@@ -12,14 +12,14 @@ var resourceBase = <Resource>{
   {{#contents}}
   {
     "name": "{{operationId}}",
-    "method": "{{capitalize httpMethod}}",
+    "method": "{{toUpperCase httpMethod}}",
     "path": "{{parsePath path}}",
     "params": [
       {{#pathParams}} 
       {
       "name": "{{baseName}}",
       "type": "{{dataType}}",
-      "example_values": [{{&jsonParser jsonSchema}}],
+      "example_values": [{{&getExampleFromJson jsonSchema}}],
       "comment": "{{description}}",
       "required": {{required}}
       },
@@ -28,7 +28,7 @@ var resourceBase = <Resource>{
       {
       "name": "{{baseName}}",
       "type": "{{dataType}}",
-      "example_values": [{{&jsonParser jsonSchema}}],
+      "example_values": [{{&getExampleFromJson jsonSchema}}],
       "comment": "{{description}}",
       "required": {{required}}
       },
