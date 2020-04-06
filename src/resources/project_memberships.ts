@@ -2,14 +2,6 @@ import resourceBase = require("./gen/project_memberships_base");
 resourceBase.comment = "With the introduction of \"comment-only\" projects in Asana, a user's membership\nin a project comes with associated permissions. These permissions (whether a\nuser has full access to the project or comment-only access) are accessible\nthrough the project memberships endpoints described here.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the project membership.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

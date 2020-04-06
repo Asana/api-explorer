@@ -2,14 +2,6 @@ import resourceBase = require("./gen/custom_field_settings_base");
 resourceBase.comment = "\nCustom fields are applied to a particular project or portfolio with the\nCustom Field Settings resource. This resource both represents the\nmany-to-many join of the Custom Field and Project or Portfolio as well as\nstores information that is relevant to that particular pairing; for instance,\nthe `is_important` property determines some possible application-specific\nhandling of that custom field and parent.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the custom field settings object.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

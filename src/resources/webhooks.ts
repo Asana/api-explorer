@@ -2,14 +2,6 @@ import resourceBase = require("./gen/webhooks_base");
 resourceBase.comment = "Webhooks allow an application to be notified of changes. This is in addition\nto the ability to fetch those changes directly as\n[Events](/developers/api-reference/events) - in fact, Webhooks are just a way\nto receive Events via HTTP POST at the time they occur instead of polling for\nthem. For services accessible via HTTP this is often vastly more convenient,\nand if events are not too frequent can be significantly more efficient.\n\nIn both cases, however, changes are represented as Event objects - refer to\nthe [Events documentation](/developers/api-reference/events) for more\ninformation on what data these events contain.\n\n**NOTE:** While Webhooks send arrays of Event objects to their target, the\nEvent objects themselves contain *only IDs*, rather than the actual resource\nthey are referencing. So while a normal event you receive via GET /events\nwould look like this:\n\n    {\\\n      \"resource\": {\\\n        \"id\": 1337,\\\n        \"resource_type\": \"task\",\\\n        \"name\": \"My Task\"\\\n      },\\\n      \"parent\": null,\\\n      \"created_at\": \"2013-08-21T18:20:37.972Z\",\\\n      \"user\": {\\\n        \"id\": 1123,\\\n        \"resource_type\": \"user\",\\\n        \"name\": \"Tom Bizarro\"\\\n      },\\\n      \"action\": \"changed\",\\\n      \"type\": \"task\"\\\n    }\n\nIn a Webhook payload you would instead receive this:\n\n    {\\\n      \"resource\": 1337,\\\n      \"parent\": null,\\\n      \"created_at\": \"2013-08-21T18:20:37.972Z\",\\\n      \"user\": 1123,\\\n      \"action\": \"changed\",\\\n      \"type\": \"task\"\\\n    }\n\nWebhooks themselves contain only the information necessary to deliver the\nevents to the desired target as they are generated.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the webhook.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

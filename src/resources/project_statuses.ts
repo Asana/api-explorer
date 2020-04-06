@@ -2,14 +2,6 @@ import resourceBase = require("./gen/project_statuses_base");
 resourceBase.comment = "A _project status_ is an update on the progress of a particular project, and is sent out to all project\nfollowers when created. These updates include both text describing the update and a color code intended to\nrepresent the overall state of the project: \"green\" for projects that are on track, \"yellow\" for projects\nat risk, and \"red\" for projects that are behind.\n\nProject statuses can be created and deleted, but not modified.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the project status update.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

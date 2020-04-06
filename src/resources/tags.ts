@@ -2,14 +2,6 @@ import resourceBase = require("./gen/tags_base");
 resourceBase.comment = "A _tag_ is a label that can be attached to any task in Asana. It exists in a\nsingle workspace or organization.\n\nTags have some metadata associated with them, but it is possible that we will\nsimplify them in the future so it is not encouraged to rely too heavily on it.\nUnlike projects, tags do not provide any ordering on the tasks they\nare associated with.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the tag.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

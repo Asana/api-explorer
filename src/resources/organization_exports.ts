@@ -2,14 +2,6 @@ import resourceBase = require("./gen/organization_exports_base");
 resourceBase.comment = "An _organization_export_ object represents a request to export the complete data of an Organization\nin JSON format.\n\nTo export an Organization using this API:\n\n* Create an `organization_export` [request](#create) and store the id that is returned.\\\n* Request the `organization_export` every few minutes, until the `state` field contains 'finished'.\\\n* Download the file located at the URL in the `download_url` field.\n\nExports can take a long time, from several minutes to a few hours for large Organizations.\n\n**Note:** These endpoints are only available to [Service Accounts](/guide/help/premium/service-accounts)\nof an [Enterprise](/enterprise) Organization.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the Organization export.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

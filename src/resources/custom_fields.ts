@@ -2,14 +2,6 @@ import resourceBase = require("./gen/custom_fields_base");
 resourceBase.comment = "\nCustom Fields store the metadata that is used in order to add user-specified\ninformation to tasks in Asana. Be sure to reference the [Custom\nFields](/developers/documentation/getting-started/custom-fields) developer\ndocumentation for more information about how custom fields relate to various\nresources in Asana.\n\nUsers in Asana can [lock custom\nfields](/guide/help/premium/custom-fields#gl-lock-fields), which will make\nthem read-only when accessed by other users. Attempting to edit a locked\ncustom field will return HTTP error code `403 Forbidden`.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the custom field.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

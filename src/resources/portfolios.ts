@@ -2,14 +2,6 @@ import resourceBase = require("./gen/portfolios_base");
 resourceBase.comment = "A _portfolio_ gives a high-level overview of the status of multiple\ninitiatives in Asana.  Portfolios provide a dashboard overview of the state\nof multiple items, including a progress report and the most recent\n[project status](/developers/api-reference/project_statuses) update.\n\nPortfolios have some restrictions on size. Each portfolio has a maximum of 250\nitems and, like projects, a maximum of 20 custom fields.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the portfolio.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

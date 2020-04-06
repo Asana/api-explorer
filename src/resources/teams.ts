@@ -2,14 +2,6 @@ import resourceBase = require("./gen/teams_base");
 resourceBase.comment = "A _team_ is used to group related projects and people together within an\norganization. Each project in an organization is associated with a team.\n";
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the team.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [

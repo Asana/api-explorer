@@ -2,14 +2,6 @@ import resourceBase = require("./gen/portfolio_memberships_base");
 resourceBase.comment = "This object determines if a user is a member of a portfolio.\n"
 resourceBase.properties = [
   {
-    "name": "id",
-    "type": "Id",
-    "example_values": [
-      "1234"
-    ],
-    "comment": "Globally unique ID of the portfolio membership.\n**Note: This field is under active migration to the [`gid` field](#field-gid)--please see our [blog post](/developers/documentation/getting-started/deprecations) for more information.**\n"
-  },
-  {
     "name": "gid",
     "type": "Gid",
     "example_values": [
