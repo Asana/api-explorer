@@ -190,14 +190,6 @@ resourceBase.properties = [
     "comment": "Array of users who have liked this task.\n"
   },
   {
-    "name": "memberships",
-    "type": "Array",
-    "example_values": [
-      "[ { project: { id: 1331, gid: \"1331\", name: 'Bugs' }, section: { id: 1123, gid: \"1123\", name: 'P1:' } }, ... ]"
-    ],
-    "comment": "Array of projects this task is associated with and the section it is in.\nAt task creation time, this array can be used to add the task to specific\nsections. After task creation, these associations can be modified using\nthe `addProject` and `removeProject` endpoints. Note that over time, more\ntypes of memberships may be added to this property.\n"
-  },
-  {
     "name": "modified_at",
     "type": "String",
     "example_values": [

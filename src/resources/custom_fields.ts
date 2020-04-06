@@ -64,16 +64,6 @@ resourceBase.properties = [
     "comment": "[Opt In](/developers/documentation/getting-started/input-output-options). The description of the custom field.\n"
   },
   {
-    "name": "type",
-    "type": "String",
-    "example_values": [
-      "'text'",
-      "'enum'",
-      "'number'"
-    ],
-    "comment": "**Deprecated: new integrations should prefer the `resource_subtype` field.**\nThe type of the custom field. Must be one of the given values.\n"
-  },
-  {
     "name": "enum_options",
     "type": "String",
     "example_values": [

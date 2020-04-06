@@ -76,14 +76,6 @@ resourceBase.properties = [
     "comment": "The number of users who have liked this story.\n",
   },
   {
-    "name": "text",
-    "type": "String",
-    "example_values": [
-      "'marked today'"
-    ],
-    "comment": "Human-readable text for the story or comment. This will not include the\nname of the creator.\n",
-  },
-  {
     "name": "html_text",
     "type": "String",
     "example_values": [
@@ -145,25 +137,6 @@ resourceBase.properties = [
     ],
     "comment": "The component of the Asana product the user used to create the story.\n"
   },
-  {
-    "name": "type",
-    "type": "Enum",
-    "example_values": [
-      "'comment'",
-      "'system'"
-    ],
-    "values": [
-      {
-        "name": "comment",
-        "comment": "A comment from a user. The text will be the message portion of the comment."
-      },
-      {
-        "name": "system",
-        "comment": "A system-generated story based on a user action. The text will be a description of the action."
-      }
-    ],
-    "comment": "**Deprecated: new integrations should prefer the `resource_subtype` field.**\nThe type of this story. For more fine-grained inspection of story types, see the [`resource_subtype`](#field-resource_subtype) property.\n"
-  }
 ]
 
 export = resourceBase;

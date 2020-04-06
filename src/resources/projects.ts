@@ -49,14 +49,6 @@ resourceBase.properties = [
     "comment": "The most recently created status update for the project, or `null` if no update exists. See also the\ndocumentation for [project status updates](/developers/api-reference/project_statuses).\n"
   },
   {
-    "name": "due_date",
-    "type": "String",
-    "example_values": [
-      "'2012-03-26'"
-    ],
-    "comment": "**Deprecated: new integrations should prefer the due_on field.**\nThe day on which this project is due. This takes a date with format YYYY-MM-DD.\n"
-  },
-  {
     "name": "due_on",
     "type": "String",
     "example_values": [

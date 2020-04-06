@@ -49,14 +49,6 @@ resourceBase.properties = [
     "comment": "The parent to which the custom field is applied. This can be a project\nor portfolio and indicates that the tasks or projects that the parent\ncontains may be given custom field values for this custom field.\n"
   },
   {
-    "name": "project",
-    "type": "Project",
-    "example_values": [
-      "{ id: 1234, gid: \"1234\", name: 'Bugs' }"
-    ],
-    "comment": "**Deprecated: new integrations should prefer the `parent` field.**\nThe id of the project that this custom field settings refers to.\n"
-  },
-  {
     "name": "custom_field",
     "type": "CustomField",
     "example_values": [

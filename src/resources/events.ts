@@ -19,28 +19,6 @@ resourceBase.properties = [
     "comment": "The resource the event occurred on.\n",
   },
   {
-    "name": "type",
-    "type": "String",
-    "example_values": [
-      "'task'"
-    ],
-    "values": [
-      {
-        "name": "task",
-        "comment": "A task."
-      },
-      {
-        "name": "project",
-        "comment": "A project."
-      },
-      {
-        "name": "story",
-        "comment": "A story."
-      }
-    ],
-    "comment": "**Deprecated: Refer to the resource_type of the resource.** The type of the resource that generated the event.\n",
-  },
-  {
     "name": "action",
     "type": "Enum",
     "example_values": [
