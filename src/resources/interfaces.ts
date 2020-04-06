@@ -24,7 +24,6 @@ interface Property {
   name: string;
   comment: string;
   type: string;
-  access?: string;
   example_values: string[];
   values?: any[];
 }

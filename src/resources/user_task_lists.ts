@@ -7,13 +7,11 @@ resourceBase.properties = [
     "example_values": [
       "\"1234\""
     ],
-    "access": "Read-only",
     "comment": "Globally unique ID of the user task list.\n"
   },
   {
     "name": "resource_type",
     "type": "Enum",
-    "access": "Read-only",
     "comment": "The resource type of this resource. The value for this resource is always `user_task_list`.\n",
     "example_values": [
       "\"user_task_list\""
@@ -32,7 +30,6 @@ resourceBase.properties = [
       "\"My Tasks\""
     ],
     "comment": "The name of the user task list.\n",
-    "access": "Read-only"
   },
   {
     "name": "owner",
@@ -42,7 +39,6 @@ resourceBase.properties = [
       "null"
     ],
     "comment": "The owner of the user task list, i.e. the person whose My Tasks is represented by this resource.\n",
-    "access": "Read-only"
   },
   {
     "name": "workspace",
@@ -50,7 +46,6 @@ resourceBase.properties = [
     "example_values": [
       "{ id: 14916, gid: \"14916\", name: 'My Workspace' }"
     ],
-    "access": "Read-only",
     "comment": "The workspace in which the user task list is located.\n"
   }
 ];
