@@ -909,7 +909,6 @@ describe("ExplorerComponent", () => {
 
                 root.setState({
                     params: {
-                        expandFields: ["test"],
                         includeFields: ["other", "this"],
                         requiredParams: _.zipObject([(requiredParam || {}).name || ""], ["123"]),
                         optionalParams: {abc: 456},
@@ -974,7 +973,6 @@ describe("ExplorerComponent", () => {
 
                 root.setState({
                     params: {
-                        expandFields: ["test"],
                         includeFields: ["other", "this"],
                         requiredParams: _.zipObject([(requiredParam || {}).name || ""], ["123"]),
                         optionalParams: {abc: 456},

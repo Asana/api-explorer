@@ -140,11 +140,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
         let params: any = {};
 
-        if (this.state.params.expandFields.length > 0) {
-            params = _.extend(params, {
-                opt_expand: this.state.params.expandFields.join()
-            });
-        }
         if (this.state.params.includeFields.length > 0) {
             params = _.extend(params, {
                 opt_fields: this.state.params.includeFields.join()
@@ -729,7 +724,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 module Explorer {
     export function emptyParams(): ParamData {
         return {
-            expandFields: [],
             includeFields: [],
             requiredParams: {},
             optionalParams: {},
@@ -741,7 +735,6 @@ module Explorer {
     }
 
     export interface ParamData {
-        expandFields: string[];
         includeFields: string[];
         requiredParams: any;
         optionalParams: any;
