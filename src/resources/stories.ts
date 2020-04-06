@@ -75,6 +75,14 @@ resourceBase.properties = [
     ],
     "comment": "The number of users who have liked this story.\n",
   },
+  {	
+    "name": "text",	
+    "type": "String",	
+    "example_values": [	
+      "'marked today'"	
+    ],	
+    "comment": "Human-readable text for the story or comment. This will not include the\nname of the creator.\n",	
+  },
   {
     "name": "html_text",
     "type": "String",
