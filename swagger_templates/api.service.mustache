@@ -26,7 +26,7 @@ var resourceBase = <Resource>{
       },
       {{/pathParams}}
       {{#queryParams}}
-      {{#neq baseName "offset"}}{{#neq baseName "limit"}}
+      {{#neq baseName "limit"}}
       {
       "name": "{{baseName}}",
       "type": "{{dataType}}",
@@ -34,7 +34,7 @@ var resourceBase = <Resource>{
       "comment": "{{description}}",
       "required": {{required}}
       },
-      {{/neq}}{{/neq}}
+      {{/neq}}
       {{/queryParams}}
     ],
     "comment": "{{summary}}"
