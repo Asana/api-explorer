@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "addDependenciesForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/addDependencies",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "addDependentsForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/addDependents",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "addFollowersForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/addFollowers",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "addProjectForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/addProject",
     "params": [
       {
@@ -70,6 +74,7 @@ var resourceBase = <Resource>{
   {
     "name": "addTagForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/addTag",
     "params": [
       {
@@ -85,6 +90,7 @@ var resourceBase = <Resource>{
   {
     "name": "createSubtaskForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/subtasks",
     "params": [
       {
@@ -100,6 +106,7 @@ var resourceBase = <Resource>{
   {
     "name": "createTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks",
     "params": [
     ],
@@ -108,6 +115,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteTask",
     "method": "DELETE",
+    "collection": false,
     "path": "/tasks/%s",
     "params": [
       {
@@ -123,6 +131,7 @@ var resourceBase = <Resource>{
   {
     "name": "duplicateTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/duplicate",
     "params": [
       {
@@ -138,6 +147,7 @@ var resourceBase = <Resource>{
   {
     "name": "getDependenciesForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/dependencies",
     "params": [
       {
@@ -153,6 +163,7 @@ var resourceBase = <Resource>{
   {
     "name": "getDependentsForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/dependents",
     "params": [
       {
@@ -168,6 +179,7 @@ var resourceBase = <Resource>{
   {
     "name": "getSubtasksForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/subtasks",
     "params": [
       {
@@ -183,6 +195,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTask",
     "method": "GET",
+    "collection": false,
     "path": "/tasks/%s",
     "params": [
       {
@@ -198,6 +211,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTasks",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks",
     "params": [
       {
@@ -248,6 +262,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTasksForProject",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects/%s/tasks",
     "params": [
       {
@@ -263,6 +278,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTasksForSection",
     "method": "GET",
+    "collection": true||false,
     "path": "/sections/%s/tasks",
     "params": [
       {
@@ -278,6 +294,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTasksForTag",
     "method": "GET",
+    "collection": true||false,
     "path": "/tags/%s/tasks",
     "params": [
       {
@@ -293,6 +310,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTasksForUserTaskList",
     "method": "GET",
+    "collection": true||false,
     "path": "/user_task_lists/%s/tasks",
     "params": [
       {
@@ -315,6 +333,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeDependenciesForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/removeDependencies",
     "params": [
       {
@@ -330,6 +349,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeDependentsForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/removeDependents",
     "params": [
       {
@@ -345,6 +365,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeFollowerForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/removeFollowers",
     "params": [
       {
@@ -360,6 +381,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeProjectForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/removeProject",
     "params": [
       {
@@ -375,6 +397,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeTagForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/removeTag",
     "params": [
       {
@@ -390,6 +413,7 @@ var resourceBase = <Resource>{
   {
     "name": "searchTasksForWorkspace",
     "method": "GET",
+    "collection": false,
     "path": "/workspaces/%s/tasks/search",
     "params": [
       {
@@ -790,6 +814,7 @@ var resourceBase = <Resource>{
   {
     "name": "setParentForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/setParent",
     "params": [
       {
@@ -805,6 +830,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateTask",
     "method": "PUT",
+    "collection": false,
     "path": "/tasks/%s",
     "params": [
       {

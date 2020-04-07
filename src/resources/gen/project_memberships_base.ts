@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectMembership",
     "method": "GET",
+    "collection": false,
     "path": "/project_memberships/%s",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectMembershipsForProject",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects/%s/project_memberships",
     "params": [
       {

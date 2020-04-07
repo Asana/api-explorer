@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createProjectStatusForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/project_statuses",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteProjectStatus",
     "method": "DELETE",
+    "collection": false,
     "path": "/project_statuses/%s",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectStatus",
     "method": "GET",
+    "collection": false,
     "path": "/project_statuses/%s",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectStatusesForProject",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects/%s/project_statuses",
     "params": [
       {

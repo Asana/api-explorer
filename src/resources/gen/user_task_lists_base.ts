@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUserTaskList",
     "method": "GET",
+    "collection": false,
     "path": "/user_task_lists/%s",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUserTaskListForUser",
     "method": "GET",
+    "collection": false,
     "path": "/users/%s/user_task_list",
     "params": [
       {

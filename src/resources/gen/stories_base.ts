@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createStoryForTask",
     "method": "POST",
+    "collection": false,
     "path": "/tasks/%s/stories",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteStory",
     "method": "DELETE",
+    "collection": false,
     "path": "/stories/%s",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "getStoriesForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/stories",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "getStory",
     "method": "GET",
+    "collection": true||false,
     "path": "/stories/%s",
     "params": [
       {
@@ -70,6 +74,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateStory",
     "method": "PUT",
+    "collection": false,
     "path": "/stories/%s",
     "params": [
       {

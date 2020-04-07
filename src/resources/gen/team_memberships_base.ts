@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeamMembership",
     "method": "GET",
+    "collection": false,
     "path": "/team_memberships/%s",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeamMemberships",
     "method": "GET",
+    "collection": true||false,
     "path": "/team_memberships",
     "params": [
       {
@@ -54,6 +56,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeamMembershipsForTeam",
     "method": "GET",
+    "collection": true||false,
     "path": "/teams/%s/team_memberships",
     "params": [
       {
@@ -69,6 +72,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeamMembershipsForUser",
     "method": "GET",
+    "collection": true||false,
     "path": "/users/%s/team_memberships",
     "params": [
       {

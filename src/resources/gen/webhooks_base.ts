@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createWebhook",
     "method": "POST",
+    "collection": false,
     "path": "/webhooks",
     "params": [
     ],
@@ -18,6 +19,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteWebhook",
     "method": "DELETE",
+    "collection": false,
     "path": "/webhooks/%s",
     "params": [
       {
@@ -33,6 +35,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWebhook",
     "method": "GET",
+    "collection": false,
     "path": "/webhooks/%s",
     "params": [
       {
@@ -48,6 +51,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWebhooks",
     "method": "GET",
+    "collection": true||false,
     "path": "/webhooks",
     "params": [
       {

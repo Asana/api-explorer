@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getEvents",
     "method": "GET",
+    "collection": false,
     "path": "/events",
     "params": [
       {

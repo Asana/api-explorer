@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getCustomFieldSettingsForPortfolio",
     "method": "GET",
+    "collection": true||false,
     "path": "/portfolios/%s/custom_field_settings",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getCustomFieldSettingsForProject",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects/%s/custom_field_settings",
     "params": [
       {

@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "typeaheadForWorkspace",
     "method": "GET",
+    "collection": false,
     "path": "/workspaces/%s/typeahead",
     "params": [
       {

@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getJob",
     "method": "GET",
+    "collection": false,
     "path": "/jobs/%s",
     "params": [
       {

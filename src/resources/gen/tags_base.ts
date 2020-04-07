@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createTag",
     "method": "POST",
+    "collection": false,
     "path": "/tags",
     "params": [
     ],
@@ -18,6 +19,7 @@ var resourceBase = <Resource>{
   {
     "name": "createTagForWorkspace",
     "method": "POST",
+    "collection": false,
     "path": "/workspaces/%s/tags",
     "params": [
       {
@@ -33,6 +35,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTag",
     "method": "GET",
+    "collection": true||false,
     "path": "/tags/%s",
     "params": [
       {
@@ -48,6 +51,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTags",
     "method": "GET",
+    "collection": true||false,
     "path": "/tags",
     "params": [
       {
@@ -63,6 +67,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTagsForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/tags",
     "params": [
       {
@@ -78,6 +83,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTagsForWorkspace",
     "method": "GET",
+    "collection": true||false,
     "path": "/workspaces/%s/tags",
     "params": [
       {
@@ -93,6 +99,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateTag",
     "method": "PUT",
+    "collection": true||false,
     "path": "/tags/%s",
     "params": [
       {

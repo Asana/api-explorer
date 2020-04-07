@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "addTaskForSection",
     "method": "POST",
+    "collection": false,
     "path": "/sections/%s/addTask",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "createSectionForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/sections",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteSection",
     "method": "DELETE",
+    "collection": false,
     "path": "/sections/%s",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "getSection",
     "method": "GET",
+    "collection": false,
     "path": "/sections/%s",
     "params": [
       {
@@ -70,6 +74,7 @@ var resourceBase = <Resource>{
   {
     "name": "getSectionsForProject",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects/%s/sections",
     "params": [
       {
@@ -85,6 +90,7 @@ var resourceBase = <Resource>{
   {
     "name": "insertSectionForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/sections/insert",
     "params": [
       {
@@ -100,6 +106,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateSection",
     "method": "PUT",
+    "collection": false,
     "path": "/sections/%s",
     "params": [
       {

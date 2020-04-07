@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteAttachment",
     "method": "DELETE",
+    "collection": false,
     "path": "/attachments/%s",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getAttachment",
     "method": "GET",
+    "collection": false,
     "path": "/attachments/%s",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "getAttachmentsForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/attachments",
     "params": [
       {

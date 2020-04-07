@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createOrganizationExport",
     "method": "POST",
+    "collection": true||false,
     "path": "/organization_exports",
     "params": [
     ],
@@ -18,6 +19,7 @@ var resourceBase = <Resource>{
   {
     "name": "getOrganizationExport",
     "method": "GET",
+    "collection": false,
     "path": "/organization_exports/%s",
     "params": [
       {

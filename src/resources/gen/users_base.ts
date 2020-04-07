@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getFavoritesForUser",
     "method": "GET",
+    "collection": false,
     "path": "/users/%s/favorites",
     "params": [
       {
@@ -39,6 +40,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUser",
     "method": "GET",
+    "collection": false,
     "path": "/users/%s",
     "params": [
       {
@@ -54,6 +56,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUsers",
     "method": "GET",
+    "collection": true||false,
     "path": "/users",
     "params": [
       {
@@ -69,6 +72,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUsersForTeam",
     "method": "GET",
+    "collection": true||false,
     "path": "/teams/%s/users",
     "params": [
       {
@@ -84,6 +88,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUsersForWorkspace",
     "method": "GET",
+    "collection": true||false,
     "path": "/workspaces/%s/users",
     "params": [
       {

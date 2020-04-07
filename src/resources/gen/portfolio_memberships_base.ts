@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getPortfolioMembership",
     "method": "GET",
+    "collection": false,
     "path": "/portfolio_memberships/%s",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getPortfolioMemberships",
     "method": "GET",
+    "collection": true||false,
     "path": "/portfolio_memberships",
     "params": [
       {
@@ -54,6 +56,7 @@ var resourceBase = <Resource>{
   {
     "name": "getPortfolioMembershipsForPortfolio",
     "method": "GET",
+    "collection": true||false,
     "path": "/portfolios/%s/portfolio_memberships",
     "params": [
       {

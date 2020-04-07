@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "addUserForTeam",
     "method": "POST",
+    "collection": false,
     "path": "/teams/%s/addUser",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeam",
     "method": "GET",
+    "collection": true||false,
     "path": "/teams/%s",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeamsForOrganization",
     "method": "GET",
+    "collection": true||false,
     "path": "/organizations/%s/teams",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTeamsForUser",
     "method": "GET",
+    "collection": true||false,
     "path": "/users/%s/teams",
     "params": [
       {
@@ -77,6 +81,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeUserForTeam",
     "method": "POST",
+    "collection": false,
     "path": "/teams/%s/removeUser",
     "params": [
       {

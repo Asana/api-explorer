@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createCustomField",
     "method": "POST",
+    "collection": true||false,
     "path": "/custom_fields",
     "params": [
     ],
@@ -18,6 +19,7 @@ var resourceBase = <Resource>{
   {
     "name": "createEnumOptionForCustomField",
     "method": "POST",
+    "collection": true||false,
     "path": "/custom_fields/%s/enum_options",
     "params": [
       {
@@ -33,6 +35,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteCustomField",
     "method": "DELETE",
+    "collection": false,
     "path": "/custom_fields/%s",
     "params": [
       {
@@ -48,6 +51,7 @@ var resourceBase = <Resource>{
   {
     "name": "getCustomField",
     "method": "GET",
+    "collection": false,
     "path": "/custom_fields/%s",
     "params": [
       {
@@ -63,6 +67,7 @@ var resourceBase = <Resource>{
   {
     "name": "getCustomFieldsForWorkspace",
     "method": "GET",
+    "collection": true||false,
     "path": "/workspaces/%s/custom_fields",
     "params": [
       {
@@ -78,6 +83,7 @@ var resourceBase = <Resource>{
   {
     "name": "insertEnumOptionForCustomField",
     "method": "POST",
+    "collection": false,
     "path": "/custom_fields/%s/enum_options/insert",
     "params": [
       {
@@ -93,6 +99,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateCustomField",
     "method": "PUT",
+    "collection": false,
     "path": "/custom_fields/%s",
     "params": [
       {
@@ -108,6 +115,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateEnumOption",
     "method": "PUT",
+    "collection": false,
     "path": "/enum_options/%s",
     "params": [
       {

@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "addUserForWorkspace",
     "method": "POST",
+    "collection": false,
     "path": "/workspaces/%s/addUser",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWorkspace",
     "method": "GET",
+    "collection": false,
     "path": "/workspaces/%s",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWorkspaces",
     "method": "GET",
+    "collection": true||false,
     "path": "/workspaces",
     "params": [
     ],
@@ -48,6 +51,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeUserForWorkspace",
     "method": "POST",
+    "collection": false,
     "path": "/workspaces/%s/removeUser",
     "params": [
       {
@@ -63,6 +67,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateWorkspace",
     "method": "PUT",
+    "collection": false,
     "path": "/workspaces/%s",
     "params": [
       {

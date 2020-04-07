@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "addCustomFieldSettingForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/addCustomFieldSetting",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "addFollowersForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/addFollowers",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "addMembersForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/addMembers",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "createProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects",
     "params": [
     ],
@@ -63,6 +67,7 @@ var resourceBase = <Resource>{
   {
     "name": "createProjectForTeam",
     "method": "POST",
+    "collection": false,
     "path": "/teams/%s/projects",
     "params": [
       {
@@ -78,6 +83,7 @@ var resourceBase = <Resource>{
   {
     "name": "createProjectForWorkspace",
     "method": "POST",
+    "collection": false,
     "path": "/workspaces/%s/projects",
     "params": [
       {
@@ -93,6 +99,7 @@ var resourceBase = <Resource>{
   {
     "name": "deleteProject",
     "method": "DELETE",
+    "collection": false,
     "path": "/projects/%s",
     "params": [
       {
@@ -108,6 +115,7 @@ var resourceBase = <Resource>{
   {
     "name": "duplicateProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/duplicate",
     "params": [
       {
@@ -123,6 +131,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProject",
     "method": "GET",
+    "collection": false,
     "path": "/projects/%s",
     "params": [
       {
@@ -138,6 +147,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjects",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects",
     "params": [
       {
@@ -167,6 +177,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectsForTask",
     "method": "GET",
+    "collection": true||false,
     "path": "/tasks/%s/projects",
     "params": [
       {
@@ -182,6 +193,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectsForTeam",
     "method": "GET",
+    "collection": true||false,
     "path": "/teams/%s/projects",
     "params": [
       {
@@ -204,6 +216,7 @@ var resourceBase = <Resource>{
   {
     "name": "getProjectsForWorkspace",
     "method": "GET",
+    "collection": true||false,
     "path": "/workspaces/%s/projects",
     "params": [
       {
@@ -226,6 +239,7 @@ var resourceBase = <Resource>{
   {
     "name": "getTaskCountsForProject",
     "method": "GET",
+    "collection": true||false,
     "path": "/projects/%s/task_counts",
     "params": [
       {
@@ -241,6 +255,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeCustomFieldSettingForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/removeCustomFieldSetting",
     "params": [
       {
@@ -256,6 +271,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeFollowersForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/removeFollowers",
     "params": [
       {
@@ -271,6 +287,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeMembersForProject",
     "method": "POST",
+    "collection": false,
     "path": "/projects/%s/removeMembers",
     "params": [
       {
@@ -286,6 +303,7 @@ var resourceBase = <Resource>{
   {
     "name": "updateProject",
     "method": "PUT",
+    "collection": false,
     "path": "/projects/%s",
     "params": [
       {

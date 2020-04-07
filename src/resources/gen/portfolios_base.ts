@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "addCustomFieldSettingForPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios/%s/addCustomFieldSetting",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "addItemForPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios/%s/addItem",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "addMembersForPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios/%s/addMembers",
     "params": [
       {
@@ -55,6 +58,7 @@ var resourceBase = <Resource>{
   {
     "name": "createPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios",
     "params": [
     ],
@@ -63,6 +67,7 @@ var resourceBase = <Resource>{
   {
     "name": "deletePortfolio",
     "method": "DELETE",
+    "collection": false,
     "path": "/portfolios/%s",
     "params": [
       {
@@ -78,6 +83,7 @@ var resourceBase = <Resource>{
   {
     "name": "getItemsForPortfolio",
     "method": "GET",
+    "collection": true||false,
     "path": "/portfolios/%s/items",
     "params": [
       {
@@ -93,6 +99,7 @@ var resourceBase = <Resource>{
   {
     "name": "getPortfolio",
     "method": "GET",
+    "collection": false,
     "path": "/portfolios/%s",
     "params": [
       {
@@ -108,6 +115,7 @@ var resourceBase = <Resource>{
   {
     "name": "getPortfolios",
     "method": "GET",
+    "collection": true||false,
     "path": "/portfolios",
     "params": [
       {
@@ -130,6 +138,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeCustomFieldSettingForPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios/%s/removeCustomFieldSetting",
     "params": [
       {
@@ -145,6 +154,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeItemForPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios/%s/removeItem",
     "params": [
       {
@@ -160,6 +170,7 @@ var resourceBase = <Resource>{
   {
     "name": "removeMembersForPortfolio",
     "method": "POST",
+    "collection": false,
     "path": "/portfolios/%s/removeMembers",
     "params": [
       {
@@ -175,6 +186,7 @@ var resourceBase = <Resource>{
   {
     "name": "updatePortfolio",
     "method": "PUT",
+    "collection": false,
     "path": "/portfolios/%s",
     "params": [
       {

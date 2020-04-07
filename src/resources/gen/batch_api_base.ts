@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "createBatchRequest",
     "method": "POST",
+    "collection": false,
     "path": "/batch",
     "params": [
     ],

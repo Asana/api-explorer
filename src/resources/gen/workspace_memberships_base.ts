@@ -10,6 +10,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWorkspaceMembership",
     "method": "GET",
+    "collection": false,
     "path": "/workspace_memberships/%s",
     "params": [
       {
@@ -25,6 +26,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWorkspaceMembershipsForUser",
     "method": "GET",
+    "collection": true||false,
     "path": "/users/%s/workspace_memberships",
     "params": [
       {
@@ -40,6 +42,7 @@ var resourceBase = <Resource>{
   {
     "name": "getWorkspaceMembershipsForWorkspace",
     "method": "GET",
+    "collection": true||false,
     "path": "/workspaces/%s/workspace_memberships",
     "params": [
       {
