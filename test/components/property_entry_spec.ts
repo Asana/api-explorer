@@ -8,14 +8,14 @@ import * as ReactDOM from "react-dom";
 import PropertyEntry = require("../../src/components/property_entry");
 import Resources = require("../../src/resources");
 import * as ReactTestUtils from "react-dom/test-utils";
-import {SinonSandbox, SinonStub} from "sinon";
+import {SinonFakeServer, SinonStub} from "sinon";
 
 const assert = chai.assert;
 const r = React.createElement;
 const testUtils = ReactTestUtils;
 
 describe("PropertyEntryComponent", () => {
-    let sand: SinonSandbox;
+    let sand: SinonFakeServer;
 
     let properties: Property[];
 
@@ -26,12 +26,12 @@ describe("PropertyEntryComponent", () => {
     let checkboxes: Element[];
 
     beforeEach(() => {
-        sand = sinon.sandbox.create();
+        sand = sinon.fakeServer.create();
 
         properties = Resources.Events.properties;
 
-        isPropertyCheckedStub = sand.stub();
-        usePropertyStub = sand.stub();
+        isPropertyCheckedStub = sinon.stub();
+        usePropertyStub = sinon.stub();
 
         root = testUtils.renderIntoDocument(
             PropertyEntry.create({
@@ -73,8 +73,7 @@ describe("PropertyEntryComponent", () => {
     it("should trigger onChange property on each check action", () => {
         checkboxes.forEach(checkbox => {
             const checkboxNode = <HTMLInputElement>ReactDOM.findDOMNode(checkbox);
-
-            checkboxNode.dispatchEvent(new Event("change", {bubbles: true}));
+            testUtils.Simulate.change(checkboxNode);
         });
         sinon.assert.callCount(isPropertyCheckedStub, properties.length);
     });

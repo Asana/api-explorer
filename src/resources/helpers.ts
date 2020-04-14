@@ -41,7 +41,7 @@ export function resourceNameFromResource(resource: Resource): string {
  */
 export function actionFromResourcePath(resource: Resource, path: string): Action {
   return resource.actions.filter(
-    action => { return path === action.path; }
+    action => { return action.method === "GET" && path === action.path; }
   )[0];
 }
 
