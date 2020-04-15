@@ -1065,7 +1065,6 @@ describe("ExplorerComponent", () => {
             });
 
             it("should be disabled with unset required param with get request", () => {
-                console.log(root.state.action)
                 assert.equal((root.state.action || {}).method, "GET");
                 assert.propertyVal(((root.state.action || {}).params || [])[0], "required", true);
                 assert.isTrue((<HTMLButtonElement>submitRequest).disabled);
