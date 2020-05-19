@@ -128,7 +128,6 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         }).catch((e: any) => {
             this.setState({authState: Credentials.AuthState.Expired})
             window.localStorage.clear()
-            // this.props.OAuth.reset()
         })
     }
 
