@@ -1,6 +1,8 @@
 import ReactDOM = require("react-dom");
 import {OAuth2AuthCodePKCE} from "@bity/oauth2-auth-code-pkce"
 import Explorer = require("./components/explorer");
+import constants = require("./constants");
+
 
 /**
  * Creates and renders the API Explorer component.
@@ -9,7 +11,7 @@ import Explorer = require("./components/explorer");
 const oauth = new OAuth2AuthCodePKCE({
   authorizationUrl: "https://app.asana.com/-/oauth_authorize",
   tokenUrl: "https://ccbv8pweoe.execute-api.us-east-1.amazonaws.com/default/api_explorer_oauth_beta",
-  clientId: "23824292948206",
+  clientId: constants.CLIENT_ID,
   redirectUrl: window.location.href.split("?")[0],
   scopes: [],
   onInvalidGrant(){
