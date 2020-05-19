@@ -102,7 +102,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
      * Authorize the client, if it has expired, and force a re-rendering.
      */
     authorize = (): void => {
-        this.props.oAuth.fetchAuthorizationCode();
+        this.props.OAuth.fetchAuthorizationCode();
     }
 
     setCredentialsFromOAuth = (token: String): void => {
@@ -128,7 +128,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
         }).catch((e: any) => {
             this.setState({authState: Credentials.AuthState.Expired})
             window.localStorage.clear()
-            this.props.oAuth.reset()
+            // this.props.OAuth.reset()
         })
     }
 
