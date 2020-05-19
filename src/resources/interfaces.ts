@@ -1,12 +1,15 @@
 /* tslint:disable variable-name */
 interface Action {
   name: string;
+  class: string;
   method: string;
   path: string;
+  notes?: string[];
   comment: string;
   params?: Parameter[];
   collection?: boolean;
   collection_cannot_paginate?: boolean;
+  no_code?: boolean;
 }
 
 interface Parameter {
@@ -15,6 +18,7 @@ interface Parameter {
   example_values?: string[];
   comment: string;
   required?: boolean;
+  explicit?: boolean;
 }
 interface Property {
   name: string;

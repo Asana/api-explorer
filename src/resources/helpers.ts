@@ -2,7 +2,7 @@
 import util = require("util");
 import _ = require("lodash");
 
-import Resources = require("./resources");
+import Resources = require("../resources");
 
 /**
  * Returns the names of all valid resources.
@@ -41,7 +41,7 @@ export function resourceNameFromResource(resource: Resource): string {
  */
 export function actionFromResourcePath(resource: Resource, path: string): Action {
   return resource.actions.filter(
-    action => { return path === action.path; }
+    action => { return action.method === "GET" && path === action.path; }
   )[0];
 }
 
@@ -78,7 +78,7 @@ export function defaultActionFromResource(resource: Resource): Action {
  * @param param_value?
  * @returns {string}
  */
-export function pathForAction(action: Action, param_value?: number): string {
+export function pathForAction(action: Action, paramValue?: string): string {
   // If there's a placeholder, then replace it with its required param.
   if (pathForActionContainsRequiredParam(action)) {
     var requiredParam = _.find(action.params, "required");
@@ -87,8 +87,8 @@ export function pathForAction(action: Action, param_value?: number): string {
     }
 
     // If a param_value is given, use it. Otherwise, use a placeholder.
-    if (param_value !== undefined) {
-      return util.format(action.path, param_value);
+    if (paramValue !== undefined) {
+      return util.format(action.path, paramValue);
     } else {
       // Use the parameter name as a placeholder in the URL.
       return util.format(action.path, ":" + requiredParam.name);

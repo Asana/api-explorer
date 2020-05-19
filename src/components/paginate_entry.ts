@@ -1,12 +1,25 @@
 import React = require("react");
 
-var r = React.DOM;
+var r = React.createElement;
 
 /**
  * Allows users to change their pagination settings.
  */
 class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
   static create = React.createFactory(PaginateEntry);
+
+  render() {
+    return r("div", {
+        className: "paginate-entry",
+        children: [
+          this.props.text,
+          this.props.canPaginate ?
+            this.renderPaginateInputs() :
+            r("small", { }, "Pagination is not available on this route.")
+        ]
+      }
+    );
+  }
 
   private renderPaginateInputs = () => {
     // If the values are not set, or 0, display empty string.
@@ -15,11 +28,11 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
     var offsetValue = !this.props.paginateParams.offset ?
       "" : this.props.paginateParams.offset;
 
-    return r.span({},
-      r.label({ },
+    return r("span", {},
+      r("label", { },
         "Limit"
       ),
-      r.input({
+      r("input", {
         type: "number",
         className: "paginate-entry-limit",
         min: "0",
@@ -27,10 +40,10 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
         placeholder: "Limit",
         value: limitValue
       }),
-      r.label({ },
+      r("label", { },
         "Offset"
       ),
-      r.input({
+      r("input", {
         type: "text",
         className: "paginate-entry-offset",
         onChange: this.props.onPaginateChange("offset"),
@@ -39,31 +52,18 @@ class PaginateEntry extends React.Component<PaginateEntry.Props, {}> {
       })
     );
   };
-
-  render() {
-    return r.div({
-        className: "paginate-entry",
-        children: [
-          this.props.text,
-          this.props.canPaginate ?
-            this.renderPaginateInputs() :
-            r.small({ }, "Pagination is not available on this route.")
-        ]
-      }
-    );
-  }
 }
 
 module PaginateEntry {
   export interface Props {
     canPaginate: boolean;
-    onPaginateChange: (limit_or_offset: string) =>
+    onPaginateChange: (limitOrOffset: string) =>
       (event?: React.FormEvent) => void;
     paginateParams: {
       limit?: number;
       offset?: string;
     };
-    text: React.DOMElement<any>;
+    text: React.DOMElement<any, any>;
   }
 }
 export = PaginateEntry;

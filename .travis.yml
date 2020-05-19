@@ -16,10 +16,7 @@ sudo: false
 language: node_js
 # Specify the node versions to run on
 node_js:
-  - "0.12"
-# Make sure to have typings before the test
-before_script:
-  - npm run typings
+  - "10.16.0"
 before_deploy:
   - npm run web
 # Push to gh-pages

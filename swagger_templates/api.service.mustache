@@ -1,0 +1,47 @@
+{{#operations}}
+/// <reference path="../interfaces.ts" />
+
+/* tslint:disable:max-line-length */
+/* tslint:disable:eofline */
+var resourceBase = <Resource>{
+  "name": "{{toSnakeCase pathPrefix}}",
+  "comment": "",
+  "properties":[],
+  "actions": [
+  {{#operation}}{{^formParams}}
+  {{#contents}}
+  {
+    "name": "{{operationId}}",
+    "method": "{{toUpperCase httpMethod}}",
+    "collection": {{#queryParams}}{{#eq baseName "limit"}}true||{{/eq}}{{/queryParams}}false,
+    "path": "{{parsePath path}}",
+    "params": [
+      {{#pathParams}} 
+      {
+      "name": "{{baseName}}",
+      "type": "{{dataType}}",
+      "example_values": [{{&getExampleFromJson jsonSchema}}],
+      "comment": "{{description}}",
+      "required": {{required}}
+      },
+      {{/pathParams}}
+      {{#queryParams}}
+      {{#neq baseName "limit"}}
+      {
+      "name": "{{baseName}}",
+      "type": "{{dataType}}",
+      "example_values": [{{&getExampleFromJson jsonSchema}}],
+      "comment": "{{description}}",
+      "required": {{required}}
+      },
+      {{/neq}}
+      {{/queryParams}}
+    ],
+    "comment": "{{summary}}"
+  },
+  {{/contents}}
+  {{/formParams}}{{/operation}}
+  ]
+}
+{{/operations}}
+export = resourceBase;

@@ -1,17 +1,19 @@
 /// <reference path="../../src/resources/interfaces.ts" />
 import chai = require("chai");
-import React = require("react/addons");
 import sinon = require("sinon");
 import _ = require("lodash");
 
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import RouteEntry = require("../../src/components/route_entry");
+import {SinonFakeServer, SinonStub} from "sinon";
+import * as ReactTestUtils from "react-dom/test-utils";
+import * as ReactDOM from "react-dom";
 
 var assert = chai.assert;
-var testUtils = React.addons.TestUtils;
+var testUtils = ReactTestUtils;
 
 describe("RouteEntryComponent", () => {
-  var sand: SinonSandbox;
+  var sand: SinonFakeServer;
 
   var initialAction: Action;
   var initialResource: Resource;
@@ -19,17 +21,22 @@ describe("RouteEntryComponent", () => {
   var onActionChangeStub: SinonStub;
 
   var root: RouteEntry;
-  var selectRoute: React.HTMLComponent;
+  var selectRoute: Element;
 
   beforeEach(() => {
-    sand = sinon.sandbox.create();
+    sand = sinon.fakeServer.create();
 
     initialResource = Resources.Projects;
-    initialAction = initialResource.actions[0];
+    let i = 0;
+    initialAction = initialResource.actions[i];
+    while(initialAction.method !== "GET") {
+      i += 1;
+      initialAction = initialResource.actions[i]
+    }
 
-    onActionChangeStub = sand.stub();
+    onActionChangeStub = sinon.stub();
 
-    root = testUtils.renderIntoDocument<RouteEntry>(
+    root = testUtils.renderIntoDocument(
       RouteEntry.create({
         action: initialAction,
         currentRequestUrl: "URL_HERE",
@@ -48,29 +55,48 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should select the current route", () => {
-    assert.include(
-      React.findDOMNode<HTMLInputElement>(selectRoute).value,
-      initialAction.name
-    );
+    
+      let selectRouteNode = (<HTMLSelectElement>ReactDOM.findDOMNode(selectRoute));
+      if (selectRouteNode === null) {
+          assert(false);
+          return;
+      }
+      assert.include(
+            selectRouteNode.value || "",
+          initialAction.name
+        );
   });
 
   it("should display the current route url", () => {
-    assert.include(
-      React.findDOMNode(root).textContent,
-      initialAction.method + " " + "URL_HERE"
+      let rootNode = ReactDOM.findDOMNode(root);
+      if (rootNode === null) {
+          assert(false);
+          return;
+      }
+      assert.include(
+          rootNode.textContent || "",
+          initialAction.method + " " + "URL_HERE"
     );
   });
 
   it("should contain dropdown with other routes", () => {
-    var children = React.findDOMNode(selectRoute).childNodes;
+    let selectRouteNode = ReactDOM.findDOMNode(selectRoute);
 
-    assert.equal(children.length, initialResource.actions.length);
-    initialResource.actions.forEach((action, idx) => {
+    if (selectRouteNode === null) {
+        assert(false);
+        return;
+    }
+    var children = selectRouteNode.childNodes;
+
+    const getActions = initialResource.actions.filter((action) => {return action.method === "GET"})
+
+    assert.equal(children.length, getActions.length);
+    getActions.forEach((action, idx) => {
       var childItem = (<HTMLOptionElement>children.item(idx));
 
       // Replace any placeholders with their required param name.
       // NB: We use replace rather than util.format in order to ignore
-      //     paths that do not contain a placeholder.
+      //     Paths that do not contain a placeholder.
       var requiredParam = _.find(action.params, "required");
       var actionPath = requiredParam !== undefined ?
         action.path.replace("%s", ":" + requiredParam.name) : action.path;
@@ -81,11 +107,7 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should trigger onRouteChange property on route change", () => {
-    var otherAction = initialResource.actions[1];
-
-    testUtils.Simulate.change(selectRoute, {
-      target: { value: otherAction.name }
-    });
+    testUtils.Simulate.change(selectRoute);
     sinon.assert.called(onActionChangeStub);
   });
 });

@@ -1,80 +1,80 @@
 /// <reference path="../../src/resources/interfaces.ts" />
 import chai = require("chai");
-import React = require("react/addons");
+import React = require("react");
 import sinon = require("sinon");
 import _ = require("lodash");
+import * as ReactDOM from "react-dom";
 
 import PropertyEntry = require("../../src/components/property_entry");
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
+import * as ReactTestUtils from "react-dom/test-utils";
+import {SinonFakeServer, SinonStub} from "sinon";
 
-var assert = chai.assert;
-var r = React.DOM;
-var testUtils = React.addons.TestUtils;
+const assert = chai.assert;
+const r = React.createElement;
+const testUtils = ReactTestUtils;
 
 describe("PropertyEntryComponent", () => {
-  var sand: SinonSandbox;
+    let sand: SinonFakeServer;
 
-  var properties: Property[];
+    let properties: Property[];
 
-  var isPropertyCheckedStub: SinonStub;
-  var usePropertyStub: SinonStub;
+    let isPropertyCheckedStub: SinonStub;
+    let usePropertyStub: SinonStub;
 
-  var root: PropertyEntry;
-  var checkboxes: React.HTMLComponent[];
+    let root: PropertyEntry;
+    let checkboxes: Element[];
 
-  beforeEach(() => {
-    sand = sinon.sandbox.create();
+    beforeEach(() => {
+        sand = sinon.fakeServer.create();
 
-    properties = Resources.Events.properties;
+        properties = Resources.Events.properties;
 
-    isPropertyCheckedStub = sand.stub();
-    usePropertyStub = sand.stub();
+        isPropertyCheckedStub = sinon.stub();
+        usePropertyStub = sinon.stub();
 
-    root = testUtils.renderIntoDocument<PropertyEntry>(
-      PropertyEntry.create({
-        classSuffix: "test",
-        text: r.h3({ }, "this is a test"),
-        properties: properties,
-        isPropertyChecked: isPropertyCheckedStub,
-        useProperty: usePropertyStub
-      })
-    );
-    checkboxes = testUtils.scryRenderedDOMComponentsWithClass(
-      root,
-      "property-checkbox-test"
-    );
-  });
-
-  afterEach(() => {
-    sand.restore();
-  });
-
-  it("should contain a checkbox for each property", () => {
-    var propertyNames = _.pluck(properties, "name");
-
-    assert.equal(checkboxes.length, properties.length);
-    checkboxes.forEach(checkbox => {
-      assert.include(
-        propertyNames,
-        (React.findDOMNode<HTMLInputElement>(checkbox)).value
-      );
+        root = testUtils.renderIntoDocument(
+            PropertyEntry.create({
+                classSuffix: "test",
+                text: r("h3", {}, "this is a test"),
+                properties: properties,
+                isPropertyChecked: isPropertyCheckedStub,
+                useProperty: usePropertyStub
+            })
+        );
+        checkboxes = testUtils.scryRenderedDOMComponentsWithClass(
+            root,
+            "property-checkbox-test"
+        );
     });
-  });
 
-  it("should verify checked state for each property", () => {
-    properties.forEach(property => {
-      sinon.assert.calledWith(usePropertyStub, property.name);
+    afterEach(() => {
+        sand.restore();
     });
-  });
 
-  it("should trigger onChange property on each check action", () => {
-    checkboxes.forEach(checkbox => {
-      var checkboxNode = React.findDOMNode<HTMLInputElement>(checkbox);
+    it("should contain a checkbox for each property", () => {
+        const propertyNames = _.map(properties, "name");
 
-      testUtils.Simulate.change(checkbox, {
-        checked: !checkboxNode.checked
-      });
+        assert.equal(checkboxes.length, properties.length);
+        checkboxes.forEach(checkbox => {
+            assert.include(
+                propertyNames,
+                (<HTMLInputElement>(ReactDOM.findDOMNode(checkbox))).value
+            );
+        });
     });
-    sinon.assert.callCount(isPropertyCheckedStub, properties.length);
-  });
+
+    it("should verify checked state for each property", () => {
+        properties.forEach(property => {
+            sinon.assert.calledWith(usePropertyStub, property.name);
+        });
+    });
+
+    it("should trigger onChange property on each check action", () => {
+        checkboxes.forEach(checkbox => {
+            const checkboxNode = <HTMLInputElement>ReactDOM.findDOMNode(checkbox);
+            testUtils.Simulate.change(checkboxNode);
+        });
+        sinon.assert.callCount(isPropertyCheckedStub, properties.length);
+    });
 });
