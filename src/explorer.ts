@@ -10,7 +10,7 @@ const oauth = new OAuth2AuthCodePKCE({
   authorizationUrl: "https://app.asana.com/-/oauth_authorize",
   tokenUrl: "https://ccbv8pweoe.execute-api.us-east-1.amazonaws.com/default/api_explorer_oauth_beta",
   clientId: "23824292948206",
-  redirectUrl: "http://localhost:8338/",
+  redirectUrl: window.location.href.split("?")[0],
   scopes: [],
   onInvalidGrant(){
       console.log("Expired! Auth code or refresh token needs to be renewed.");
@@ -29,7 +29,7 @@ export function run(initialResource?: string, initialRoute?: string): void {
     OAuth: oauth
   }), document.getElementById("tab-explorer"));
 
-  oauth.isReturningFromAuthServer().then(hasAuthCode => {
+  oauth.isReturningFromAuthServer().then(() => {
     return oauth.getAccessToken().then((tokenResponse) => {
         explorer.setCredentialsFromOAuth(tokenResponse.token.value)
     });
