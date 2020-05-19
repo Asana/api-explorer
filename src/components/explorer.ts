@@ -102,7 +102,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
      * Authorize the client, if it has expired, and force a re-rendering.
      */
     authorize = (): void => {
-        this.props.OAuth.fetchAuthorizationCode();
+        this.props.oauth.fetchAuthorizationCode();
     }
 
     setCredentialsFromOAuth = (token: String): void => {
@@ -750,7 +750,7 @@ module Explorer {
         initialClient?: Asana.Client;
         initialResourceString?: string;
         initialRoute?: string;
-        OAuth?: OAuth2AuthCodePKCE;
+        oauth?: OAuth2AuthCodePKCE;
     }
 
     /**

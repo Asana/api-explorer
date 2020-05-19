@@ -10,7 +10,7 @@ import constants = require("./constants");
 
 const oauth = new OAuth2AuthCodePKCE({
   authorizationUrl: "https://app.asana.com/-/oauth_authorize",
-  tokenUrl: "https://ccbv8pweoe.execute-api.us-east-1.amazonaws.com/default/api_explorer_oauth_beta",
+  tokenUrl: constants.TOKEN_URL,
   clientId: constants.CLIENT_ID,
   redirectUrl: window.location.href.split("?")[0],
   scopes: [],
@@ -28,7 +28,7 @@ export function run(initialResource?: string, initialRoute?: string): void {
   const explorer = ReactDOM.render(Explorer.create({
     initialResourceString: initialResource,
     initialRoute: initialRoute,
-    OAuth: oauth
+    oauth
   }), document.getElementById("tab-explorer"));
 
   oauth.isReturningFromAuthServer().then(() => {
