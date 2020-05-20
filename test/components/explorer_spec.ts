@@ -7,13 +7,12 @@ import util = require("util");
 import _ = require("lodash");
 import * as ReactDOM from "react-dom";
 
-
 import constants = require("../../src/constants");
 import Credentials = require("../../src/credentials");
 import Explorer = require("../../src/components/explorer");
-import Resources = require("../../src/resources");
+import Resources = require("../../src/resources/resources");
 import ResourcesHelpers = require("../../src/resources/helpers");
-import {SinonFakeServer, SinonStub} from "sinon";
+import {SinonSandbox, SinonStub} from "sinon";
 import * as ReactTestUtils from "react-dom/test-utils";
 
 const assert = chai.assert;
@@ -21,25 +20,21 @@ const testUtils = ReactTestUtils;
 import Helpers = require("../helpers");
 
 describe("ExplorerComponent", () => {
-    let sand: SinonFakeServer;
+    let sand: SinonSandbox;
 
     let client: Asana.Client;
     let authStateFromClientStub: SinonStub;
     let findAllWorkspacesPromise: Promise<any>;
-    let findAllWorkspacesStub: any;
-
-
-    before(() => {
-        authStateFromClientStub = sinon.stub(Credentials, "authStateFromClient");
-    })
+    let findAllWorkspacesStub: SinonStub;
 
     beforeEach(() => {
-        sand = sinon.fakeServer.create();
+        sand = sinon.sandbox.create();
 
         client = Asana.Client.create({
             clientId: constants.CLIENT_ID,
             redirectUri: constants.REDIRECT_URI
         });
+        authStateFromClientStub = sand.stub(Credentials, "authStateFromClient");
 
         findAllWorkspacesPromise = Promise.resolve({
             data: [
@@ -47,8 +42,8 @@ describe("ExplorerComponent", () => {
                 {id: "456", name: "Workspace Name"}
             ]
         });
-
-        findAllWorkspacesStub = sinon.stub(client.workspaces, "findAll").returns(findAllWorkspacesPromise)
+        findAllWorkspacesStub = sand.stub(client.workspaces, "findAll")
+            .returns(findAllWorkspacesPromise);
     });
 
     afterEach(() => {
@@ -134,11 +129,11 @@ describe("ExplorerComponent", () => {
                 root, "authorize-link");
             assert.equal(link.tagName, "A");
 
-            let authorizeStub = sinon.stub();
+            let authorizeStub = sand.stub();
 
             // Stub authorization to set the client to authorized.
             let promise = new Promise<Asana.Client>((resolve, reject) => {
-                authorizeStub = sinon.stub(client, "authorize").callsFake(() => {
+                authorizeStub = sand.stub(client, "authorize").callsFake(() => {
                         authStateFromClientStub.returns(Credentials.AuthState.Authorized);
                         resolve(client);
                         return promise;
@@ -166,12 +161,12 @@ describe("ExplorerComponent", () => {
 
         it("should fetch workspaces only after authorization", (cb) => {
             sinon.assert.notCalled(findAllWorkspacesStub);
-            assert.isUndefined(root.state.workspaces);
+            assert.isUndefined((root.state.workspaces || []));
             assert.isUndefined(root.state.workspace);
 
             // Stub authorization to set the client to authorized.
             let promise = new Promise<Asana.Client>((resolve, reject) => {
-                sinon.stub(client, "authorize").callsFake(() => {
+                sand.stub(client, "authorize").callsFake(() => {
                         authStateFromClientStub.returns(Credentials.AuthState.Authorized);
                         resolve(client);
                         return promise;
@@ -182,6 +177,7 @@ describe("ExplorerComponent", () => {
 
             // After authorization resolves, the state should have updated.
             promise.then(() => {
+                sinon.assert.called(findAllWorkspacesStub);
                 findAllWorkspacesPromise.then(() => {
                     assert.lengthOf((root.state.workspaces || []), 2);
                     assert.equal(root.state.workspace, (root.state.workspaces || [])[0]);
@@ -210,7 +206,7 @@ describe("ExplorerComponent", () => {
         it("should disable the submit button", () => {
             const submitRequest = testUtils.findRenderedDOMComponentWithClass(
                 root, "submit-request");
-            assert.isTrue((<HTMLButtonElement>submitRequest).disabled);
+            assert.isTrue(Helpers.findReactComponent(submitRequest).props.disabled);
         });
 
         it("should contain link to authorize client", (cb) => {
@@ -218,11 +214,11 @@ describe("ExplorerComponent", () => {
                 root, "authorize-link");
             assert.equal(link.tagName, "A");
 
-            let authorizeStub = sinon.stub();
+            let authorizeStub = sand.stub();
 
             // Stub authorization to set the client to authorized.
             let promise = new Promise<Asana.Client>((resolve, reject) => {
-                authorizeStub = sinon.stub(client, "authorize").callsFake(() => {
+                authorizeStub = sand.stub(client, "authorize").callsFake(() => {
                         authStateFromClientStub.returns(Credentials.AuthState.Authorized);
                         resolve(client);
                         return promise;
@@ -250,12 +246,12 @@ describe("ExplorerComponent", () => {
 
         it("should fetch workspaces only after authorization", (cb) => {
             sinon.assert.notCalled(findAllWorkspacesStub);
-            assert.isUndefined(root.state.workspaces);
+            assert.isUndefined((root.state.workspaces || []));
             assert.isUndefined(root.state.workspace);
 
             // Stub authorization to set the client to authorized.
             let promise = new Promise<Asana.Client>((resolve, reject) => {
-                sinon.stub(client, "authorize").callsFake(() => {
+                sand.stub(client, "authorize").callsFake(() => {
                         authStateFromClientStub.returns(Credentials.AuthState.Authorized);
                         resolve(client);
                         return promise;
@@ -290,7 +286,7 @@ describe("ExplorerComponent", () => {
             authStateFromClientStub.returns(Credentials.AuthState.Authorized);
 
             initialResource = Resources.Attachments;
-            initialAction = initialResource.actions[1]; // GET method
+            initialAction = initialResource.actions[0];
 
             root = testUtils.renderIntoDocument(
                 Explorer.create({
@@ -880,12 +876,12 @@ describe("ExplorerComponent", () => {
             beforeEach(() => {
                 const rawResponse = {data: "{ a: 2 }"};
                 jsonResponse = JSON.stringify(rawResponse, undefined, 2);
-                getStub = sinon.stub(client.dispatcher, "get").callsFake(() => {
+                getStub = sand.stub(client.dispatcher, "get").callsFake(() => {
                     return rawResponsePromise = Promise.resolve(rawResponse);
                 });
 
                 // For these tests, we'll bypass the check for allowable submission.
-                sinon.stub(root, "userStateStatus")
+                sand.stub(root, "userStateStatus")
                     .returns(Explorer.UserStateStatus.Okay);
             });
 
@@ -913,6 +909,7 @@ describe("ExplorerComponent", () => {
 
                 root.setState({
                     params: {
+                        expandFields: ["test"],
                         includeFields: ["other", "this"],
                         requiredParams: _.zipObject([(requiredParam || {}).name || ""], ["123"]),
                         optionalParams: {abc: 456},
@@ -926,7 +923,7 @@ describe("ExplorerComponent", () => {
                 // The path should include all the params initialized above.
                 const actionPath =
                     util.format(initialAction.path, "123") +
-                    "?opt_fields=other,this&abc=456&test=hi";
+                    "?opt_expand=test&opt_fields=other,this&abc=456&test=hi";
 
                 rawResponsePromise.then(function () {
                     assert.include(
@@ -977,6 +974,7 @@ describe("ExplorerComponent", () => {
 
                 root.setState({
                     params: {
+                        expandFields: ["test"],
                         includeFields: ["other", "this"],
                         requiredParams: _.zipObject([(requiredParam || {}).name || ""], ["123"]),
                         optionalParams: {abc: 456},
@@ -992,6 +990,7 @@ describe("ExplorerComponent", () => {
                         getStub,
                         util.format(initialAction.path, "123"),
                         {
+                            opt_expand: "test",
                             opt_fields: "other,this",
                             abc: 456,
                             test: "hi"
@@ -1067,7 +1066,7 @@ describe("ExplorerComponent", () => {
             it("should be disabled with unset required param with get request", () => {
                 assert.equal((root.state.action || {}).method, "GET");
                 assert.propertyVal(((root.state.action || {}).params || [])[0], "required", true);
-                assert.isTrue((<HTMLButtonElement>submitRequest).disabled);
+                assert.isTrue(Helpers.findReactComponent(submitRequest).props.disabled);
 
                 assert.equal(
                     root.userStateStatus(),
@@ -1090,13 +1089,13 @@ describe("ExplorerComponent", () => {
             });
 
             it("should be disabled with non-get request", () => {
-                const deleteAction = initialResource.actions[0];
+                const postAction = initialResource.actions[2];
 
                 let element = (<HTMLSelectElement>ReactDOM.findDOMNode(selectRoute));
-                element.value = deleteAction.name;
+                element.value = postAction.name;
                 testUtils.Simulate.change(selectRoute);
 
-                assert.equal(root.state.action, deleteAction);
+                assert.equal(root.state.action, postAction);
                 assert.notEqual((root.state.action || {}).method, "GET");
                 assert.isTrue(Helpers.findReactComponent(submitRequest).props.disabled);
 
@@ -1110,7 +1109,7 @@ describe("ExplorerComponent", () => {
                     root.userStateStatus(),
                     Explorer.UserStateStatus.Okay);
 
-                assert.isTrue((<HTMLButtonElement>submitRequest).disabled);
+                assert.isTrue(Helpers.findReactComponent(submitRequest).props.disabled);
                 assert.throws(root.onSubmitRequest);
             });
         });

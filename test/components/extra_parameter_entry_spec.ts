@@ -5,7 +5,7 @@ import _ = require("lodash");
 
 import ExtraParameterEntry = require("../../src/components/extra_parameter_entry");
 import * as ReactTestUtils from "react-dom/test-utils";
-import {SinonFakeServer, SinonStub} from "sinon";
+import {SinonSandbox, SinonStub} from "sinon";
 
 import Helpers = require("../helpers");
 
@@ -14,7 +14,7 @@ const r = React.createElement;
 const testUtils = ReactTestUtils;
 
 describe("ExtraParameterEntryComponent", () => {
-    let sand: SinonFakeServer;
+    let sand: SinonSandbox;
 
     let syncExtraParametersStub: SinonStub;
 
@@ -22,9 +22,9 @@ describe("ExtraParameterEntryComponent", () => {
     let addExtraParam: Element;
 
     beforeEach(() => {
-        sand = sinon.fakeServer.create();
+        sand = sinon.sandbox.create();
 
-        syncExtraParametersStub = sinon.stub();
+        syncExtraParametersStub = sand.stub();
 
         root = testUtils.renderIntoDocument(
             ExtraParameterEntry.create({
@@ -81,25 +81,19 @@ describe("ExtraParameterEntryComponent", () => {
             "extra-param"
         );
 
-
-        const extraParamKeys = testUtils.scryRenderedDOMComponentsWithClass(
-            root,
-            "extra-param-key"
-        );
-
-        const extraParamValues = testUtils.scryRenderedDOMComponentsWithClass(
-            root,
-            "extra-param-value"
-        );
-
         // For each extra parameter, we'll input data and verify it updated.
-        extraParamKeys.forEach((keyInput, i) => {
+        extraParams.forEach(extraParam => {
+            const keyInput = testUtils.findRenderedDOMComponentWithClass(
+                Helpers.findReactComponent(extraParam),
+                "extra-param-key"
+            );
+            const valueInput = testUtils.findRenderedDOMComponentWithClass(
+                Helpers.findReactComponent(extraParam),
+                "extra-param-value"
+            );
 
             const uniqueKey = _.uniqueId();
-            const input = (<HTMLInputElement>keyInput)
-            testUtils.Simulate.change(input, {	
-                target: { value: uniqueKey }	
-              } as any)
+            keyInput.dispatchEvent(new Event("change", {bubbles: true}));
 
             assert.include(
                 root.state.extraParams,
@@ -111,9 +105,7 @@ describe("ExtraParameterEntryComponent", () => {
 
             const uniqueValue = _.uniqueId();
 
-            testUtils.Simulate.change( extraParamValues[i], {	
-                target: { value: uniqueValue }	
-              } as any)
+            valueInput.dispatchEvent(new Event("change", {bubbles: true}));
 
             assert.include(
                 root.state.extraParams,
@@ -122,7 +114,7 @@ describe("ExtraParameterEntryComponent", () => {
             sinon.assert.calledWith(
                 syncExtraParametersStub,
                 root.state.extraParams);
-        })  
+        });
     });
 
     it("should remove extra param after clicking link", () => {
@@ -135,30 +127,29 @@ describe("ExtraParameterEntryComponent", () => {
             "extra-param"
         );
 
-        const extraParamKeys = testUtils.scryRenderedDOMComponentsWithClass(
-            root,
-            "extra-param-key"
-        );
-
-        const extraParamValues = testUtils.scryRenderedDOMComponentsWithClass(
-            root,
-            "extra-param-value"
-        );
-
         // Now enter text in parameters to differentiate them.
-        extraParamKeys.forEach((keyInput, i) => {
+        extraParams.forEach(extraParam => {
+            const keyInput = testUtils.findRenderedDOMComponentWithClass(
+                Helpers.findReactComponent(extraParam),
+                "extra-param-key"
+            );
+            const valueInput = testUtils.findRenderedDOMComponentWithClass(
+                Helpers.findReactComponent(extraParam),
+                "extra-param-value"
+            );
+
             keyInput.dispatchEvent(new Event("change", {bubbles: true}));
-            extraParamValues[i].dispatchEvent(new Event("change", {bubbles: true}));
-        })
+            valueInput.dispatchEvent(new Event("change", {bubbles: true}));
+        });
 
         // Now, we can remove each of the fields and verify.
         const extraParamsCopy = _.cloneDeep(root.state.extraParams);
         while (root.state.extraParams.length > 0) {
-            const deleteLink = testUtils.scryRenderedDOMComponentsWithClass(
-                root,
+            const deleteLink = testUtils.findRenderedDOMComponentWithClass(
+                Helpers.findReactComponent(extraParams[0]),
                 "delete-extra-param"
             );
-            testUtils.Simulate.click(deleteLink[0]);
+            testUtils.Simulate.click(deleteLink);
 
             extraParamsCopy.shift();
             assert.deepEqual(root.state.extraParams, extraParamsCopy);

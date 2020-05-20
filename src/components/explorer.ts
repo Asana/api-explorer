@@ -4,7 +4,6 @@ import Asana = require("asana");
 import * as React from "react";
 import url = require("url");
 import _ = require("lodash");
-import {OAuth2AuthCodePKCE} from "@bity/oauth2-auth-code-pkce"
 
 import constants = require("../constants");
 import Credentials = require("../credentials");
@@ -14,14 +13,13 @@ import PaginateEntry = require("./paginate_entry");
 import ParameterEntry = require("./parameter_entry");
 import PropertyEntry = require("./property_entry");
 import ResourceEntry = require("./resource_entry");
-import Resources = require("../resources");
+import Resources = require("../resources/resources");
 import RouteEntry = require("./route_entry");
 import update from "immutability-helper";
 
 import ResourcesHelpers = require("../resources/helpers");
 
 const r = React.createElement;
-
 
 /**
  * If a client exists in props, use it. Otherwise, make a new one.
@@ -102,15 +100,19 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
      * Authorize the client, if it has expired, and force a re-rendering.
      */
     authorize = (): void => {
-        this.props.oauth.fetchAuthorizationCode();
-    }
+        if (this.state.client === undefined) {
+            return;
+        }
+        this.state.client.authorize().then(client => {
+            Credentials.storeFromClient(client);
+            // @ts-ignore
+            this.state.authState = Credentials.authStateFromClient(client);
 
-    setCredentialsFromOAuth = (token: String): void => {
-        this.state.client.useAccessToken(token)
-        this.setState({authState: Credentials.AuthState.Authorized})
-        window.history.replaceState({}, document.title, window.location.href.split("?")[0]);
-        this.fetchAndStoreWorkspaces();
-        this.forceUpdate();
+            // After authorization, perform tasks that require authentication.
+            this.fetchAndStoreWorkspaces();
+
+            this.forceUpdate();
+        });
     }
 
     /**
@@ -125,10 +127,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
                 workspace: workspaces.data[0],
                 workspaces: workspaces.data
             });
-        }).catch((e: any) => {
-            this.setState({authState: Credentials.AuthState.Expired})
-            window.localStorage.clear()
-        })
+        });
     }
 
     /**
@@ -141,6 +140,11 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 
         let params: any = {};
 
+        if (this.state.params.expandFields.length > 0) {
+            params = _.extend(params, {
+                opt_expand: this.state.params.expandFields.join()
+            });
+        }
         if (this.state.params.includeFields.length > 0) {
             params = _.extend(params, {
                 opt_fields: this.state.params.includeFields.join()
@@ -674,6 +678,24 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
                                     isPropertyChecked: this.onChangePropertyChecked("includeFields")
                                 })
                             ),
+
+                            r("div", {
+                                    className: "column-6"
+                                },
+                                PropertyEntry.create({
+                                    classSuffix: "expand",
+                                    text: r("h3", {}, "Expand Fields"),
+                                    properties: this.state.resource.properties,
+                                    useProperty: property => {
+                                        if (!this.state.params) {
+                                            return false;
+                                        }
+
+                                        return _.includes(this.state.params.expandFields, property);
+                                    },
+                                    isPropertyChecked: this.onChangePropertyChecked("expandFields")
+                                })
+                            )
                         ),
 
                     r("div", {
@@ -725,6 +747,7 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
 module Explorer {
     export function emptyParams(): ParamData {
         return {
+            expandFields: [],
             includeFields: [],
             requiredParams: {},
             optionalParams: {},
@@ -736,6 +759,7 @@ module Explorer {
     }
 
     export interface ParamData {
+        expandFields: string[];
         includeFields: string[];
         requiredParams: any;
         optionalParams: any;
@@ -750,7 +774,6 @@ module Explorer {
         initialClient?: Asana.Client;
         initialResourceString?: string;
         initialRoute?: string;
-        oauth?: OAuth2AuthCodePKCE;
     }
 
     /**

@@ -5,16 +5,16 @@ import sinon = require("sinon");
 import _ = require("lodash");
 
 import ParameterEntry = require("../../src/components/parameter_entry");
-import Resources = require("../../src/resources");
+import Resources = require("../../src/resources/resources");
 import * as ReactTestUtils from "react-dom/test-utils";
-import {SinonFakeServer, SinonStub} from "sinon";
+import {SinonSandbox, SinonStub} from "sinon";
 
 const assert = chai.assert;
 const r = React.createElement;
 const testUtils = ReactTestUtils;
 
 describe("ParameterEntryComponent", () => {
-    let sand: SinonFakeServer;
+    let sand: SinonSandbox;
 
     let parameters: Parameter[];
 
@@ -24,11 +24,11 @@ describe("ParameterEntryComponent", () => {
     let inputs: Element[];
 
     beforeEach(() => {
-        sand = sinon.fakeServer.create();
+        sand = sinon.sandbox.create();
 
         parameters = Resources.Events.actions[0].params || [];
 
-        onParameterChangeStub = sinon.stub();
+        onParameterChangeStub = sand.stub();
 
         root = testUtils.renderIntoDocument(
             ParameterEntry.create({

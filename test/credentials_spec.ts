@@ -4,24 +4,23 @@ import sinon = require("sinon");
 import Credentials = require("../src/credentials");
 import constants = require("../src/constants");
 import helpers = require("./helpers");
-import {SinonFakeTimers, SinonFakeServer} from "sinon";
+import {SinonSandbox} from "sinon";
 
 var assert = chai.assert;
 
 var MINUTE_IN_MS = 1000 * 60;
 
 describe("Credentials", () => {
-  var sand: SinonFakeServer;
-  var clock: SinonFakeTimers;
+  var sand: SinonSandbox;
 
   beforeEach(() => {
-    sand = sinon.fakeServer.create();
+    sand = sinon.sandbox.create();
 
-    clock = sinon.useFakeTimers();
+    sand.clock = sinon.useFakeTimers();
   });
 
   afterEach(() => {
-    clock.restore();
+    sand.clock.restore();
 
     sand.restore();
   });
@@ -38,7 +37,7 @@ describe("Credentials", () => {
       var client = helpers.createOauthClient(
         helpers.createCredentials(Date.now())
       );
-      clock.tick(500);
+      sand.clock.tick(500);
       assert.equal(
         Credentials.authStateFromClient(client),
         Credentials.AuthState.Expired);
@@ -84,8 +83,8 @@ describe("Credentials", () => {
 
     describe("#getFromLocalStorage", () => {
       it("should return null when localStorage is empty", () => {
-        var getItemStub = sinon.stub(localStorage, "getItem");
-        var parseStub = sinon.spy(JSON, "parse");
+        var getItemStub = sand.stub(localStorage, "getItem");
+        var parseStub = sand.spy(JSON, "parse");
 
         getItemStub.returns(null);
         assert.equal(Credentials.getFromLocalStorage(), null);
@@ -95,8 +94,8 @@ describe("Credentials", () => {
       });
 
       it("should fetch result when localStorage is not empty", () => {
-        var getItemStub = sinon.stub(localStorage, "getItem");
-        var parseStub = sinon.stub(JSON, "parse");
+        var getItemStub = sand.stub(localStorage, "getItem");
+        var parseStub = sand.stub(JSON, "parse");
 
         getItemStub.returns("hi");
         Credentials.getFromLocalStorage();
@@ -119,7 +118,7 @@ describe("Credentials", () => {
       it("should store credentials from the client", () => {
         var credentials = helpers.createCredentials(Date.now());
         var client = helpers.createOauthClient(credentials);
-        var setItemStub = sinon.stub(localStorage, "setItem");
+        var setItemStub = sand.stub(localStorage, "setItem");
 
         Credentials.storeFromClient(client);
 

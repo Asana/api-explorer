@@ -2,7 +2,7 @@
 import util = require("util");
 import _ = require("lodash");
 
-import Resources = require("../resources");
+import Resources = require("./resources");
 
 /**
  * Returns the names of all valid resources.
@@ -41,7 +41,7 @@ export function resourceNameFromResource(resource: Resource): string {
  */
 export function actionFromResourcePath(resource: Resource, path: string): Action {
   return resource.actions.filter(
-    action => { return action.method === "GET" && path === action.path; }
+    action => { return path === action.path; }
   )[0];
 }
 

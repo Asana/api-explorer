@@ -3,9 +3,9 @@ import chai = require("chai");
 import sinon = require("sinon");
 import _ = require("lodash");
 
-import Resources = require("../../src/resources");
+import Resources = require("../../src/resources/resources");
 import RouteEntry = require("../../src/components/route_entry");
-import {SinonFakeServer, SinonStub} from "sinon";
+import {SinonSandbox, SinonStub} from "sinon";
 import * as ReactTestUtils from "react-dom/test-utils";
 import * as ReactDOM from "react-dom";
 
@@ -13,7 +13,7 @@ var assert = chai.assert;
 var testUtils = ReactTestUtils;
 
 describe("RouteEntryComponent", () => {
-  var sand: SinonFakeServer;
+  var sand: SinonSandbox;
 
   var initialAction: Action;
   var initialResource: Resource;
@@ -24,17 +24,12 @@ describe("RouteEntryComponent", () => {
   var selectRoute: Element;
 
   beforeEach(() => {
-    sand = sinon.fakeServer.create();
+    sand = sinon.sandbox.create();
 
     initialResource = Resources.Projects;
-    let i = 0;
-    initialAction = initialResource.actions[i];
-    while(initialAction.method !== "GET") {
-      i += 1;
-      initialAction = initialResource.actions[i]
-    }
+    initialAction = initialResource.actions[0];
 
-    onActionChangeStub = sinon.stub();
+    onActionChangeStub = sand.stub();
 
     root = testUtils.renderIntoDocument(
       RouteEntry.create({
@@ -55,14 +50,13 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should select the current route", () => {
-    
-      let selectRouteNode = (<HTMLSelectElement>ReactDOM.findDOMNode(selectRoute));
+      let selectRouteNode = ReactDOM.findDOMNode(selectRoute);
       if (selectRouteNode === null) {
           assert(false);
           return;
       }
       assert.include(
-            selectRouteNode.value || "",
+            selectRouteNode.nodeValue || "",
           initialAction.name
         );
   });
@@ -88,10 +82,8 @@ describe("RouteEntryComponent", () => {
     }
     var children = selectRouteNode.childNodes;
 
-    const getActions = initialResource.actions.filter((action) => {return action.method === "GET"})
-
-    assert.equal(children.length, getActions.length);
-    getActions.forEach((action, idx) => {
+    assert.equal(children.length, initialResource.actions.length);
+    initialResource.actions.forEach((action, idx) => {
       var childItem = (<HTMLOptionElement>children.item(idx));
 
       // Replace any placeholders with their required param name.
@@ -107,7 +99,8 @@ describe("RouteEntryComponent", () => {
   });
 
   it("should trigger onRouteChange property on route change", () => {
-    testUtils.Simulate.change(selectRoute);
+    selectRoute.dispatchEvent( new Event("change", {bubbles: true}));
+
     sinon.assert.called(onActionChangeStub);
   });
 });

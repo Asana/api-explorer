@@ -5,14 +5,14 @@ import _ = require("lodash");
 
 import PaginateEntry = require("../../src/components/paginate_entry");
 import * as ReactTestUtils from "react-dom/test-utils";
-import {SinonFakeServer, SinonStub} from "sinon";
+import {SinonSandbox, SinonStub} from "sinon";
 
 const assert = chai.assert;
 const r = React.createElement;
 const testUtils = ReactTestUtils;
 
 describe("PaginateEntryComponent", () => {
-    let sand: SinonFakeServer;
+    let sand: SinonSandbox;
 
     let onPaginateChangeStub: SinonStub;
 
@@ -21,9 +21,9 @@ describe("PaginateEntryComponent", () => {
     let offsetInput: Element;
 
     beforeEach(() => {
-        sand = sinon.fakeServer.create();
+        sand = sinon.sandbox.create();
 
-        onPaginateChangeStub = sinon.stub().returns(_.noop);
+        onPaginateChangeStub = sand.stub().returns(_.noop);
     });
 
     afterEach(() => {

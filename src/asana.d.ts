@@ -11,7 +11,6 @@ declare module "asana" {
     workspaces: resources.Workspaces;
     static create(options?: any): Client;
     useOauth(options?: any): Client;
-    useAccessToken(accessToken: String): Client;
     authorize(): Promise<Client>;
   }
 
