@@ -4,6 +4,7 @@ import Asana = require("asana");
 import * as React from "react";
 import url = require("url");
 import _ = require("lodash");
+import {OAuth2AuthCodePKCE} from "@bity/oauth2-auth-code-pkce"
 
 import constants = require("../constants");
 import Credentials = require("../credentials");
@@ -20,6 +21,7 @@ import update from "immutability-helper";
 import ResourcesHelpers = require("../resources/helpers");
 
 const r = React.createElement;
+
 
 /**
  * If a client exists in props, use it. Otherwise, make a new one.
@@ -100,19 +102,15 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
      * Authorize the client, if it has expired, and force a re-rendering.
      */
     authorize = (): void => {
-        if (this.state.client === undefined) {
-            return;
-        }
-        this.state.client.authorize().then(client => {
-            Credentials.storeFromClient(client);
-            // @ts-ignore
-            this.state.authState = Credentials.authStateFromClient(client);
+        this.props.oauth.fetchAuthorizationCode();
+    }
 
-            // After authorization, perform tasks that require authentication.
-            this.fetchAndStoreWorkspaces();
-
-            this.forceUpdate();
-        });
+    setCredentialsFromOAuth = (token: String): void => {
+        this.state.client.useAccessToken(token)
+        this.setState({authState: Credentials.AuthState.Authorized})
+        window.history.replaceState({}, document.title, window.location.href.split("?")[0]);
+        this.fetchAndStoreWorkspaces();
+        this.forceUpdate();
     }
 
     /**
@@ -127,7 +125,10 @@ class Explorer extends React.Component<Explorer.Props, Explorer.State> {
                 workspace: workspaces.data[0],
                 workspaces: workspaces.data
             });
-        });
+        }).catch((e: any) => {
+            this.setState({authState: Credentials.AuthState.Expired})
+            window.localStorage.clear()
+        })
     }
 
     /**
@@ -749,6 +750,7 @@ module Explorer {
         initialClient?: Asana.Client;
         initialResourceString?: string;
         initialRoute?: string;
+        oauth?: OAuth2AuthCodePKCE;
     }
 
     /**
