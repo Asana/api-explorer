@@ -2,8 +2,8 @@ import chai = require("chai");
 import sinon = require("sinon");
 
 import JsonResponse = require("../../src/components/json_response");
-import Resources = require("../../src/resources/resources");
-import {SinonSandbox, SinonSpy} from "sinon";
+import Resources = require("../../src/resources");
+import {SinonFakeServer, SinonSpy} from "sinon";
 import * as ReactTestUtils from "react-dom/test-utils";
 import * as ReactDOM from "react-dom";
 
@@ -11,15 +11,14 @@ const assert = chai.assert;
 const testUtils = ReactTestUtils;
 
 describe("JsonResponseComponent", () => {
-    let sand: SinonSandbox;
+    let sand: SinonFakeServer;
 
     let root: JsonResponse;
     let responseBlock: Element;
-    let stringifySpy: SinonSpy;
+    let stringifySpy = sinon.spy(JSON, "stringify");
 
     beforeEach(() => {
-        sand = sinon.sandbox.create();
-        stringifySpy = sand.spy(JSON, "stringify");
+        sand = sinon.fakeServer.create();    
     });
 
     function renderWithProps(props?: JsonResponse.Props) {

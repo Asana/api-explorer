@@ -29,7 +29,8 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
         className: "select-route",
         onChange: this.props.onActionChange,
         value: this.props.action.name,
-        children: this.props.resource.actions.map(
+        // Only include read paths in route select
+        children: this.props.resource.actions.filter((action) => {return action.method === "GET"}).map(
             action => {
             return r("option", {
               value: action.name
@@ -43,7 +44,7 @@ class RouteEntry extends React.Component<RouteEntry.Props, {}> {
     return r("div", { },
       r("h3", { }, "Route description"),
       r("div", { dangerouslySetInnerHTML: {
-        __html: marked(this.props.action.comment, { sanitize: true }) }
+        __html: marked(this.props.action.comment) }
       }),
       r("hr", { }),
       r("h3", { }, "Current request URL"),

@@ -55,12 +55,12 @@ export function createFakeStorage(): Storage {
  * @returns {Component}
  */
 export function findReactComponent(el: Element) {
-    for (const key in el) {
-        if (key.startsWith("__reactInternalInstance$")) {
-            const fiberNode = (<any>el)[key];
+  for (const key in el) {
+      if (key.startsWith("__reactInternalInstance$")) {
+          const fiberNode = (<any>el)[key];
 
-            return fiberNode && fiberNode.return && fiberNode.return.stateNode;
-        }
-    }
-    return null;
+          return fiberNode && fiberNode.return && fiberNode.return.stateNode;
+      }
+  }
+  return null;
 }

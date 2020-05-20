@@ -4,16 +4,16 @@ import * as ReactDOM from "react-dom";
 import sinon = require("sinon");
 
 import ResourceEntry = require("../../src/components/resource_entry");
-import Resources = require("../../src/resources/resources");
+import Resources = require("../../src/resources");
 import * as ReactTestUtils from "react-dom/test-utils";
 import ResourcesHelpers = require("../../src/resources/helpers");
-import {SinonSandbox, SinonStub} from "sinon";
+import {SinonFakeServer, SinonStub} from "sinon";
 
 var assert = chai.assert;
 var testUtils = ReactTestUtils;
 
 describe("ResourceEntryComponent", () => {
-    var sand: SinonSandbox;
+    var sand: SinonFakeServer;
 
     var initialResource: Resource;
 
@@ -23,11 +23,11 @@ describe("ResourceEntryComponent", () => {
     var selectResource: Element;
 
     beforeEach(() => {
-        sand = sinon.sandbox.create();
+        sand = sinon.fakeServer.create();
 
         initialResource = Resources.Events;
 
-        onResourceChangeStub = sand.stub();
+        onResourceChangeStub = sinon.stub();
 
         root = testUtils.renderIntoDocument(
             ResourceEntry.create({
@@ -66,8 +66,7 @@ describe("ResourceEntryComponent", () => {
     });
 
     it("should trigger onResourceChange property on resource change", () => {
-        selectResource.dispatchEvent( new Event("change", {bubbles: true}));
-
+        testUtils.Simulate.change(selectResource);
         sinon.assert.called(onResourceChangeStub);
     });
 });
