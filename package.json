@@ -68,7 +68,7 @@
     "bluebird": "^2.11.0",
     "immutability-helper": "^3.0.1",
     "jsdom-global": "^3.0.2",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.19",
     "marked": "^0.7.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
