@@ -33,6 +33,22 @@ var resourceBase = <Resource>{
     "comment": "Create a tag in a workspace"
   },
   {
+    "name": "deleteTag",
+    "method": "DELETE",
+    "collection": true||false,
+    "path": "/tags/%s",
+    "params": [
+      {
+      "name": "tag_gid",
+      "type": "string",
+      "example_values": ["11235"],
+      "comment": "Globally unique identifier for the tag.",
+      "required": true
+      },
+    ],
+    "comment": "Delete a tag"
+  },
+  {
     "name": "getTag",
     "method": "GET",
     "collection": true||false,

@@ -130,7 +130,7 @@ var resourceBase = <Resource>{
       "type": "string",
       "example_values": ["1331"],
       "comment": "The workspace or organization to filter portfolios on.",
-      "required": true
+      "required": false
       },
     ],
     "comment": "Get multiple portfolios"
