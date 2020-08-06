@@ -774,6 +774,13 @@ var resourceBase = <Resource>{
       "required": false
       },
       {
+      "name": "portfolios.any",
+      "type": "string",
+      "example_values": ["12345,23456,34567"],
+      "comment": "Comma-separated list of portfolio IDs",
+      "required": false
+      },
+      {
       "name": "assignee_status",
       "type": "string",
       "example_values": ["later"],
