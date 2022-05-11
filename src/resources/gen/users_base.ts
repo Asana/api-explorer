@@ -60,6 +60,13 @@ var resourceBase = <Resource>{
     "path": "/users",
     "params": [
       {
+      "name": "team",
+      "type": "string",
+      "example_values": ["15627"],
+      "comment": "The team ID to filter users on.",
+      "required": false
+      },
+      {
       "name": "workspace",
       "type": "string",
       "example_values": ["1331"],
@@ -72,7 +79,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUsersForTeam",
     "method": "GET",
-    "collection": true||false,
+    "collection": false,
     "path": "/teams/%s/users",
     "params": [
       {
@@ -88,7 +95,7 @@ var resourceBase = <Resource>{
   {
     "name": "getUsersForWorkspace",
     "method": "GET",
-    "collection": true||false,
+    "collection": false,
     "path": "/workspaces/%s/users",
     "params": [
       {

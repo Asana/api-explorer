@@ -34,7 +34,7 @@ npm run setup
 # Compile the typescript and browserify the output
 npm run web
 # Start a server
-cd dist && python -m SimpleHTTPServer 8338
+cd dist && python -m http.server 8338
 # Now, you can open a web browser to http://localhost:8338/
 ```
 

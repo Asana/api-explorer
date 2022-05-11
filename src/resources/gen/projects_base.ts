@@ -253,6 +253,22 @@ var resourceBase = <Resource>{
     "comment": "Get task count of a project"
   },
   {
+    "name": "projectSaveAsTemplate",
+    "method": "POST",
+    "collection": false,
+    "path": "/projects/%s/saveAsTemplate",
+    "params": [
+      {
+      "name": "project_gid",
+      "type": "string",
+      "example_values": ["1331"],
+      "comment": "Globally unique identifier for the project.",
+      "required": true
+      },
+    ],
+    "comment": "Create a project template from a project"
+  },
+  {
     "name": "removeCustomFieldSettingForProject",
     "method": "POST",
     "collection": false,

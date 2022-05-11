@@ -24,6 +24,15 @@ var resourceBase = <Resource>{
     "comment": "Add a user to a team"
   },
   {
+    "name": "createTeam",
+    "method": "POST",
+    "collection": true||false,
+    "path": "/teams",
+    "params": [
+    ],
+    "comment": "Create a team"
+  },
+  {
     "name": "getTeam",
     "method": "GET",
     "collection": true||false,
@@ -38,22 +47,6 @@ var resourceBase = <Resource>{
       },
     ],
     "comment": "Get a team"
-  },
-  {
-    "name": "getTeamsForOrganization",
-    "method": "GET",
-    "collection": true||false,
-    "path": "/organizations/%s/teams",
-    "params": [
-      {
-      "name": "workspace_gid",
-      "type": "string",
-      "example_values": ["12345"],
-      "comment": "Globally unique identifier for the workspace or organization.",
-      "required": true
-      },
-    ],
-    "comment": "Get teams in an organization"
   },
   {
     "name": "getTeamsForUser",
@@ -77,6 +70,22 @@ var resourceBase = <Resource>{
       },
     ],
     "comment": "Get teams for a user"
+  },
+  {
+    "name": "getTeamsForWorkspcae",
+    "method": "GET",
+    "collection": true||false,
+    "path": "/workspaces/%s/teams",
+    "params": [
+      {
+      "name": "workspace_gid",
+      "type": "string",
+      "example_values": ["12345"],
+      "comment": "Globally unique identifier for the workspace or organization.",
+      "required": true
+      },
+    ],
+    "comment": "Get teams in a workspace"
   },
   {
     "name": "removeUserForTeam",

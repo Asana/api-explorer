@@ -641,21 +641,7 @@ var resourceBase = <Resource>{
       "required": false
       },
       {
-      "name": "commented_on_by.any",
-      "type": "string",
-      "example_values": ["12345,23456,34567"],
-      "comment": "Comma-separated list of user identifiers",
-      "required": false
-      },
-      {
       "name": "liked_by.not",
-      "type": "string",
-      "example_values": ["12345,23456,34567"],
-      "comment": "Comma-separated list of user identifiers",
-      "required": false
-      },
-      {
-      "name": "liked_by.any",
       "type": "string",
       "example_values": ["12345,23456,34567"],
       "comment": "Comma-separated list of user identifiers",
@@ -691,13 +677,6 @@ var resourceBase = <Resource>{
       },
       {
       "name": "followers.not",
-      "type": "string",
-      "example_values": ["12345,23456,34567"],
-      "comment": "Comma-separated list of user identifiers",
-      "required": false
-      },
-      {
-      "name": "followers.any",
       "type": "string",
       "example_values": ["12345,23456,34567"],
       "comment": "Comma-separated list of user identifiers",
@@ -778,13 +757,6 @@ var resourceBase = <Resource>{
       "type": "string",
       "example_values": ["12345,23456,34567"],
       "comment": "Comma-separated list of portfolio IDs",
-      "required": false
-      },
-      {
-      "name": "assignee_status",
-      "type": "string",
-      "example_values": ["later"],
-      "comment": "One of &#x60;inbox&#x60;, &#x60;today&#x60;, &#x60;upcoming&#x60;, or &#x60;later&#x60;",
       "required": false
       },
       {
