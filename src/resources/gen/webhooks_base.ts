@@ -71,6 +71,22 @@ var resourceBase = <Resource>{
     ],
     "comment": "Get multiple webhooks"
   },
+  {
+    "name": "updateWebhook",
+    "method": "PUT",
+    "collection": false,
+    "path": "/webhooks/%s",
+    "params": [
+      {
+      "name": "webhook_gid",
+      "type": "string",
+      "example_values": ["12345"],
+      "comment": "Globally unique identifier for the webhook.",
+      "required": true
+      },
+    ],
+    "comment": "Update a webhook"
+  },
   ]
 }
 export = resourceBase;
