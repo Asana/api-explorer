@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -rf build coverage dist *.js *.d.ts",
     "precompile": "npm run clean",
-    "compile": "find src test typings -name \"*.ts\" | xargs tsc --module commonjs --target es5 --noImplicitAny --outDir build",
+    "compile": "find src test -name \"*.ts\" | xargs tsc --module commonjs --target es5 --noImplicitAny --outDir build",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "find src test -name \"*.ts\" | sed 's/^/--file=/g' | xargs tslint",
     "setup": "rm -rf node_modules typings && npm install",
