@@ -40,20 +40,20 @@ var resourceBase = <Resource>{
     "comment": "Get an attachment"
   },
   {
-    "name": "getAttachmentsForTask",
+    "name": "getAttachmentsForObject",
     "method": "GET",
     "collection": true||false,
-    "path": "/tasks/%s/attachments",
+    "path": "/attachments",
     "params": [
       {
-      "name": "task_gid",
+      "name": "parent",
       "type": "string",
-      "example_values": ["321654"],
-      "comment": "The task to operate on.",
+      "example_values": ["159874"],
+      "comment": "Globally unique identifier for object to fetch statuses from. Must be a GID for a task or project_brief.",
       "required": true
       },
     ],
-    "comment": "Get attachments for a task"
+    "comment": "Get attachments from an object"
   },
   ]
 }

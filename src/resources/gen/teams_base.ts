@@ -72,7 +72,7 @@ var resourceBase = <Resource>{
     "comment": "Get teams for a user"
   },
   {
-    "name": "getTeamsForWorkspcae",
+    "name": "getTeamsForWorkspace",
     "method": "GET",
     "collection": true||false,
     "path": "/workspaces/%s/teams",

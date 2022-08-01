@@ -65,7 +65,7 @@ var resourceBase = <Resource>{
       "name": "parent",
       "type": "string",
       "example_values": ["159874"],
-      "comment": "Globally unique identifier for object to fetch statuses from.",
+      "comment": "Globally unique identifier for object to fetch statuses from. Must be a GID for a project, portfolio, or goal.",
       "required": true
       },
     ],
