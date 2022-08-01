@@ -31,7 +31,7 @@ var resourceBase = <Resource>{
       "name": "query",
       "type": "string",
       "example_values": ["Greg"],
-      "comment": "The string that will be used to search for relevant objects. If an empty string is passed in, the API will currently return an empty result set.",
+      "comment": "The string that will be used to search for relevant objects. If an empty string is passed in, the API will return results.",
       "required": false
       },
       {

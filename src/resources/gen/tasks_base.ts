@@ -253,7 +253,7 @@ var resourceBase = <Resource>{
       "name": "assignee",
       "type": "string",
       "example_values": ["14641"],
-      "comment": "The assignee to filter tasks on. *Note: If you specify &#x60;assignee&#x60;, you must also specify the &#x60;workspace&#x60; to filter on.*",
+      "comment": "The assignee to filter tasks on. If searching for unassigned tasks, assignee.any &#x3D; null can be specified. *Note: If you specify &#x60;assignee&#x60;, you must also specify the &#x60;workspace&#x60; to filter on.*",
       "required": false
       },
     ],
@@ -271,6 +271,13 @@ var resourceBase = <Resource>{
       "example_values": ["1331"],
       "comment": "Globally unique identifier for the project.",
       "required": true
+      },
+      {
+      "name": "completed_since",
+      "type": "string",
+      "example_values": ["2012-02-22T02:06:58.158Z"],
+      "comment": "Only return tasks that are either incomplete or that have been completed since this time. Accepts a date-time string or the keyword *now*. ",
+      "required": false
       },
     ],
     "comment": "Get tasks from a project"
