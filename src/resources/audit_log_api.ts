@@ -25,5 +25,29 @@ resourceBase.properties = [
         "example_values": [],
         "comment": "",
     },
+    {
+        "name": "details",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "event_category",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "event_type",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "resource",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
 ];
 export = resourceBase;

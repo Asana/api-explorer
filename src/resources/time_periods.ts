@@ -14,7 +14,31 @@ resourceBase.properties = [
         "comment": "",
     },
     {
+        "name": "display_name",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "end_on",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
         "name": "parent",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "period",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "start_on",
         "type": "",
         "example_values": [],
         "comment": "",

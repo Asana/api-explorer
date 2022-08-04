@@ -14,7 +14,19 @@ resourceBase.properties = [
         "comment": "",
     },
     {
+        "name": "html_text",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
         "name": "title",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "permalink_url",
         "type": "",
         "example_values": [],
         "comment": "",

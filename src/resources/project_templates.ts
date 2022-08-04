@@ -14,13 +14,43 @@ resourceBase.properties = [
         "comment": "",
     },
     {
+        "name": "color",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
         "name": "description",
         "type": "",
         "example_values": [],
         "comment": "",
     },
     {
+        "name": "html_description",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "name",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
         "name": "owner",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "public",
+        "type": "",
+        "example_values": [],
+        "comment": "",
+    },
+    {
+        "name": "requested_dates",
         "type": "",
         "example_values": [],
         "comment": "",
