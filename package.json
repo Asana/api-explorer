@@ -55,7 +55,7 @@
     "chai-as-promised": "^4.1.1",
     "coveralls": "^3.0.6",
     "envify": "^4.1.0",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.3",
     "nyc": "^14.1.1",
     "sinon": "^9.0.2",
     "source-map-support": "^0.2.10",
