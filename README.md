@@ -1,3 +1,5 @@
+> **_NOTE:_**  This repository has been archived and is no longer being maintained. Asana's API explorer is available at [https://developers.asana.com/docs/api-explorer](https://developers.asana.com/docs/api-explorer). To access up-to-date versions of Asana's OpenAPI Specifications, visit the [openapi](https://github.com/asana/openapi) repository.
+
 # api-explorer [![Build Status][travis-image]][travis-url]
 
 The Asana Api Explorer is a React component that was built to allow one to explore the Asana Api. It is built in typescript with React to allow easy integration with the [Asana Developers Site](https://developers.asana.com/docs), and uses the [node.js asana client](https://github.com/Asana/node-asana). To populate the API Explorer, we use metadata from the [asana-api-meta](https://github.com/Asana/asana-api-meta) repository, which contains structural information of the various resources and endpoints in the API.
