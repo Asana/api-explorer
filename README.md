@@ -1,4 +1,4 @@
-> **_NOTE:_**  This repository has been archived and is no longer being maintained. Asana's API documentation is available at [https://developers.asana.com/docs/api-explorer](https://developers.asana.com/docs/api-explorer). To access up-to-date versions of Asana's OpenAPI Specifications, visit the [openapi](https://github.com/asana/openapi) repository.
+> **_NOTE:_**  This repository has been archived and is no longer being maintained. Asana's API explorer is available at [https://developers.asana.com/docs/api-explorer](https://developers.asana.com/docs/api-explorer). To access up-to-date versions of Asana's OpenAPI Specifications, visit the [openapi](https://github.com/asana/openapi) repository.
 
 # api-explorer [![Build Status][travis-image]][travis-url]
 
